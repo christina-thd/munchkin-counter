@@ -1,0 +1,353 @@
+/* Dashboard (tablet / TV). */
+
+html, body { height: 100%; }
+body { display: flex; flex-direction: column; overflow: hidden; }
+
+/* ----- sizes: all scale from the row height --rh (set in js/table/sizing.js), capped by screen width ----- */
+:root {
+  --rh: 100px;
+  --avatar:   clamp(56px, min(calc(var(--rh) * 0.74), 7vw), 104px);
+  --name:     clamp(24px, min(calc(var(--rh) * 0.30), 3.2vw), 40px);
+  --pip:      clamp(24px, calc(var(--rh) * 0.26), 36px);
+  --button:   clamp(38px, min(calc(var(--rh) * 0.42), 4.2vw), 54px);   /* − / + */
+  --value:    clamp(30px, min(calc(var(--rh) * 0.38), 4vw), 52px);     /* level & gear */
+  --strength: clamp(50px, min(calc(var(--rh) * 0.64), 7.4vw), 100px);  /* about twice level & gear */
+  --pad:      clamp(6px, calc(var(--rh) * 0.07), 14px);
+  --stepper:  calc(var(--button) * 2 + var(--value) * 1.6 + 22px);
+}
+
+/* ----- top bar ----- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 62px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 400 28px var(--font-display);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  color: var(--gold);
+  text-shadow: 2px 2px 0 var(--shadow-red);
+}
+.brand img { width: 40px; height: 40px; filter: drop-shadow(0 2px 3px #0008); }
+.game-button {
+  display: flex;
+  color: var(--ink);
+  text-decoration: none;
+  align-items: center;
+  gap: 6px;
+  max-width: 220px;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #00000040;
+  font-size: 16px;
+  font-weight: 700;
+}
+.game-button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* announcer: up to three short lines of table talk */
+.announcer {
+  flex: 1;
+  min-width: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 1.2;
+  color: var(--muted);
+}
+.announcer b { color: var(--ink); }
+.announcer.fresh { animation: announce 0.5s ease-out; }
+@keyframes announce { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+.bar-button {
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+}
+.bar-button.primary { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.bar-button.icon { width: 44px; padding: 0; font-size: 20px; }
+.qr-thumb { width: 48px; height: 48px; padding: 3px; border-radius: 8px; background: #fff; cursor: pointer; }
+
+/* ----- player rows ----- */
+
+#board {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 12px 10px;
+  overflow: auto;
+}
+
+.player {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  max-height: 190px;
+  display: grid;
+  grid-template-columns: var(--avatar) minmax(0, 1fr) var(--stepper) var(--stepper) calc(var(--strength) * 1.25 + 28px);
+  align-items: center;
+  gap: 12px;
+  padding: var(--pad) 40px var(--pad) var(--pad);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: linear-gradient(90deg, #3a2819, #2c1e13);
+}
+.player.leading { border-color: var(--gold); }
+.player.won {
+  border-color: var(--gold);
+  background: linear-gradient(90deg, #6b4a12, #3a2819);
+  animation: glow 1.2s ease-in-out infinite alternate;
+}
+.player.died { animation: died 1.6s ease-out; }
+@keyframes glow { from { box-shadow: 0 0 6px #e8b54a55; } to { box-shadow: 0 0 26px #ffd46b99; } }
+@keyframes died { 0% { background: #7a1010; } }
+
+/* emoji avatar with rank badge */
+.avatar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--avatar);
+  height: var(--avatar);
+  border: 2px solid #ffffff1f;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #5a3d25, #24170e);
+}
+.avatar .emoji { font-size: calc(var(--avatar) * 0.6); line-height: 1; }
+.avatar .rank {
+  position: absolute;
+  left: -4px;
+  top: -4px;
+  display: grid;
+  place-items: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  border: 2px solid var(--line);
+  border-radius: 13px;
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+.player.leading .avatar, .player.won .avatar { border-color: var(--gold); }
+.player.leading .rank, .player.won .rank { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+
+/* name on top, level track underneath, both from the same left edge */
+.identity { display: flex; flex-direction: column; justify-content: center; gap: calc(var(--pad) * 0.9); min-width: 0; }
+.name-line { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.name {
+  min-width: 0;
+  overflow: hidden;
+  padding-top: 0.1em;
+  font: 400 var(--name)/1 var(--font-display);
+  letter-spacing: 0.03em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tag {
+  flex: none;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: var(--gold);
+  color: var(--on-gold);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+/* level track: tap a number to jump straight to it */
+.track-line { display: flex; align-items: center; gap: 8px; }
+.track {
+  flex: 1;
+  min-width: 0;
+  max-width: 480px;
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 4px;
+}
+.pip {
+  min-width: 0;
+  height: var(--pip);
+  padding: 0.14em 0 0;
+  border: 1px solid #ffffff1f;
+  border-radius: 7px;
+  background: #ffffff14;
+  color: #d9c29c;
+  font: 400 calc(var(--pip) * 0.5) var(--font-display);
+}
+.pip.on { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.pip.current { outline: 3px solid #fff8e6; outline-offset: 1px; font-size: calc(var(--pip) * 0.62); }
+
+.die {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: calc(var(--pip) * 1.35);
+  height: var(--pip);
+  border: 1px solid #ffffff26;
+  border-radius: 8px;
+  background: #00000055;
+  font-size: calc(var(--pip) * 0.6);
+}
+.die:active { background: var(--red); }
+
+.remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #ffffff1c;
+  border-radius: 8px;
+  background: #00000040;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Level / Gear: label on top, then − value + */
+.stepper {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 5px 8px 8px;
+  border: 1px solid #ffffff14;
+  border-radius: 16px;
+  background: #00000045;
+}
+.stepper .label {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.stepper .controls { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.stepper .value {
+  flex: 1;
+  padding-top: 0.12em;
+  text-align: center;
+  font: 400 var(--value)/1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+}
+.stepper.level .value { color: var(--gold); }
+.stepper .pm { width: var(--button); height: var(--button); border-radius: 50%; }
+
+/* Strength: the number people read from across the table */
+.strength {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: 2px solid #e8b54a66;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #e8b54a22, #e8b54a08);
+}
+.strength span {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.strength b {
+  padding-top: 0.08em;
+  font: 400 var(--strength)/0.9 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  color: var(--gold);
+  text-shadow: 3px 3px 0 var(--shadow-red);
+}
+.player.leading .strength, .player.won .strength { border-color: var(--gold); }
+
+.empty { margin: auto; text-align: center; font-size: 18px; line-height: 1.6; color: var(--muted); }
+.empty img { display: block; width: 220px; margin: 0 auto 14px; padding: 8px; border-radius: 12px; background: #fff; }
+
+/* ----- QR overlay ----- */
+
+#qrOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: #000c;
+}
+#qrOverlay.open { display: flex; }
+#qrOverlay .card { padding: 24px; border-radius: 18px; background: #fff; color: #111; text-align: center; }
+#qrOverlay img { display: block; width: min(340px, 70vw); margin: 0 auto 12px; }
+
+/* ----- list in the sound test dialog ----- */
+
+.list { display: flex; flex-direction: column; gap: 8px; margin: 6px 0 14px; }
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #00000040;
+  text-align: left;
+}
+.list-item .text { flex: 1; min-width: 0; }
+.list-item .title { display: block; overflow: hidden; font-size: 17px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.list-item .meta { display: block; font-size: 13px; color: var(--muted); }
+
+/* ----- short landscape screens (e.g. iPad in Safari): slimmer top bar ----- */
+@media (min-width: 861px) and (max-height: 760px) {
+  .topbar { min-height: 54px; padding: 6px 14px; }
+  .qr-thumb { width: 42px; height: 42px; }
+  #board { gap: 6px; padding: 4px 10px 8px; }
+}
+
+/* ----- portrait tablet: avatar + name + strength on top, level & gear below ----- */
+@media (max-width: 860px) {
+  :root { --button: clamp(40px, 6.2vw, 58px); --value: clamp(30px, 6vw, 52px); }   /* fill the panel width */
+  .brand { font-size: 20px; }
+  .brand img { width: 32px; height: 32px; }
+  .announcer { display: none; }
+
+  .player {
+    flex: none;
+    max-height: none;
+    grid-template-columns: var(--avatar) 1fr var(--avatar) 1fr calc(var(--strength) * 1.25 + 24px);
+    grid-template-areas:
+      "avatar identity identity identity strength"
+      "level  level    gear     gear     strength";
+    gap: 5px 10px;
+    padding: 5px 40px 5px 8px;
+  }
+  .avatar { grid-area: avatar; }
+  .identity { grid-area: identity; }
+  .stepper.level { grid-area: level; }
+  .stepper.gear { grid-area: gear; }
+  .strength { grid-area: strength; }
+  .track { max-width: none; }
+
+  .stepper { flex-direction: row; align-items: center; justify-content: center; gap: 10px; padding: 5px 10px; }
+  .stepper .label { text-align: left; font-size: 12px; }
+  .stepper .controls { flex: none; justify-content: center; gap: 8px; }
+  .stepper .value { flex: none; min-width: calc(var(--value) * 1.4); }
+}

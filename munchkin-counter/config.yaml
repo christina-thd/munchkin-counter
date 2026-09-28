@@ -1,0 +1,27 @@
+name: "Munchkin Counter"
+description: "Level counter for the Munchkin card game: tablet dashboard, phones join by QR code"
+version: "2.3.0"
+slug: "munchkin_counter"
+init: false
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+startup: application
+boot: auto
+# Host network so the QR code shows the host's real address (not the add-on's internal one).
+# The web interface listens on port 3000 of the host.
+host_network: true
+ingress: true
+ingress_port: 3000
+# Read-only access to the "share" folder, for an optional custom logo (see DOCS.md)
+map:
+  - share:ro
+panel_icon: "mdi:sword-cross"
+panel_title: "Munchkin"
+options:
+  host_ip: ""
+schema:
+  host_ip: "str?"

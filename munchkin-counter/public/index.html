@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>Munchkin Counter</title>
+  <script>
+    // The start page and dashboard are for tablets and TVs; phones get their own controls.
+    // Phone = a phone browser, or a screen under 600px on its short side (tablets start around 740px).
+    (function () {
+      var phoneBrowser = /iPhone|iPod|Android.+Mobile|Windows Phone|Mobi/i.test(navigator.userAgent);
+      if (phoneBrowser || Math.min(screen.width, screen.height) < 600) location.replace('join');
+    })();
+  </script>
+  <link rel="icon" href="logo">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Fredoka:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/lobby.css">
+  <script type="module" src="js/lobby/main.js"></script>
+</head>
+<body>
+  <main class="lobby">
+    <section class="hero">
+      <img class="logo" src="logo" alt="">
+      <h1>Munchkin</h1>
+      <p class="tagline">Kick open the door. We'll keep count.</p>
+
+      <div class="continue" id="continue" hidden>
+        <div class="label">Continue</div>
+        <div class="game-name" id="currentName"></div>
+        <div class="players" id="currentPlayers"></div>
+        <div class="meta" id="currentMeta"></div>
+        <button class="big primary" id="continueButton">▶ Play</button>
+      </div>
+
+      <button class="big" id="newGame">+ New game</button>
+    </section>
+
+    <section class="history">
+      <h2>Past games</h2>
+      <div class="games" id="games"></div>
+    </section>
+  </main>
+
+  <div id="modal"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+</body>
+</html>

@@ -1,0 +1,115 @@
+/* Shared by the dashboard and the phone page: theme, reset, − / + buttons, dialogs. */
+
+:root {
+  --bg: #1b120b;
+  --panel: #2a1c12;
+  --surface: #33231a;
+  --line: #4a3322;
+  --ink: #f3e3bf;
+  --muted: #b39a78;
+  --gold: #e8b54a;
+  --red: #b3261e;
+  --green: #4f8a2f;
+  --shadow-red: #7a1a12;
+  --on-gold: #2a1c12;
+
+  --font-display: "Luckiest Guy", "Arial Black", Impact, sans-serif;   /* titles, names, numbers */
+  --font-body: Fredoka, "Trebuchet MS", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  user-select: none;
+}
+
+button, input { font: inherit; color: inherit; }
+button { border: 0; background: none; cursor: pointer; }
+[hidden] { display: none !important; }
+
+/* ----- − / + buttons: the symbols are drawn as bars so they sit exactly in the centre ----- */
+
+.pm {
+  position: relative;
+  flex: none;
+  color: #fff8e6;
+  box-shadow: 0 3px 0 #0008;
+}
+.pm.minus { background: var(--red); }
+.pm.plus { background: var(--green); }
+.pm:active { transform: translateY(2px); box-shadow: 0 1px 0 #0008; }
+.pm:disabled { opacity: 0.25; box-shadow: none; }
+.pm::before,
+.pm.plus::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 44%;
+  height: 12%;
+  min-height: 4px;
+  border-radius: 3px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+.pm.plus::after { transform: translate(-50%, -50%) rotate(90deg); }
+
+/* ----- dialogs ----- */
+
+#modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: #000b;
+}
+#modal.open { display: flex; }
+
+.sheet {
+  width: min(480px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--panel);
+  box-shadow: 0 20px 60px #000a;
+}
+.sheet h3 {
+  margin: 0 0 10px;
+  font: 400 26px/1.1 var(--font-display);
+  letter-spacing: 0.02em;
+  color: var(--gold);
+}
+.sheet p { margin: 0 0 14px; font-size: 17px; line-height: 1.45; }
+.sheet .note { color: var(--muted); font-size: 15px; }
+.sheet input[type="text"] {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #00000055;
+  font-size: 20px;
+}
+.sheet label { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; font-size: 16px; }
+.sheet label input { width: 22px; height: 22px; accent-color: var(--gold); }
+
+.sheet .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
+.sheet .actions button {
+  padding: 12px 18px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #00000055;
+  font-size: 17px;
+  font-weight: 700;
+}
+.sheet .actions .confirm { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.sheet .actions .confirm.danger { background: var(--red); border-color: var(--red); color: #fff8e6; }

@@ -1,0 +1,43 @@
+// Checks that the Home Assistant add-on files agree with each other and with the app.
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { test } from 'node:test';
+import { ROOT_DIR } from '../src/config.js';
+
+const read = (file) => fs.readFileSync(path.join(ROOT_DIR, file), 'utf8');
+const yamlValue = (yaml, key) => yaml.match(new RegExp(`^${key}:\\s*"?([^"\\n]*)"?\\s*$`, 'm'))?.[1];
+
+const config = read('config.yaml');
+const pkg = JSON.parse(read('package.json'));
+
+test('config.yaml and package.json have the same version', () => {
+  assert.equal(yamlValue(config, 'version'), pkg.version);
+});
+
+test('the changelog has an entry for this version', () => {
+  assert.match(read('CHANGELOG.md'), new RegExp(`^## ${pkg.version.replaceAll('.', '\\.')}$`, 'm'));
+});
+
+test('run.sh starts the app on the ingress port', () => {
+  const run = read('run.sh');
+  assert.equal(run.match(/^export PORT=(\d+)/m)?.[1], yamlValue(config, 'ingress_port'));
+  assert.match(run, /^#!\/usr\/bin\/with-contenv bashio\n/);
+  assert.match(run, /exec node \/app\/src\/server\.js/);
+});
+
+test('run.sh has Unix line endings (it runs in a Linux container)', () => {
+  assert.ok(!read('run.sh').includes('\r'));
+});
+
+test('everything the Dockerfile copies exists', () => {
+  const sources = [...read('Dockerfile').matchAll(/^COPY (.+) \S+$/gm)].flatMap((m) => m[1].split(/\s+/));
+  assert.ok(sources.length > 0);
+  for (const source of sources) assert.ok(fs.existsSync(path.join(ROOT_DIR, source)), source);
+});
+
+test('every option has a schema entry', () => {
+  const block = (name) => config.split(new RegExp(`^${name}:\\n`, 'm'))[1]?.split(/^\S/m)[0] ?? '';
+  const keys = (text) => [...text.matchAll(/^ {2}(\w+):/gm)].map((m) => m[1]).sort();
+  assert.deepEqual(keys(block('options')), keys(block('schema')));
+});

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>My Munchkin</title>
+  <link rel="icon" href="logo">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Fredoka:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/phone.css">
+  <script type="module" src="js/phone/main.js"></script>
+</head>
+<body>
+  <section id="pickView" hidden>
+    <h2>Who are you?</h2>
+    <div class="player-list" id="playerList"></div>
+    <form class="join" id="joinForm">
+      <input id="newName" placeholder="New player name" maxlength="20" autocomplete="off">
+      <button type="submit">Join</button>
+    </form>
+  </section>
+
+  <section id="playView" hidden>
+    <div class="me">
+      <button class="emoji-button" id="emojiButton" aria-label="Change emoji"></button>
+      <div class="name" id="playerName"></div>
+      <div class="strength"><b id="strength"></b><span>Strength</span></div>
+    </div>
+    <div class="emoji-grid" id="emojiGrid" hidden></div>
+
+    <div class="panel" id="levelPanel">
+      <div class="label" id="levelLabel">Level</div>
+      <div class="controls">
+        <button class="pm minus" id="levelDown" data-action="changeLevel" data-delta="-1" aria-label="Level down"></button>
+        <span class="value" id="level"></span>
+        <button class="pm plus" id="levelUp" data-action="changeLevel" data-delta="1" aria-label="Level up"></button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="label">Gear</div>
+      <div class="controls">
+        <button class="pm minus" data-action="changeGear" data-delta="-1" aria-label="Gear down"></button>
+        <span class="value" id="gear"></span>
+        <button class="pm plus" data-action="changeGear" data-delta="1" aria-label="Gear up"></button>
+      </div>
+    </div>
+
+    <button class="died-button" id="died">💀 I died</button>
+    <button class="switch" id="switchPlayer">Switch player</button>
+  </section>
+
+  <div id="modal"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+</body>
+</html>

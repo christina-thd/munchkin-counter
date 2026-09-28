@@ -1,0 +1,36 @@
+munchkin-counter/                  Home Assistant add-on containing the app
+                                   (in the repository it sits next to repository.yaml and the repo README)
+├── config.yaml                    add-on definition: version, ingress, host network, host_ip option, share:ro
+├── Dockerfile                     Home Assistant base image + Node.js, copies src/ and public/
+├── run.sh                         bashio: add-on options → env vars (HOST_IP, LOGO_FILE), starts the server
+├── README.md                      add-on store page: features, install, options
+├── DOCS.md                        add-on Documentation tab: usage, rules, sound, custom logo
+├── CHANGELOG.md                   release notes (shown in Home Assistant)
+├── package.json                   version, scripts (start, dev, test), one dependency (qrcode)
+├── src/                           server (Node, no framework)
+│   ├── server.js                  entry point: wires everything, graceful shutdown
+│   ├── config.js                  environment variables (PORT, HOST, HOST_IP, STATE_FILE, LOGO_FILE)
+│   ├── app.js                     HTTP routes: pages, static files, /logo, /qr.svg, API
+│   ├── game/state.js              state shape, migrations, view for clients
+│   ├── game/actions.js            every game action, validated
+│   ├── store.js                   safe JSON saving (atomic, debounced)
+│   ├── sse.js                     live updates to all screens
+│   └── network.js, static.js      LAN address detection, safe static file serving
+├── public/                        browser (plain ES modules, no build step)
+│   ├── index.html                 start page: continue, new game, past games
+│   ├── table.html, phone.html     dashboard, phone controls (markup only)
+│   ├── css/   base.css, lobby.css, table.css, phone.css
+│   ├── img/   logo.svg            built-in logo (a custom one can replace it via LOGO_FILE)
+│   └── js/
+│       ├── shared/  rules.js (used by server too), api, dialog, dom, format, games, storage
+│       ├── lobby/   main.js       start page
+│       ├── table/   main, board, sizing, dialogs, sounds,
+│       │            announcer (situations, pure) + lines (texts) + ticker (UI)
+│       └── phone/   main.js       phone controls
+├── test/                          automated tests (Node's built-in runner, no extra deps):
+│                                  actions, state, announcer, store, http, addon packaging
+└── docs/
+    ├── DEVELOPMENT.md             dev setup, architecture, releasing, local Docker test
+    └── _project_architecture.txt  this overview
+
+Not in the repository: node_modules/ (npm install), data/ (local saved games)
