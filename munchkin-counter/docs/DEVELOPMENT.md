@@ -43,8 +43,10 @@ public/                   browser (plain ES modules, no build step)
   index.html              start page: continue, new game, past games
   table.html, phone.html  dashboard, phone controls (markup only)
   css/                    base.css (theme, shared components), lobby.css, table.css, phone.css
-  img/logo.svg            app logo and browser icon
-  js/shared/              rules.js (also used by the server), api, dialog, dom, format, games, storage
+  img/logo.svg            app logo and browser icon; icon-*.png home-screen icons
+  media/wake.*            tiny silent video that keeps the screen on over plain http
+  manifest.webmanifest    web app manifest (home screen opens full screen)
+  js/shared/              rules.js (also used by the server), api, dialog, dom, format, games, screen, storage
   js/lobby/               start page
   js/table/               dashboard: main, board, sizing, dialogs,
                           announcer (situations, pure) + lines (texts) + ticker (UI), sounds
@@ -88,6 +90,11 @@ They are rendered from `public/img/logo.svg` and `art/store-logo.svg`; after cha
 ```sh
 docker run --rm -v "$PWD:/addon" -w /addon alpine:3.20 sh art/render.sh
 ```
+
+**Keeping the screen on:** `js/shared/screen.js` uses the Wake Lock API where the browser allows it
+(https or localhost). On plain http, which is how tablets reach the add-on at home, it loops the tiny
+silent video in `public/media/` instead (regenerate it with `art/wake-video.sh`). Safari only plays
+video from servers that support byte ranges, which `src/static.js` does.
 
 ## Testing the add-on image locally
 

@@ -9,8 +9,13 @@ import { resolveInside, sendFile } from './static.js';
 
 const MAX_BODY_BYTES = 10 * 1024;
 
-const PAGES = { '/': 'index.html', '/table': 'table.html', '/join': 'phone.html' };
-const STATIC_DIRS = ['/css/', '/js/', '/img/'];
+const PAGES = {
+  '/': 'index.html',
+  '/table': 'table.html',
+  '/join': 'phone.html',
+  '/manifest.webmanifest': 'manifest.webmanifest',
+};
+const STATIC_DIRS = ['/css/', '/js/', '/img/', '/media/'];
 
 class HttpError extends Error {
   constructor(status, message) {
@@ -55,7 +60,8 @@ function readJsonBody(req) {
  *   GET  /              start page (tablet / TV): continue, new game, past games
  *   GET  /table         dashboard (tablet / TV)
  *   GET  /join          phone controls
- *   GET  /css/*, /js/*, /img/*   static files
+ *   GET  /manifest.webmanifest   web app manifest ("Add to Home Screen" opens full screen)
+ *   GET  /css/*, /js/*, /img/*, /media/*   static files (byte ranges supported, for video)
  *   GET  /logo          the logo: LOGO_FILE if set and present, else public/img/logo.svg
  *   GET  /qr.svg        QR code pointing phones at /join
  *   GET  /api/info      { version, joinUrl, emojis }
@@ -86,9 +92,9 @@ export function createApp({ config, state, store, hub = new SseHub(), now = Date
   }
 
   const defaultLogo = path.join(config.publicDir, 'img', 'logo.svg');
-  function sendLogo(res) {
-    const fallback = () => sendFile(res, defaultLogo, () => notFound(res));
-    return config.logoFile ? sendFile(res, config.logoFile, fallback) : fallback();
+  function sendLogo(req, res) {
+    const fallback = () => sendFile(req, res, defaultLogo, () => notFound(res));
+    return config.logoFile ? sendFile(req, res, config.logoFile, fallback) : fallback();
   }
 
   async function route(req, res) {
@@ -103,13 +109,13 @@ export function createApp({ config, state, store, hub = new SseHub(), now = Date
 
     if (pathname === '/api/events') return hub.connect(req, res, view());
     if (pathname === '/api/info') return sendJson(res, 200, { version: config.version, joinUrl: joinUrl(), emojis: EMOJIS });
-    if (pathname === '/logo') return sendLogo(res);
+    if (pathname === '/logo') return sendLogo(req, res);
     if (pathname === '/qr.svg') {
       res.writeHead(200, { 'Content-Type': 'image/svg+xml', 'Cache-Control': 'no-cache' });
       return res.end(await qrSvg());
     }
     if (Object.hasOwn(PAGES, pathname)) {
-      return sendFile(res, path.join(config.publicDir, PAGES[pathname]), () => notFound(res));
+      return sendFile(req, res, path.join(config.publicDir, PAGES[pathname]), () => notFound(res));
     }
     if (STATIC_DIRS.some((dir) => pathname.startsWith(dir))) {
       let decoded;
@@ -119,7 +125,7 @@ export function createApp({ config, state, store, hub = new SseHub(), now = Date
         throw new HttpError(400, 'Malformed path');
       }
       const file = resolveInside(config.publicDir, decoded);
-      return file ? sendFile(res, file, () => notFound(res)) : notFound(res);
+      return file ? sendFile(req, res, file, () => notFound(res)) : notFound(res);
     }
     return notFound(res);
   }

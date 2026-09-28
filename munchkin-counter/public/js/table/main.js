@@ -1,6 +1,7 @@
 // Dashboard (tablet / TV): wires the server view to the board, announcer and sounds.
 import { fetchInfo, sendAction, subscribe } from '../shared/api.js';
 import { $ } from '../shared/dom.js';
+import { keepScreenOn, setupFullscreenButton } from '../shared/screen.js';
 import { LevelWatcher } from './announcer.js';
 import { renderBoard } from './board.js';
 import { askPlayerName, confirmDeath, confirmRemovePlayer, showSoundTest } from './dialogs.js';
@@ -89,6 +90,9 @@ $('sound').addEventListener('click', () => {
   if (sounds.enabled) setTimeout(() => sounds.play('beep'), 50);
 });
 showSoundState();
+
+keepScreenOn();
+setupFullscreenButton($('fullscreen'));
 
 const qrOverlay = $('qrOverlay');
 $('qrButton').addEventListener('click', () => qrOverlay.classList.add('open'));

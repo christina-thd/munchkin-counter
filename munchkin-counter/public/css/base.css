@@ -113,3 +113,8 @@ button { border: 0; background: none; cursor: pointer; }
 }
 .sheet .actions .confirm { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
 .sheet .actions .confirm.danger { background: var(--red); border-color: var(--red); color: #fff8e6; }
+
+/* ----- full-screen button: shows "expand" corners, or "collapse" while full screen ----- */
+.fullscreen-button svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.fullscreen-button .collapse, .fullscreen-button.active .expand { display: none; }
+.fullscreen-button.active .collapse { display: inline; }

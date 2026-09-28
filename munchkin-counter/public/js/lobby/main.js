@@ -2,6 +2,7 @@
 import { sendAction, subscribe } from '../shared/api.js';
 import { $, escapeHtml } from '../shared/dom.js';
 import { askNewGame, confirmDeleteGame, describeGame } from '../shared/games.js';
+import { keepScreenOn, setupFullscreenButton } from '../shared/screen.js';
 
 const DASHBOARD = 'table';
 
@@ -40,6 +41,9 @@ function renderHistory() {
         </div>`).join('')
     : '<p class="empty">No past games yet. Finished games show up here.</p>';
 }
+
+keepScreenOn();
+setupFullscreenButton($('fullscreen'));
 
 subscribe((next) => {
   view = next;

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.4.0
+- The tablet or TV screen stays on while the start page or dashboard is open
+- Full-screen button on the start page and the dashboard; stays full screen when moving between them
+- "Add to Home Screen" opens the app full screen, with its own icon
+
 ## 2.3.3
 - Add-on icon and logo in the Home Assistant store
 

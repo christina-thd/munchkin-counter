@@ -36,6 +36,19 @@ The dashboard plays a sound for a win, a death, someone reaching level 9, someon
 negative gear, and level changes. Tap the screen once after opening it (browsers only allow sound after a tap).
 Use the 🔊 button to mute. Add `#sounds` to the end of the address to hear every sound.
 
+## Screen always on, and full screen
+
+- **Always on:** while the start page or dashboard is open, the screen doesn't dim or lock. It starts with the first tap
+  (browsers require one). Phones are left alone to save their battery.
+- **Full screen:** tap the ⛶ button in the top bar (or the top-right corner of the start page). It stays full screen
+  when you move between the start page and the dashboard. Tap it again, or press Esc, to leave.
+- **Like an app:** use **Add to Home Screen** in the tablet's browser menu (on an iPad: Share → Add to Home Screen).
+  It then opens full screen from its own icon.
+
+For a tablet that stays on the table for hours, also check its own settings: set the screen timeout to the longest
+value (Android: Settings → Display → Screen timeout; iPad: Settings → Display & Brightness → Auto-Lock → Never)
+and keep it plugged in.
+
 ## Custom logo
 
 To show your own logo in the top bar, on the start page and as the browser icon:

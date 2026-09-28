@@ -5,12 +5,15 @@ const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
+  '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.webp': 'image/webp',
   '.ico': 'image/x-icon',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
 };
 
 /** Resolves `relative` inside `root`, or returns null if it would escape it (e.g. `../`). */
@@ -20,19 +23,56 @@ export function resolveInside(root, relative) {
   return full.startsWith(base + path.sep) ? full : null;
 }
 
-/** Streams a file with its content type. Calls `onMissing` if it doesn't exist or isn't served. */
-export function sendFile(res, file, onMissing) {
+/** Parses a single `bytes=start-end` range. Returns null for none, false if it can't be satisfied. */
+function parseRange(header, size) {
+  const match = /^bytes=(\d*)-(\d*)$/.exec(header ?? '');
+  if (!match || (!match[1] && !match[2])) return null;
+  let start;
+  let end;
+  if (match[1]) {
+    start = Number(match[1]);
+    end = match[2] ? Math.min(Number(match[2]), size - 1) : size - 1;
+  } else {
+    start = Math.max(size - Number(match[2]), 0);   // suffix: the last N bytes
+    end = size - 1;
+  }
+  return start <= end && start < size ? { start, end } : false;
+}
+
+/**
+ * Streams a file with its content type, supporting byte ranges (Safari needs them to play video).
+ * Calls `onMissing` if the file doesn't exist or its type isn't served.
+ */
+export function sendFile(req, res, file, onMissing) {
   const type = MIME_TYPES[path.extname(file).toLowerCase()];
   if (!type) return onMissing();
   fs.stat(file, (err, stats) => {
     if (err || !stats.isFile()) return onMissing();
-    res.writeHead(200, {
+    const headers = {
       'Content-Type': type,
-      'Content-Length': stats.size,
+      'Accept-Ranges': 'bytes',
       // LAN app that gets updated in place: always revalidate so updates show up on reload
       'Cache-Control': 'no-cache',
       'X-Content-Type-Options': 'nosniff',
-    });
+    };
+
+    const range = parseRange(req.headers.range, stats.size);
+    if (range === false) {
+      res.writeHead(416, { ...headers, 'Content-Range': `bytes */${stats.size}` });
+      return res.end();
+    }
+    if (range) {
+      res.writeHead(206, {
+        ...headers,
+        'Content-Range': `bytes ${range.start}-${range.end}/${stats.size}`,
+        'Content-Length': range.end - range.start + 1,
+      });
+      if (req.method === 'HEAD') return res.end();
+      return fs.createReadStream(file, range).pipe(res);
+    }
+
+    res.writeHead(200, { ...headers, 'Content-Length': stats.size });
+    if (req.method === 'HEAD') return res.end();
     fs.createReadStream(file).pipe(res);
   });
 }

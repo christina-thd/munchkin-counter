@@ -11,6 +11,7 @@ and each player controls their own level and gear from their phone by scanning a
 - Announcer with Munchkin-style table talk and sound effects
 - Start page: continue the current game, start a new one, or reopen a past game
 - Live updates on every screen
+- Screen stays on, full-screen button, and "Add to Home Screen" as an app
 - Also available in the Home Assistant sidebar
 - Multi-architecture support
 

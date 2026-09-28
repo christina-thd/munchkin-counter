@@ -137,3 +137,32 @@ describe('logo', () => {
     assert.equal(type, 'image/svg+xml');
   });
 });
+
+describe('home screen and always-on screen', () => {
+  test('the web app manifest is served and opens full screen', async () => {
+    const res = await fetch(`${base}/manifest.webmanifest`);
+    assert.equal(res.status, 200);
+    assert.match(res.headers.get('content-type'), /application\/manifest\+json/);
+    const manifest = await res.json();
+    assert.equal(manifest.display, 'fullscreen');
+    for (const icon of manifest.icons) assert.equal((await fetch(`${base}/${icon.src}`)).status, 200, icon.src);
+  });
+
+  test('the keep-awake video is served, with byte ranges (Safari needs them for video)', async () => {
+    const full = await fetch(`${base}/media/wake.mp4`);
+    assert.equal(full.status, 200);
+    assert.equal(full.headers.get('accept-ranges'), 'bytes');
+    const size = Number(full.headers.get('content-length'));
+
+    const part = await fetch(`${base}/media/wake.mp4`, { headers: { Range: 'bytes=0-1' } });
+    assert.equal(part.status, 206);
+    assert.equal(part.headers.get('content-range'), `bytes 0-1/${size}`);
+    assert.equal((await part.arrayBuffer()).byteLength, 2);
+
+    const tail = await fetch(`${base}/media/wake.mp4`, { headers: { Range: 'bytes=-10' } });
+    assert.equal(tail.headers.get('content-range'), `bytes ${size - 10}-${size - 1}/${size}`);
+
+    const beyond = await fetch(`${base}/media/wake.mp4`, { headers: { Range: `bytes=${size + 5}-` } });
+    assert.equal(beyond.status, 416);
+  });
+});

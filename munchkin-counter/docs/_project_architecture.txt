@@ -7,7 +7,7 @@ munchkin-counter/                  Home Assistant add-on containing the app
 ├── DOCS.md                        add-on Documentation tab: usage, rules, sound, custom logo
 ├── CHANGELOG.md                   release notes (shown in Home Assistant)
 ├── icon.png, logo.png             add-on store icon (128×128) and banner (250×100)
-├── art/                           store-logo.svg + render.sh (renders the two PNGs)
+├── art/                           store-logo.svg, render.sh (PNG images), wake-video.sh (keep-awake video)
 ├── package.json                   version, scripts (start, dev, test), one dependency (qrcode)
 ├── src/                           server (Node, no framework)
 │   ├── server.js                  entry point: wires everything, graceful shutdown
@@ -22,9 +22,11 @@ munchkin-counter/                  Home Assistant add-on containing the app
 │   ├── index.html                 start page: continue, new game, past games
 │   ├── table.html, phone.html     dashboard, phone controls (markup only)
 │   ├── css/   base.css, lobby.css, table.css, phone.css
-│   ├── img/   logo.svg            built-in logo (a custom one can replace it via LOGO_FILE)
+│   ├── manifest.webmanifest       "Add to Home Screen" opens the app full screen
+│   ├── img/   logo.svg            built-in logo (a custom one can replace it via LOGO_FILE), icon-*.png
+│   ├── media/ wake.mp4, wake.webm tiny silent video that keeps the screen on over plain http
 │   └── js/
-│       ├── shared/  rules.js (used by server too), api, dialog, dom, format, games, storage
+│       ├── shared/  rules.js (used by server too), api, dialog, dom, format, games, screen, storage
 │       ├── lobby/   main.js       start page
 │       ├── table/   main, board, sizing, dialogs, sounds,
 │       │            announcer (situations, pure) + lines (texts) + ticker (UI)

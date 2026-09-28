@@ -351,3 +351,5 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   .stepper .controls { flex: none; justify-content: center; gap: 8px; }
   .stepper .value { flex: none; min-width: calc(var(--value) * 1.4); }
 }
+
+.bar-button.icon { display: grid; place-items: center; }

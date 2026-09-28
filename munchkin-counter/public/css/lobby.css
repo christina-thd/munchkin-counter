@@ -89,3 +89,19 @@ h2 {
 @media (max-width: 860px) {
   .lobby { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); gap: 28px; padding: 28px 24px; }
 }
+
+/* ----- full-screen button in the corner ----- */
+.corner-button {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #00000045;
+  color: var(--ink);
+}

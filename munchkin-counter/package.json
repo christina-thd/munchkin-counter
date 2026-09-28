@@ -1,6 +1,6 @@
 {
   "name": "munchkin-counter",
-  "version": "2.3.3",
+  "version": "2.4.0",
   "description": "Munchkin level counter: tablet dashboard and phone controls over the home network, packaged as a Home Assistant add-on",
   "private": true,
   "type": "module",
