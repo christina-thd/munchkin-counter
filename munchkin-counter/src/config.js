@@ -16,6 +16,8 @@ function parsePort(value) {
  *   HOST_IP     address shown in the QR code, when auto-detection picks the wrong one
  *   STATE_FILE  where games are saved (default ./data/state.json)
  *   LOGO_FILE   your own logo image (png, jpg, webp or svg) instead of the built-in one
+ *   HTTPS_PORT, TLS_CERT, TLS_KEY   also serve https on that port with this certificate (PEM files);
+ *               tablets need https for the Wake Lock API that keeps the screen on
  */
 export function loadConfig(env = process.env) {
   const pkg = JSON.parse(readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf8'));
@@ -27,6 +29,9 @@ export function loadConfig(env = process.env) {
     publicHost: env.HOST_IP || null,
     stateFile: env.STATE_FILE || path.join(ROOT_DIR, 'data', 'state.json'),
     logoFile: env.LOGO_FILE || null,
+    httpsPort: parsePort(env.HTTPS_PORT),
+    tlsCert: env.TLS_CERT || null,
+    tlsKey: env.TLS_KEY || null,
     publicDir: path.join(ROOT_DIR, 'public'),
   });
 }

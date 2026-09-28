@@ -57,3 +57,10 @@ test('store images are PNGs of the sizes Home Assistant expects', () => {
   assert.deepEqual(pngSize('icon.png'), [128, 128]);
   assert.deepEqual(pngSize('logo.png'), [250, 100]);
 });
+
+test('the add-on serves https with a certificate made by run.sh', () => {
+  const run = read('run.sh');
+  assert.match(run, /^export HTTPS_PORT=\d+$/m);
+  assert.match(run, /openssl req -x509/);
+  assert.match(read('Dockerfile'), /^\s+openssl\b/m);
+});

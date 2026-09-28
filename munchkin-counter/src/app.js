@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import QRCode from 'qrcode';
 import { EMOJIS } from '../public/js/shared/rules.js';
@@ -64,13 +65,19 @@ function readJsonBody(req) {
  *   GET  /css/*, /js/*, /img/*, /media/*   static files (byte ranges supported, for video)
  *   GET  /logo          the logo: LOGO_FILE if set and present, else public/img/logo.svg
  *   GET  /qr.svg        QR code pointing phones at /join
- *   GET  /api/info      { version, joinUrl, emojis }
+ *   GET  /api/info      { version, joinUrl, secureUrl, emojis }
+ *   GET  /munchkin-counter.crt   the https certificate, to install on a tablet (no warning after that)
  *   GET  /api/events    live view (Server-Sent Events)
  *   POST /api/actions   apply one action, e.g. { "type": "changeLevel", "playerId": "…", "delta": 1 }
  */
-export function createApp({ config, state, store, hub = new SseHub(), now = Date.now, logger = console }) {
+export function createApp({
+  config, state, store, hub = new SseHub(), now = Date.now, logger = console,
+  httpsActive = () => false,   // whether the https server is running (see server.js)
+}) {
   const view = () => toView(state, config.version);
-  const joinUrl = () => `http://${config.publicHost ?? lanAddress()}:${config.port}/join`;
+  const host = () => config.publicHost ?? lanAddress();
+  const joinUrl = () => `http://${host()}:${config.port}/join`;
+  const secureUrl = () => (httpsActive() ? `https://${host()}:${config.httpsPort}/` : null);
 
   let qr = { url: null, svg: null };
   async function qrSvg() {
@@ -91,6 +98,19 @@ export function createApp({ config, state, store, hub = new SseHub(), now = Date
     sendJson(res, 404, { error: 'Not found' });
   }
 
+  function sendCertificate(res) {
+    if (!httpsActive() || !config.tlsCert) return notFound(res);
+    fs.readFile(config.tlsCert, (err, pem) => {
+      if (err) return notFound(res);
+      res.writeHead(200, {
+        'Content-Type': 'application/x-x509-ca-cert',
+        'Content-Disposition': 'attachment; filename="munchkin-counter.crt"',
+        'Cache-Control': 'no-cache',
+      });
+      res.end(pem);
+    });
+  }
+
   const defaultLogo = path.join(config.publicDir, 'img', 'logo.svg');
   function sendLogo(req, res) {
     const fallback = () => sendFile(req, res, defaultLogo, () => notFound(res));
@@ -108,7 +128,10 @@ export function createApp({ config, state, store, hub = new SseHub(), now = Date
     if (method !== 'GET' && method !== 'HEAD') throw new HttpError(405, 'Method not allowed');
 
     if (pathname === '/api/events') return hub.connect(req, res, view());
-    if (pathname === '/api/info') return sendJson(res, 200, { version: config.version, joinUrl: joinUrl(), emojis: EMOJIS });
+    if (pathname === '/api/info') {
+      return sendJson(res, 200, { version: config.version, joinUrl: joinUrl(), secureUrl: secureUrl(), emojis: EMOJIS });
+    }
+    if (pathname === '/munchkin-counter.crt') return sendCertificate(res);
     if (pathname === '/logo') return sendLogo(req, res);
     if (pathname === '/qr.svg') {
       res.writeHead(200, { 'Content-Type': 'image/svg+xml', 'Cache-Control': 'no-cache' });
@@ -141,5 +164,5 @@ export function createApp({ config, state, store, hub = new SseHub(), now = Date
     }
   }
 
-  return { handle, hub, joinUrl };
+  return { handle, hub, joinUrl, secureUrl };
 }

@@ -4,10 +4,11 @@ ARG BUILD_ARCH=amd64
 ARG BUILD_FROM=ghcr.io/home-assistant/${BUILD_ARCH}-base:latest
 FROM $BUILD_FROM
 
-# Install Node.js
+# Install Node.js, and openssl for the https certificate (made by run.sh)
 RUN apk add --no-cache \
     nodejs \
-    npm
+    npm \
+    openssl
 
 # Install app dependencies, then the app
 WORKDIR /app
@@ -21,8 +22,8 @@ COPY public ./public
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-# Web interface (tablet dashboard + phone controls)
-EXPOSE 3000/tcp
+# Web interface: http (dashboard + phone controls) and https (keeps tablet screens on)
+EXPOSE 3000/tcp 3443/tcp
 
 # Runs as root: games are saved in /data, which Home Assistant mounts owned by root.
 CMD [ "/run.sh" ]

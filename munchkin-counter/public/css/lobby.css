@@ -105,3 +105,21 @@ h2 {
   background: #00000045;
   color: var(--ink);
 }
+
+/* ----- note for Android tablets on plain http ----- */
+.secure-notice {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px 16px;
+  border: 1px dashed var(--line);
+  border-radius: 16px;
+  text-align: center;
+}
+.secure-notice p { margin: 0; font-size: 15px; line-height: 1.4; color: var(--muted); }
+.secure-notice p b { color: var(--ink); }
+.secure-notice a.big { display: grid; place-items: center; height: 48px; font-size: 17px; text-decoration: none; }
+.small-link { font-size: 14px; color: var(--muted); }

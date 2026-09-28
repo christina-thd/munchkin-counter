@@ -17,6 +17,7 @@ Open `/#sounds` on the dashboard to hear every sound.
 | `HOST_IP`    | auto-detected     | Address in the QR code, if detection picks the wrong one |
 | `STATE_FILE` | `data/state.json` | Where games are saved                                    |
 | `LOGO_FILE`  | built-in die logo | Your own logo image (png, jpg, webp, svg)                |
+| `HTTPS_PORT`, `TLS_CERT`, `TLS_KEY` | off | Also serve https (PEM certificate and key); the add-on uses 3443 and makes its own certificate in `run.sh` |
 
 The server doesn't know about Home Assistant: in the add-on, `run.sh` reads the add-on options
 with bashio and sets these variables.
@@ -96,6 +97,11 @@ docker run --rm -v "$PWD:/addon" -w /addon alpine:3.20 sh art/render.sh
 (https or localhost). On plain http, which is how tablets reach the add-on at home, it loops the tiny
 silent video in `public/media/` instead (regenerate it with `art/wake-video.sh`). Safari only plays
 video from servers that support byte ranges, which `src/static.js` does.
+
+Android Chrome no longer keeps the screen on for that video, so the add-on also serves https on port
+3443 with a self-made certificate: `run.sh` creates it in `/data/tls/`, and again if the address changes.
+The start page points Android tablets on plain http to the secure address, and the certificate can be
+downloaded from `/munchkin-counter.crt` to install on a tablet (then there's no browser warning).
 
 ## Testing the add-on image locally
 
