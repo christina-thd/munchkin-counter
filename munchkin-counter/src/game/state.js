@@ -76,13 +76,11 @@ export function normalizeState(raw, now = Date.now()) {
 }
 
 function summarize(game) {
-  const leader = game.players.reduce((best, p) => (!best || p.level > best.level ? p : best), null);
   return {
     id: game.id,
     name: game.name,
     createdAt: game.createdAt,
     playerCount: game.players.length,
-    leader: leader && { name: leader.name, emoji: leader.emoji, level: leader.level },
   };
 }
 

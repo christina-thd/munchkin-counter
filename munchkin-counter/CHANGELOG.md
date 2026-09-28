@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.3.1
+- Start page: games show only their date and number of players
+
 ## 2.3.0
 - Logo: a bouncier, more playful M wearing a little horned helmet
 - Use your own logo: put `logo.png` in the `share` folder under `munchkin-counter/` (see Documentation)

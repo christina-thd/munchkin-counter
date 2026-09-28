@@ -55,7 +55,6 @@ describe('toView', () => {
     assert.equal(view.players.length, 2);
     assert.deepEqual(view.games[0], {
       id: state.currentGameId, name: 'Game 1', createdAt: 5, playerCount: 2,
-      leader: { name: 'Bo', emoji: '🧝', level: 6 },
     });
   });
 });

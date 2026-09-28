@@ -2,16 +2,13 @@
 import { openDialog } from './dialog.js';
 import { escapeHtml } from './dom.js';
 import { plural } from './format.js';
-import { MAX_GAME_NAME, MAX_LEVEL } from './rules.js';
+import { MAX_GAME_NAME } from './rules.js';
 
 const formatDate = (time) => new Date(time).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
-/** "28 Sep, 19:24 · 4 players · 👑 🧙 Ana lvl 10" */
+/** "28 Sep, 19:24 · 4 players" */
 export function describeGame(game) {
-  const leader = game.leader
-    ? ` · ${game.leader.level >= MAX_LEVEL ? '👑' : 'top'} ${escapeHtml(game.leader.emoji)} ${escapeHtml(game.leader.name)} lvl ${game.leader.level}`
-    : '';
-  return `${formatDate(game.createdAt)} · ${game.playerCount} ${plural(game.playerCount, 'player')}${leader}`;
+  return `${formatDate(game.createdAt)} · ${game.playerCount} ${plural(game.playerCount, 'player')}`;
 }
 
 /** @returns {Promise<{name: string, keepPlayers: boolean} | null>} */

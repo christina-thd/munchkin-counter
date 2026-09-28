@@ -1,6 +1,6 @@
 name: "Munchkin Counter"
 description: "Level counter for the Munchkin card game: tablet dashboard, phones join by QR code"
-version: "2.3.0"
+version: "2.3.1"
 slug: "munchkin_counter"
 init: false
 arch:
