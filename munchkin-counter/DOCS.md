@@ -21,6 +21,8 @@ This add-on runs a level counter for the Munchkin card game on your home network
 
 Phones connect straight to port 3000, so they don't need a Home Assistant login.
 The dashboard is for tablets and TVs only: opening it on a phone goes to the phone controls instead.
+If a tablet or TV ever shows the phone controls by mistake, open it once with `?dashboard` at the end of the
+address (e.g. `http://<homeassistant-ip>:3000/?dashboard`); it remembers. Use `?auto` to undo.
 
 ### Rules
 

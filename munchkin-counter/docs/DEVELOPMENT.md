@@ -46,7 +46,8 @@ public/                   browser (plain ES modules, no build step)
   img/logo.svg            app logo and browser icon; icon-*.png home-screen icons
   media/wake.*            tiny silent video that keeps the screen on over plain http
   manifest.webmanifest    web app manifest (home screen opens full screen)
-  js/shared/              rules.js (also used by the server), api, dialog, dom, format, games, screen, storage
+  js/shared/              rules.js (also used by the server), api, dialog, dom, format, games, screen, storage;
+                          device-check.js (plain script: sends phones to /join, keeps tablets and TVs)
   js/lobby/               start page
   js/table/               dashboard: main, board, sizing, dialogs,
                           announcer (situations, pure) + lines (texts) + ticker (UI), sounds

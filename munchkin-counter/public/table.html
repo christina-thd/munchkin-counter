@@ -4,15 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <title>Munchkin Counter</title>
-  <script>
-    // The dashboard is for tablets and TVs; phones get their own controls.
-    // Phone = a phone browser, or a screen under 600px on its short side (tablets start around 740px).
-    // Inline and first, so a phone never renders the dashboard.
-    (function () {
-      var phoneBrowser = /iPhone|iPod|Android.+Mobile|Windows Phone|Mobi/i.test(navigator.userAgent);
-      if (phoneBrowser || Math.min(screen.width, screen.height) < 600) location.replace('join');
-    })();
-  </script>
+  <script src="js/shared/device-check.js"></script>
   <link rel="icon" href="logo">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="img/icon-180.png">

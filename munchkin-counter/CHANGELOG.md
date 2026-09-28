@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.4.1
+- Fix: TVs showed the phone controls instead of the dashboard
+- Open the app once with `?dashboard` to keep any device on the dashboard (`?auto` to undo)
+
 ## 2.4.0
 - The tablet or TV screen stays on while the start page or dashboard is open
 - Full-screen button on the start page and the dashboard; stays full screen when moving between them
