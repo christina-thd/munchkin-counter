@@ -80,10 +80,19 @@ sidebar, which serves it under `/api/hassio_ingress/<token>/`.
 
 Games are kept in the add-on's `/data` folder across updates.
 
+## Store images
+
+`icon.png` (128×128) and `logo.png` (250×100) are what Home Assistant shows in the add-on store.
+They are rendered from `public/img/logo.svg` and `art/store-logo.svg`; after changing either, run:
+
+```sh
+docker run --rm -v "$PWD:/addon" -w /addon alpine:3.20 sh art/render.sh
+```
+
 ## Testing the add-on image locally
 
 ```sh
-docker build --build-arg BUILD_FROM=ghcr.io/home-assistant/amd64-base:latest -t munchkin-counter .
+docker build --build-arg BUILD_ARCH=amd64 -t munchkin-counter .    # BUILD_FROM defaults to the Home Assistant base image
 docker run --rm -p 3000:3000 -v munchkin-data:/data \
   --add-host supervisor:127.0.0.1 -e HOST_IP=192.168.1.50 munchkin-counter
 ```

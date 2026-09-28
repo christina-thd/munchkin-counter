@@ -1,4 +1,7 @@
-ARG BUILD_FROM
+# Home Assistant passes BUILD_ARCH (amd64, aarch64, …). Newer Supervisors no longer pass
+# BUILD_FROM, so default to the official base image for that architecture.
+ARG BUILD_ARCH=amd64
+ARG BUILD_FROM=ghcr.io/home-assistant/${BUILD_ARCH}-base:latest
 FROM $BUILD_FROM
 
 # Install Node.js

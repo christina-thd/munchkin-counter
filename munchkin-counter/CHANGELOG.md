@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.3
+- Add-on icon and logo in the Home Assistant store
+
+## 2.3.2
+- Fix: install failed on newer Home Assistant ("base name ($BUILD_FROM) should not be blank")
+
 ## 2.3.1
 - Start page: games show only their date and number of players
 

@@ -41,3 +41,19 @@ test('every option has a schema entry', () => {
   const keys = (text) => [...text.matchAll(/^ {2}(\w+):/gm)].map((m) => m[1]).sort();
   assert.deepEqual(keys(block('options')), keys(block('schema')));
 });
+
+test('the Dockerfile builds without BUILD_FROM (newer Supervisors only pass BUILD_ARCH)', () => {
+  const dockerfile = read('Dockerfile');
+  assert.match(dockerfile, /^ARG BUILD_ARCH=\S+$/m);
+  assert.match(dockerfile, /^ARG BUILD_FROM=ghcr\.io\/home-assistant\/\$\{BUILD_ARCH\}-base:\S+$/m);
+});
+
+test('store images are PNGs of the sizes Home Assistant expects', () => {
+  const pngSize = (file) => {
+    const png = fs.readFileSync(path.join(ROOT_DIR, file));
+    assert.equal(png.toString('latin1', 1, 4), 'PNG', `${file} is not a PNG`);
+    return [png.readUInt32BE(16), png.readUInt32BE(20)];   // IHDR width, height
+  };
+  assert.deepEqual(pngSize('icon.png'), [128, 128]);
+  assert.deepEqual(pngSize('logo.png'), [250, 100]);
+});

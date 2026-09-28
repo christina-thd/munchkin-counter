@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 250 100" width="250" height="100">
+  <!-- Banner for the Home Assistant add-on page (rendered to ../logo.png, see docs/DEVELOPMENT.md).
+       Reuses the app logo; the text has a dark outline so it reads on light and dark themes. -->
+  <image x="2" y="6" width="88" height="88" xlink:href="../public/img/logo.svg" href="../public/img/logo.svg"/>
+
+  <g font-family="Luckiest Guy" text-anchor="start" stroke-linejoin="round" paint-order="stroke">
+    <text x="97" y="57" font-size="27" fill="#7a1a12" stroke="#2a1c12" stroke-width="5" transform="translate(2 2)">MUNCHKIN</text>
+    <text x="97" y="57" font-size="27" fill="#e8b54a" stroke="#2a1c12" stroke-width="5">MUNCHKIN</text>
+    <text x="98" y="84" font-size="18.5" fill="#f3e3bf" stroke="#2a1c12" stroke-width="4.5" letter-spacing="1.5">COUNTER</text>
+  </g>
+</svg>
