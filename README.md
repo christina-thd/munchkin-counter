@@ -25,7 +25,6 @@ Tablet dashboard and phone controls for Munchkin, over your home network.
 - Dashboard for up to 6 players on one screen, phones join by QR code
 - Levels 1–10, gear, strength, and Munchkin death rules
 - Munchkin-style announcer and sound effects
-- Start page with past games
 
 [Documentation →](./munchkin-counter/README.md)
 
