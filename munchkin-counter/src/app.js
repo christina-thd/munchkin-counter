@@ -3,7 +3,7 @@ import path from 'node:path';
 import QRCode from 'qrcode';
 import { EMOJIS } from '../public/js/shared/rules.js';
 import { ActionError, applyAction } from './game/actions.js';
-import { toView } from './game/state.js';
+import { gameLog, toView } from './game/state.js';
 import { lanAddress } from './network.js';
 import { SseHub } from './sse.js';
 import { resolveInside, sendFile } from './static.js';
@@ -68,6 +68,7 @@ function readJsonBody(req) {
  *   GET  /api/info      { version, joinUrl, secureUrl, emojis }
  *   GET  /munchkin-counter.crt   the https certificate, to install on a tablet (no warning after that)
  *   GET  /api/events    live view (Server-Sent Events)
+ *   GET  /api/log?game=<id>   activity log of a game (the current one if no id)
  *   POST /api/actions   apply one action, e.g. { "type": "changeLevel", "playerId": "…", "delta": 1 }
  */
 export function createApp({
@@ -118,7 +119,7 @@ export function createApp({
   }
 
   async function route(req, res) {
-    const { pathname } = new URL(req.url, 'http://localhost');
+    const { pathname, searchParams } = new URL(req.url, 'http://localhost');
     const method = req.method;
 
     if (pathname === '/api/actions') {
@@ -128,6 +129,10 @@ export function createApp({
     if (method !== 'GET' && method !== 'HEAD') throw new HttpError(405, 'Method not allowed');
 
     if (pathname === '/api/events') return hub.connect(req, res, view());
+    if (pathname === '/api/log') {
+      const log = gameLog(state, searchParams.get('game') || state.currentGameId);
+      return log ? sendJson(res, 200, log) : sendJson(res, 404, { error: 'No such game' });
+    }
     if (pathname === '/api/info') {
       return sendJson(res, 200, { version: config.version, joinUrl: joinUrl(), secureUrl: secureUrl(), emojis: EMOJIS });
     }

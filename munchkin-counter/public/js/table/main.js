@@ -1,5 +1,6 @@
 // Dashboard (tablet / TV): wires the server view to the board, announcer and sounds.
-import { fetchInfo, sendAction, subscribe } from '../shared/api.js';
+import { refreshActivityLog, showActivityLog } from '../shared/activity.js';
+import { fetchInfo, sendAction, setActionSource, subscribe } from '../shared/api.js';
 import { $ } from '../shared/dom.js';
 import { keepScreenOn, setupFullscreenButton } from '../shared/screen.js';
 import { LevelWatcher } from './announcer.js';
@@ -10,6 +11,8 @@ import { LEVEL_SOUNDS, NEWS_SOUNDS, Soundboard } from './sounds.js';
 import { Ticker } from './ticker.js';
 
 const DEATH_FLASH_MS = 1600;
+
+setActionSource('dashboard');
 
 const board = $('board');
 const ticker = new Ticker($('announcer'));
@@ -32,6 +35,7 @@ function render() {
 subscribe((next) => {
   view = next;
   render();
+  refreshActivityLog();
   // One sound per update: news (death, win, level 9…) beats a plain level change.
   const news = ticker.update(view);
   const levelChange = levels.update(view.game.id, view.players);
@@ -72,6 +76,8 @@ board.addEventListener('click', async (e) => {
 });
 
 // ----- top bar -----
+
+$('activity').addEventListener('click', () => showActivityLog(view.game.id, view.game.name));
 
 $('addPlayer').addEventListener('click', async () => {
   const name = await askPlayerName();

@@ -36,6 +36,7 @@ src/                      server (Node, no framework)
   app.js                  HTTP routes: pages, static files, QR code, API
   game/state.js           state shape, migrations of older saved data, the view sent to screens
   game/actions.js         every game action, validated (the only code that changes state)
+  game/activity.js        activity log: recording (merges quick taps), limits, cleaning saved logs
   store.js                JSON file storage: debounced, atomic writes
   sse.js                  Server-Sent Events hub for live updates
   static.js, network.js   safe static file serving, LAN address detection
@@ -47,7 +48,8 @@ public/                   browser (plain ES modules, no build step)
   img/logo.svg            app logo and browser icon; icon-*.png home-screen icons
   media/wake.*            tiny silent video that keeps the screen on over plain http
   manifest.webmanifest    web app manifest (home screen opens full screen)
-  js/shared/              rules.js (also used by the server), api, dialog, dom, format, games, screen, storage;
+  js/shared/              rules.js (also used by the server), activity (log dialog), api, dialog, dom,
+                          format, games, screen, storage;
                           device-check.js (plain script: sends phones to /join, keeps tablets and TVs)
   js/lobby/               start page
   js/table/               dashboard: main, board, sizing, dialogs,
@@ -63,6 +65,11 @@ test/                     node:test suites
 "playerId": "…", "delta": 1 }`). The server validates and applies the action, saves, and
 broadcasts the new view to every screen over `GET /api/events` (Server-Sent Events).
 Screens never change state locally; they only render the latest view.
+
+**Activity log:** every action records an entry in its game's `log` (see `src/game/activity.js`).
+Screens send `source: "dashboard"` or `"phone"` with their actions so the log can show where a change
+came from. The log isn't part of the live view (it would grow every update); screens fetch it from
+`GET /api/log?game=<id>` when it's opened.
 
 **Actions:** `addPlayer`, `removePlayer`, `renamePlayer`, `setEmoji`, `changeLevel`, `setLevel`,
 `changeGear`, `die`, `newGame`, `switchGame`, `deleteGame`. See `src/game/actions.js`.

@@ -32,6 +32,14 @@ address (e.g. `http://<homeassistant-ip>:3000/?dashboard`); it remembers. Use `?
 - **💀 Died**: you keep your level but lose all your gear.
 - **New game** (on the start page) adds a game to the list. Old games are kept and can be reopened or deleted.
 
+### Activity log
+
+Every game keeps a log of what happened: players joining or being removed, name and emoji changes,
+level and gear changes, and deaths, each with the time and whether it came from the tablet or a phone.
+Open it with 📜 in the dashboard's top bar. It updates live while open.
+Quick taps in a row in the same direction are shown as one change; going up and back down shows both.
+The newest 500 entries are kept per game.
+
 ### Sound
 
 The dashboard plays a sound for a win, a death, someone reaching level 9, someone stuck at level 1,

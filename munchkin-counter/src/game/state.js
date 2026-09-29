@@ -1,4 +1,5 @@
 import { randomBytes } from 'node:crypto';
+import { normalizeLog } from './activity.js';
 import { clampLevel, EMOJIS, MAX_GAME_NAME, MAX_PLAYER_NAME } from '../../public/js/shared/rules.js';
 
 /**
@@ -11,6 +12,7 @@ import { clampLevel, EMOJIS, MAX_GAME_NAME, MAX_PLAYER_NAME } from '../../public
  *       id, name, createdAt,
  *       players: [{ id, name, emoji, level, gear }],
  *       lastDeath: { playerId, at } | null,
+ *       log: [activity entries],          (see activity.js)
  *     }],
  *   }
  */
@@ -19,7 +21,7 @@ export const SCHEMA_VERSION = 2;
 export const newId = () => randomBytes(4).toString('hex');
 
 export function createGame(name, players = [], now = Date.now()) {
-  return { id: newId(), name, createdAt: now, players, lastDeath: null };
+  return { id: newId(), name, createdAt: now, players, lastDeath: null, log: [] };
 }
 
 export function createInitialState(now = Date.now()) {
@@ -54,6 +56,7 @@ function normalizeGame(raw, index, now) {
     createdAt: toInt(raw.createdAt, now),
     players,
     lastDeath: deathPlayerId ? { playerId: deathPlayerId, at: toInt(death.at, now) } : null,
+    log: normalizeLog(raw.log),
   };
 }
 
@@ -82,6 +85,12 @@ function summarize(game) {
     createdAt: game.createdAt,
     playerCount: game.players.length,
   };
+}
+
+/** The activity log of one game (oldest first), or null if there's no such game. */
+export function gameLog(state, gameId) {
+  const game = state.games.find((g) => g.id === gameId);
+  return game ? { gameId: game.id, name: game.name, entries: game.log } : null;
 }
 
 /** What every screen receives: the current game in full, plus a summary of all games. */

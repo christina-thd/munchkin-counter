@@ -1,4 +1,5 @@
 import { clampLevel, EMOJIS, MAX_GAME_NAME, MAX_LEVEL, MAX_PLAYER_NAME, MIN_LEVEL } from '../../public/js/shared/rules.js';
+import { aboutPlayer, record, SOURCES } from './activity.js';
 import { createGame, currentGame, newId } from './state.js';
 
 /** A rejected action. `status` is the HTTP status the API answers with. */
@@ -36,10 +37,11 @@ function findGame(state, gameId) {
 }
 
 // ----- actions -----
-// Each handler changes `state` in place and may return a result for the caller.
+// Each handler changes `state` in place, records what happened in the game's activity log,
+// and may return a result for the caller. `ctx` is { now, source }.
 
 const handlers = {
-  addPlayer(state, { name }) {
+  addPlayer(state, { name }, ctx) {
     const game = currentGame(state);
     const player = {
       id: newId(),
@@ -49,66 +51,86 @@ const handlers = {
       gear: 0,
     };
     game.players.push(player);
+    record(game, { kind: 'join', ...aboutPlayer(player) }, ctx);
     return player;
   },
 
-  removePlayer(state, { playerId }) {
+  removePlayer(state, { playerId }, ctx) {
     const game = currentGame(state);
-    findPlayer(game, playerId);
+    const player = findPlayer(game, playerId);
     game.players = game.players.filter((p) => p.id !== playerId);
+    record(game, { kind: 'remove', ...aboutPlayer(player) }, ctx);
   },
 
-  renamePlayer(state, { playerId, name }) {
-    const player = findPlayer(currentGame(state), playerId);
+  renamePlayer(state, { playerId, name }, ctx) {
+    const game = currentGame(state);
+    const player = findPlayer(game, playerId);
+    const from = player.name;
     player.name = text(name, MAX_PLAYER_NAME) || player.name;
+    record(game, { kind: 'rename', ...aboutPlayer(player), from, to: player.name }, ctx);
     return player;
   },
 
-  setEmoji(state, { playerId, emoji }) {
+  setEmoji(state, { playerId, emoji }, ctx) {
     if (!EMOJIS.includes(emoji)) throw new ActionError('Unknown emoji');
-    const player = findPlayer(currentGame(state), playerId);
+    const game = currentGame(state);
+    const player = findPlayer(game, playerId);
+    const from = player.emoji;
     player.emoji = emoji;
+    record(game, { kind: 'emoji', ...aboutPlayer(player), from, to: emoji }, ctx);
     return player;
   },
 
-  changeLevel(state, { playerId, delta }) {
-    const player = findPlayer(currentGame(state), playerId);
+  changeLevel(state, { playerId, delta }, ctx) {
+    const game = currentGame(state);
+    const player = findPlayer(game, playerId);
+    const from = player.level;
     player.level = clampLevel(player.level + step(delta));
+    record(game, { kind: 'level', ...aboutPlayer(player), from, to: player.level }, ctx);
     return player;
   },
 
-  setLevel(state, { playerId, level }) {
+  setLevel(state, { playerId, level }, ctx) {
     const n = Number(level);
     if (!Number.isInteger(n) || n < MIN_LEVEL || n > MAX_LEVEL) {
       throw new ActionError(`level must be ${MIN_LEVEL}–${MAX_LEVEL}`);
     }
-    const player = findPlayer(currentGame(state), playerId);
+    const game = currentGame(state);
+    const player = findPlayer(game, playerId);
+    const from = player.level;
     player.level = n;
+    record(game, { kind: 'level', ...aboutPlayer(player), from, to: n }, ctx);
     return player;
   },
 
-  changeGear(state, { playerId, delta }) {
-    const player = findPlayer(currentGame(state), playerId);
+  changeGear(state, { playerId, delta }, ctx) {
+    const game = currentGame(state);
+    const player = findPlayer(game, playerId);
+    const from = player.gear;
     player.gear += step(delta);          // may go negative: curses
+    record(game, { kind: 'gear', ...aboutPlayer(player), from, to: player.gear }, ctx);
     return player;
   },
 
   /** Munchkin death: you keep your level but lose all your gear. */
-  die(state, { playerId }, now) {
+  die(state, { playerId }, ctx) {
     const game = currentGame(state);
     const player = findPlayer(game, playerId);
+    const gearLost = player.gear;
     player.gear = 0;
-    game.lastDeath = { playerId, at: now };
+    game.lastDeath = { playerId, at: ctx.now };
+    record(game, { kind: 'death', ...aboutPlayer(player), from: gearLost, to: 0 }, ctx);
     return player;
   },
 
   /** Adds a game to the list and switches to it; old games are kept. */
-  newGame(state, { name, keepPlayers }, now) {
+  newGame(state, { name, keepPlayers }, ctx) {
     const players = keepPlayers
       // same ids, so phones stay connected to their player
       ? currentGame(state).players.map((p) => ({ ...p, level: MIN_LEVEL, gear: 0 }))
       : [];
-    const game = createGame(text(name, MAX_GAME_NAME) || `Game ${state.games.length + 1}`, players, now);
+    const game = createGame(text(name, MAX_GAME_NAME) || `Game ${state.games.length + 1}`, players, ctx.now);
+    record(game, { kind: 'start', kept: players.length }, ctx);
     state.games.push(game);
     state.currentGameId = game.id;
     return { gameId: game.id };
@@ -130,9 +152,11 @@ export const ACTION_TYPES = Object.freeze(Object.keys(handlers));
 /**
  * Applies one action to the state (mutating it) and returns the handler's result.
  * Throws ActionError for anything invalid; the state is left unchanged in that case.
+ * `action.source` ('dashboard' or 'phone') is optional and only shows up in the activity log.
  */
 export function applyAction(state, action, now = Date.now()) {
   if (!action || typeof action !== 'object') throw new ActionError('Action must be a JSON object');
   if (!Object.hasOwn(handlers, action.type)) throw new ActionError(`Unknown action: ${action.type}`);
-  return handlers[action.type](state, action, now) ?? { ok: true };
+  const source = SOURCES.includes(action.source) ? action.source : null;
+  return handlers[action.type](state, action, { now, source }) ?? { ok: true };
 }

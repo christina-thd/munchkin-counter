@@ -214,3 +214,16 @@ describe('https (keeps tablet screens on)', () => {
     assert.equal((await fetch(`${base}/munchkin-counter.crt`)).status, 404);
   });
 });
+
+describe('activity log API', () => {
+  test('returns the log of the current game, or of a given game', async () => {
+    const player = await (await post({ type: 'addPlayer', name: 'Logged', source: 'phone' })).json();
+    const log = await (await fetch(`${base}/api/log`)).json();
+    const entry = log.entries.at(-1);
+    assert.deepEqual([entry.kind, entry.playerId, entry.source], ['join', player.id, 'phone']);
+
+    const same = await (await fetch(`${base}/api/log?game=${log.gameId}`)).json();
+    assert.equal(same.entries.length, log.entries.length);
+    assert.equal((await fetch(`${base}/api/log?game=nope`)).status, 404);
+  });
+});

@@ -1,5 +1,5 @@
 // Start page: continue the current game, start a new one, or reopen / delete a past game.
-import { sendAction, subscribe } from '../shared/api.js';
+import { sendAction, setActionSource, subscribe } from '../shared/api.js';
 import { $, escapeHtml } from '../shared/dom.js';
 import { askNewGame, confirmDeleteGame, describeGame } from '../shared/games.js';
 import { keepScreenOn, setupFullscreenButton } from '../shared/screen.js';
@@ -7,6 +7,8 @@ import { keepScreenOn, setupFullscreenButton } from '../shared/screen.js';
 const DASHBOARD = 'table';
 
 let view = null;
+
+setActionSource('dashboard');
 
 const openDashboard = () => location.assign(DASHBOARD);
 

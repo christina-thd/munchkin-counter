@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.6.0
+- Activity log for every game: who changed what, when, and from the tablet or a phone
+- Open it with 📜 in the dashboard's top bar
+- Quick taps in a row in the same direction show as one change ("level 3 → 6")
+
 ## 2.5.0
 - Secure address `https://<homeassistant-ip>:3443` so Android tablets keep the screen on (the add-on makes its own certificate)
 - Download the certificate at `/munchkin-counter.crt` to install it on a tablet and skip the browser warning
@@ -10,7 +15,7 @@
 
 ## 2.4.0
 - The tablet or TV screen stays on while the start page or dashboard is open
-- Full-screen button on the start page and the dashboard; stays full screen when moving between them
+- Full-screen button on the start page and the dashboard
 - "Add to Home Screen" opens the app full screen, with its own icon
 
 ## 2.3.3
@@ -28,7 +33,6 @@
 
 ## 2.2.0
 - Start page: continue the current game, start a new one, or reopen and delete past games
-- Logo in the top bar, on the start page and as the browser icon
 - The game name in the top bar goes back to the start page
 
 ## 2.1.0
@@ -41,11 +45,11 @@
 Rebuilt with a proper project structure.
 
 - Server split into modules: game rules, state and migrations, file storage, live updates, HTTP routes.
-- Games are saved atomically, so a power cut can't corrupt them
+- Games are saved atomically, so a power cut can't corrupt them.
 - Every action is validated; bad requests get a clear error.
 - Browser code split into modules; styles shared between the dashboard and phones.
 - Automated tests for the game rules, saved-data migration, the announcer and the HTTP API.
-- Pages reload themselves after an update
+- Pages reload themselves after an update.
 - Older saved games are migrated automatically.
 
 ## 1.8.0

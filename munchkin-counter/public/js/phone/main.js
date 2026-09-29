@@ -1,5 +1,5 @@
 // Phone controls: pick (or create) your player, then change your own level, gear and emoji.
-import { fetchInfo, sendAction, subscribe } from '../shared/api.js';
+import { fetchInfo, sendAction, setActionSource, subscribe } from '../shared/api.js';
 import { openDialog } from '../shared/dialog.js';
 import { $, escapeHtml, restartAnimation } from '../shared/dom.js';
 import { formatGear } from '../shared/format.js';
@@ -7,6 +7,8 @@ import { MAX_LEVEL, MIN_LEVEL, strengthOf } from '../shared/rules.js';
 import { storage } from '../shared/storage.js';
 
 const PLAYER_KEY = 'playerId';   // remembered per phone
+
+setActionSource('phone');
 
 let players = [];
 let myId = storage.get(PLAYER_KEY);
