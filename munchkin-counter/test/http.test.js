@@ -18,7 +18,7 @@ let dir;
 before(async () => {
   dir = fs.mkdtempSync(path.join(os.tmpdir(), 'munchkin-http-'));
   const config = {
-    version: 'test', port: 3000, publicHost: '192.168.1.50',
+    version: 'test', port: 3000, publicHost: '192.0.2.10',
     stateFile: path.join(dir, 'state.json'), publicDir: path.join(ROOT_DIR, 'public'),
   };
   const store = new JsonFileStore(config.stateFile, { debounceMs: 0 });
@@ -61,7 +61,7 @@ describe('pages and static files', () => {
 
   test('QR code and info point phones at /join', async () => {
     const info = await (await fetch(`${base}/api/info`)).json();
-    assert.equal(info.joinUrl, 'http://192.168.1.50:3000/join');
+    assert.equal(info.joinUrl, 'http://192.0.2.10:3000/join');
     assert.ok(info.emojis.length > 0);
     const qr = await fetch(`${base}/qr.svg`);
     assert.match(await qr.text(), /^<svg/);
@@ -180,7 +180,7 @@ describe('https (keeps tablet screens on)', () => {
 
   test('serves the same app over https, and offers the certificate for download', async () => {
     const config = {
-      version: 'test', port: 3000, publicHost: '192.168.1.50', httpsPort: 3443,
+      version: 'test', port: 3000, publicHost: '192.0.2.10', httpsPort: 3443,
       tlsCert: fixture('tls-cert.pem'), tlsKey: fixture('tls-key.pem'),
       stateFile: path.join(dir, 'https-state.json'), publicDir: path.join(ROOT_DIR, 'public'),
     };
@@ -196,8 +196,8 @@ describe('https (keeps tablet screens on)', () => {
       assert.match(page.body, /<title>Munchkin Counter<\/title>/);
 
       const info = JSON.parse((await get(`${origin}/api/info`, { ca })).body);
-      assert.equal(info.secureUrl, 'https://192.168.1.50:3443/');
-      assert.equal(info.joinUrl, 'http://192.168.1.50:3000/join');   // phones stay on plain http
+      assert.equal(info.secureUrl, 'https://192.0.2.10:3443/');
+      assert.equal(info.joinUrl, 'http://192.0.2.10:3000/join');   // phones stay on plain http
 
       const cert = await get(`${origin}/munchkin-counter.crt`, { ca });
       assert.equal(cert.headers['content-type'], 'application/x-x509-ca-cert');

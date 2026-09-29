@@ -1,5 +1,5 @@
 // Start page: continue the current game, start a new one, or reopen / delete a past game.
-import { fetchInfo, sendAction, subscribe } from '../shared/api.js';
+import { sendAction, subscribe } from '../shared/api.js';
 import { $, escapeHtml } from '../shared/dom.js';
 import { askNewGame, confirmDeleteGame, describeGame } from '../shared/games.js';
 import { keepScreenOn, setupFullscreenButton } from '../shared/screen.js';
@@ -44,13 +44,6 @@ function renderHistory() {
 
 keepScreenOn();
 setupFullscreenButton($('fullscreen'));
-
-// Android tablets only keep the screen on over https (Wake Lock API): point them to the secure address.
-fetchInfo().then(({ secureUrl }) => {
-  if (!secureUrl || isSecureContext || !/Android/i.test(navigator.userAgent)) return;
-  $('secureLink').href = secureUrl;
-  $('secureNotice').hidden = false;
-});
 
 subscribe((next) => {
   view = next;

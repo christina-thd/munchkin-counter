@@ -100,15 +100,14 @@ video from servers that support byte ranges, which `src/static.js` does.
 
 Android Chrome no longer keeps the screen on for that video, so the add-on also serves https on port
 3443 with a self-made certificate: `run.sh` creates it in `/data/tls/`, and again if the address changes.
-The start page points Android tablets on plain http to the secure address, and the certificate can be
-downloaded from `/munchkin-counter.crt` to install on a tablet (then there's no browser warning).
+The certificate can be downloaded from `/munchkin-counter.crt` to install on a tablet (then there's no browser warning).
 
 ## Testing the add-on image locally
 
 ```sh
 docker build --build-arg BUILD_ARCH=amd64 -t munchkin-counter .    # BUILD_FROM defaults to the Home Assistant base image
 docker run --rm -p 3000:3000 -v munchkin-data:/data \
-  --add-host supervisor:127.0.0.1 -e HOST_IP=192.168.1.50 munchkin-counter
+  --add-host supervisor:127.0.0.1 -e HOST_IP=192.0.2.10 munchkin-counter
 ```
 
 `run.sh` reads the add-on options from the Home Assistant Supervisor. Outside Home Assistant there

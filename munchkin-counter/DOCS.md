@@ -6,7 +6,7 @@ This add-on runs a level counter for the Munchkin card game on your home network
 
 **host_ip** (string, optional)
 - The address shown in the QR code that phones scan
-- Leave it empty: the address is detected automatically. Set it only if the QR code shows the wrong address, e.g. `192.168.1.99`
+- Leave it empty: the address is detected automatically. Set it only if the QR code shows the wrong address, e.g. `192.0.2.10`
 
 ## Usage
 
@@ -42,7 +42,7 @@ Use the 🔊 button to mute. Add `#sounds` to the end of the address to hear eve
 
 - **Always on:** while the start page or dashboard is open, the screen doesn't dim or lock. It starts with the first tap
   (browsers require one). Phones are left alone to save their battery.
-- **Android tablets:** open the secure address `https://<homeassistant-ip>:3443/` (the start page offers a button).
+- **Android tablets:** open the secure address `https://<homeassistant-ip>:3443/`.
   Android browsers only allow keeping the screen on for secure pages. The add-on makes its own certificate, so the
   browser warns once: tap **Advanced → Proceed**. To remove the warning for good, install the certificate on the tablet:
   download `http://<homeassistant-ip>:3000/munchkin-counter.crt`, then **Settings → Security → More security settings →
