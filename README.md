@@ -6,6 +6,10 @@ A tablet (or TV) shows every player at the table, and each player controls their
 level and gear from their phone by scanning a QR code. Munchkin rules are built in,
 with an announcer, sound effects and a game history.
 
+![Munchkin Counter on a tablet and a phone](images/hero.png)
+
+![Start page with past games](images/start-page.png)
+
 ## Installation
 
 Add this repository to Home Assistant:
