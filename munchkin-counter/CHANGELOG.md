@@ -1,9 +1,15 @@
 # Changelog
 
+## 2.6.2
+- Fix fullscreen mode
+
 ## 2.6.1
-- Safer https certificate: a plain server certificate that can't vouch for other websites
+- Safer https certificate: a plain server certificate that can't vouch for other websites (replaces the old one
+  automatically, so the tablet asks to accept it once more)
 - The certificate is no longer offered for download
 - The start page no longer shows the note pointing Android tablets to the secure address
+- Activity log: opens from the dashboard only (no longer from the start page)
+- Activity log: quick taps are grouped only in the same direction, so going up and back down shows both changes
 
 ## 2.6.0
 - Activity log for every game: who changed what, when, and from the tablet or a phone
@@ -47,7 +53,7 @@
 
 ## 2.0.0
 
-Rebuilt with a proper project structure.
+Rebuilt with a proper project structure
 
 - Server split into modules: game rules, state and migrations, file storage, live updates, HTTP routes.
 - Games are saved atomically, so a power cut can't corrupt them.

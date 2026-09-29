@@ -41,7 +41,7 @@ const post = (body) => fetch(`${base}/api/actions`, {
 
 describe('pages and static files', () => {
   test('start page, dashboard, phone page, modules and images are served with the right types', async () => {
-    for (const [url, type] of [['/', 'text/html'], ['/table', 'text/html'], ['/join', 'text/html'], ['/js/lobby/main.js', 'text/javascript'], ['/js/table/main.js', 'text/javascript'], ['/css/base.css', 'text/css'], ['/img/logo.svg', 'image/svg']]) {
+    for (const [url, type] of [['/', 'text/html'], ['/table', 'text/html'], ['/join', 'text/html'], ['/js/app.js', 'text/javascript'], ['/js/table/dashboard.js', 'text/javascript'], ['/css/base.css', 'text/css'], ['/img/logo.svg', 'image/svg']]) {
       const res = await fetch(base + url);
       assert.equal(res.status, 200, url);
       assert.match(res.headers.get('content-type'), new RegExp(type));

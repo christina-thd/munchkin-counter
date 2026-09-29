@@ -42,8 +42,9 @@ src/                      server (Node, no framework)
   static.js, network.js   safe static file serving, LAN address detection
 
 public/                   browser (plain ES modules, no build step)
-  index.html              start page: continue, new game, past games
-  table.html, phone.html  dashboard, phone controls (markup only)
+  index.html              tablet / TV page: start page and dashboard views (markup only);
+                          served at / and at /table
+  phone.html              phone controls (markup only)
   css/                    base.css (theme, shared components), lobby.css, table.css, phone.css
   img/logo.svg            app logo and browser icon; icon-*.png home-screen icons
   media/wake.*            tiny silent video that keeps the screen on over plain http
@@ -51,8 +52,9 @@ public/                   browser (plain ES modules, no build step)
   js/shared/              rules.js (also used by the server), activity (log dialog), api, dialog, dom,
                           format, games, screen, storage;
                           device-check.js (plain script: sends phones to /join, keeps tablets and TVs)
-  js/lobby/               start page
-  js/table/               dashboard: main, board, sizing, dialogs,
+  js/app.js               tablet / TV entry: switches between the start page and dashboard views
+  js/lobby/               start page (lobby.js)
+  js/table/               dashboard: dashboard.js, board, sizing, dialogs,
                           announcer (situations, pure) + lines (texts) + ticker (UI), sounds
   js/phone/               phone controls
 
@@ -79,6 +81,11 @@ updates never lose games.
 
 **Updates while a page is open:** every view carries the app version; a page that sees a new
 version reloads itself.
+
+**One page for tablets and TVs:** browsers leave full screen whenever a new page loads, so the start page
+and the dashboard are two views of `index.html`. `js/app.js` switches between them with
+`history.pushState` (the address still changes to `/table` and back, and the back button works). The
+dashboard's announcer, sounds and level watching only run while its view is shown.
 
 **Paths are relative** (`api/actions`, `css/…`), so the app also works in the Home Assistant
 sidebar, which serves it under `/api/hassio_ingress/<token>/`.

@@ -13,12 +13,18 @@ export class Ticker {
   #chosen = new Map();   // situation key → the line picked for it until the next rotation
   #shown = '';
   #death = { gameId: null, seenAt: null, until: 0 };
+  #timers = [];
 
   constructor(el, { rotateMs = 30_000, deathMs = 30_000 } = {}) {
     this.#el = el;
     this.#deathMs = deathMs;
-    setInterval(() => this.#rotate(), rotateMs);
-    setInterval(() => this.#expireDeath(), 1000);
+    this.#timers = [setInterval(() => this.#rotate(), rotateMs), setInterval(() => this.#expireDeath(), 1000)];
+  }
+
+  /** Stops rotating (when the dashboard is hidden). */
+  stop() {
+    this.#timers.forEach(clearInterval);
+    this.#timers = [];
   }
 
   /**

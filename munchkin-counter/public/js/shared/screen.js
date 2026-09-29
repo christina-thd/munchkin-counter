@@ -1,8 +1,4 @@
 // Screen helpers for the tablet / TV pages: keep the screen on, and full screen.
-import { storage } from './storage.js';
-
-const FULLSCREEN_KEY = 'munchkinFullscreen';
-
 /**
  * Keeps the screen from dimming or locking while the page is open.
  * Uses the Wake Lock API where available (https or localhost). On plain http, which is how
@@ -66,13 +62,13 @@ function goFullscreen() {
   try {
     enterFullscreen.call(root)?.catch?.(() => {});
   } catch {
-    // refused (e.g. not triggered by a tap): the next tap tries again
+    // refused by the browser: nothing to do
   }
 }
 
 /**
- * Wires a full-screen toggle button. Browsers leave full screen whenever the page changes
- * (start page → dashboard), so the choice is remembered and restored on the next tap.
+ * Wires a full-screen toggle button. The start page and dashboard are one page (see app.js),
+ * so full screen stays on when moving between them.
  * The button hides itself where full screen isn't possible (iPhone) or not needed (home-screen app).
  */
 export function setupFullscreenButton(button) {
@@ -89,32 +85,10 @@ export function setupFullscreenButton(button) {
   };
 
   button.addEventListener('click', () => {
-    if (isFullscreen()) {
-      storage.set(FULLSCREEN_KEY, null);
-      exitFullscreen.call(document);
-    } else {
-      storage.set(FULLSCREEN_KEY, 'on');
-      goFullscreen();
-    }
+    if (isFullscreen()) exitFullscreen.call(document);
+    else goFullscreen();
   });
-
-  // Restore full screen on the first tap after opening a page (a tap is required to enter it).
-  if (storage.get(FULLSCREEN_KEY) === 'on') {
-    addEventListener('pointerdown', (e) => {
-      if (!isFullscreen() && !button.contains(e.target)) goFullscreen();
-    }, { once: true, capture: true });
-  }
-
-  // Leaving full screen another way (Esc, swipe, system back) forgets the choice,
-  // but not the automatic exit that happens when moving to another page.
-  let leaving = false;
-  addEventListener('pagehide', () => { leaving = true; });
-  addEventListener('beforeunload', () => { leaving = true; });
-  const onChange = () => {
-    if (!isFullscreen() && !leaving) storage.set(FULLSCREEN_KEY, null);
-    update();
-  };
-  document.addEventListener('fullscreenchange', onChange);
-  document.addEventListener('webkitfullscreenchange', onChange);
+  document.addEventListener('fullscreenchange', update);
+  document.addEventListener('webkitfullscreenchange', update);
   update();
 }

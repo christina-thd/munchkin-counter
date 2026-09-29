@@ -11,7 +11,7 @@ const MAX_BODY_BYTES = 10 * 1024;
 
 const PAGES = {
   '/': 'index.html',
-  '/table': 'table.html',
+  '/table': 'index.html',     // same page as '/', opens on the dashboard view
   '/join': 'phone.html',
   '/manifest.webmanifest': 'manifest.webmanifest',
 };
@@ -58,7 +58,7 @@ function readJsonBody(req) {
  * Builds the request handler.
  *
  *   GET  /              start page (tablet / TV): continue, new game, past games
- *   GET  /table         dashboard (tablet / TV)
+ *   GET  /table         the same page, opening on the dashboard (tablet / TV)
  *   GET  /join          phone controls
  *   GET  /manifest.webmanifest   web app manifest ("Add to Home Screen" opens full screen)
  *   GET  /css/*, /js/*, /img/*, /media/*   static files (byte ranges supported, for video)

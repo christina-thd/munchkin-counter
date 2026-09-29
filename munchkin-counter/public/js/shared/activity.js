@@ -73,8 +73,7 @@ export async function showActivityLog(gameId, gameName) {
     title: `📜 ${escapeHtml(gameName)}`,
     ok: null,
     cancel: 'Close',
-    body: `<p class="note">Everything that happened in this game, newest first.
-             Quick taps in a row in the same direction are shown as one change.</p>
+    body: `<p class="note">Every move, on the record. Cheaters beware.</p>
            <div class="activity" id="activityList"><p class="note">Loading…</p></div>`,
   });
   renderList();

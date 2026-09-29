@@ -1,7 +1,9 @@
 /* Start page (tablet / TV). */
 
-html, body { height: 100%; }
-body {
+.lobby-view {
+  position: fixed;
+  inset: 0;
+  overflow: auto;
   background:
     radial-gradient(ellipse at 30% 20%, #3b2616 0%, transparent 60%),
     var(--bg);

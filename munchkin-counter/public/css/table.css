@@ -1,7 +1,6 @@
 /* Dashboard (tablet / TV). */
 
-html, body { height: 100%; }
-body { display: flex; flex-direction: column; overflow: hidden; }
+.table-view { position: fixed; inset: 0; display: flex; flex-direction: column; overflow: hidden; }
 
 /* ----- sizes: all scale from the row height --rh (set in js/table/sizing.js), capped by screen width ----- */
 :root {
