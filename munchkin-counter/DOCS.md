@@ -52,10 +52,8 @@ Use the 🔊 button to mute. Add `#sounds` to the end of the address to hear eve
   (browsers require one). Phones are left alone to save their battery.
 - **Android tablets:** open the secure address `https://<homeassistant-ip>:3443/`.
   Android browsers only allow keeping the screen on for secure pages. The add-on makes its own certificate, so the
-  browser warns once: tap **Advanced → Proceed**. To remove the warning for good, install the certificate on the tablet:
-  download `http://<homeassistant-ip>:3000/munchkin-counter.crt`, then **Settings → Security → More security settings →
-  Install from device storage → CA certificate** (names vary a little by brand) and pick the downloaded file.
-  If the NUC's address ever changes, the add-on makes a new certificate and you install it again.
+  browser warns that it isn't trusted: tap **Advanced → Proceed**. The browser remembers this for a while; if the
+  NUC's address changes, the add-on makes a new certificate and the browser asks once more.
 - **Full screen:** tap the ⛶ button in the top bar (or the top-right corner of the start page). It stays full screen
   when you move between the start page and the dashboard. Tap it again, or press Esc, to leave.
 - **Like an app:** use **Add to Home Screen** in the tablet's browser menu (on an iPad: Share → Add to Home Screen).

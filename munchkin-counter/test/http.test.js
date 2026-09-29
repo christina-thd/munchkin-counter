@@ -178,7 +178,7 @@ describe('https (keeps tablet screens on)', () => {
     }).on('error', reject);
   });
 
-  test('serves the same app over https, and offers the certificate for download', async () => {
+  test('serves the same app over https', async () => {
     const config = {
       version: 'test', port: 3000, publicHost: '192.0.2.10', httpsPort: 3443,
       tlsCert: fixture('tls-cert.pem'), tlsKey: fixture('tls-key.pem'),
@@ -188,7 +188,7 @@ describe('https (keeps tablet screens on)', () => {
     const server = https.createServer({ cert: fs.readFileSync(config.tlsCert), key: fs.readFileSync(config.tlsKey) }, secureApp.handle);
     await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
     const origin = `https://localhost:${server.address().port}`;
-    const ca = fs.readFileSync(config.tlsCert);   // trust the test certificate, like a tablet that installed it
+    const ca = fs.readFileSync(config.tlsCert);   // trust the test certificate
 
     try {
       const page = await get(`${origin}/table`, { ca });
@@ -199,19 +199,16 @@ describe('https (keeps tablet screens on)', () => {
       assert.equal(info.secureUrl, 'https://192.0.2.10:3443/');
       assert.equal(info.joinUrl, 'http://192.0.2.10:3000/join');   // phones stay on plain http
 
-      const cert = await get(`${origin}/munchkin-counter.crt`, { ca });
-      assert.equal(cert.headers['content-type'], 'application/x-x509-ca-cert');
-      assert.match(cert.body, /BEGIN CERTIFICATE/);
+      assert.equal((await get(`${origin}/munchkin-counter.crt`, { ca })).status, 404);   // never offered for download
     } finally {
       secureApp.hub.close();
       await new Promise((resolve) => server.close(resolve));
     }
   });
 
-  test('without https, there is no secure address and no certificate', async () => {
+  test('without https, there is no secure address', async () => {
     const info = await (await fetch(`${base}/api/info`)).json();
     assert.equal(info.secureUrl, null);
-    assert.equal((await fetch(`${base}/munchkin-counter.crt`)).status, 404);
   });
 });
 

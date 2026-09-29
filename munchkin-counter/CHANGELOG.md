@@ -1,13 +1,18 @@
 # Changelog
 
+## 2.6.1
+- Safer https certificate: a plain server certificate that can't vouch for other websites
+- The certificate is no longer offered for download
+- The start page no longer shows the note pointing Android tablets to the secure address
+
 ## 2.6.0
 - Activity log for every game: who changed what, when, and from the tablet or a phone
-- Open it with 📜 in the dashboard's top bar
-- Quick taps in a row in the same direction show as one change ("level 3 → 6")
+- Open it with 📜 in the dashboard's top bar, or for any game on the start page
+- Quick taps in a row show as one change ("level 3 → 6")
 
 ## 2.5.0
 - Secure address `https://<homeassistant-ip>:3443` so Android tablets keep the screen on (the add-on makes its own certificate)
-- Download the certificate at `/munchkin-counter.crt` to install it on a tablet and skip the browser warning
+- Start page on an Android tablet points to the secure address
 
 ## 2.4.1
 - Fix: TVs showed the phone controls instead of the dashboard

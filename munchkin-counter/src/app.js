@@ -1,4 +1,3 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import QRCode from 'qrcode';
 import { EMOJIS } from '../public/js/shared/rules.js';
@@ -66,7 +65,6 @@ function readJsonBody(req) {
  *   GET  /logo          the logo: LOGO_FILE if set and present, else public/img/logo.svg
  *   GET  /qr.svg        QR code pointing phones at /join
  *   GET  /api/info      { version, joinUrl, secureUrl, emojis }
- *   GET  /munchkin-counter.crt   the https certificate, to install on a tablet (no warning after that)
  *   GET  /api/events    live view (Server-Sent Events)
  *   GET  /api/log?game=<id>   activity log of a game (the current one if no id)
  *   POST /api/actions   apply one action, e.g. { "type": "changeLevel", "playerId": "…", "delta": 1 }
@@ -99,18 +97,6 @@ export function createApp({
     sendJson(res, 404, { error: 'Not found' });
   }
 
-  function sendCertificate(res) {
-    if (!httpsActive() || !config.tlsCert) return notFound(res);
-    fs.readFile(config.tlsCert, (err, pem) => {
-      if (err) return notFound(res);
-      res.writeHead(200, {
-        'Content-Type': 'application/x-x509-ca-cert',
-        'Content-Disposition': 'attachment; filename="munchkin-counter.crt"',
-        'Cache-Control': 'no-cache',
-      });
-      res.end(pem);
-    });
-  }
 
   const defaultLogo = path.join(config.publicDir, 'img', 'logo.svg');
   function sendLogo(req, res) {
@@ -136,7 +122,6 @@ export function createApp({
     if (pathname === '/api/info') {
       return sendJson(res, 200, { version: config.version, joinUrl: joinUrl(), secureUrl: secureUrl(), emojis: EMOJIS });
     }
-    if (pathname === '/munchkin-counter.crt') return sendCertificate(res);
     if (pathname === '/logo') return sendLogo(req, res);
     if (pathname === '/qr.svg') {
       res.writeHead(200, { 'Content-Type': 'image/svg+xml', 'Cache-Control': 'no-cache' });

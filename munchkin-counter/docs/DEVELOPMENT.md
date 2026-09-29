@@ -107,7 +107,8 @@ video from servers that support byte ranges, which `src/static.js` does.
 
 Android Chrome no longer keeps the screen on for that video, so the add-on also serves https on port
 3443 with a self-made certificate: `run.sh` creates it in `/data/tls/`, and again if the address changes.
-The certificate can be downloaded from `/munchkin-counter.crt` to install on a tablet (then there's no browser warning).
+It's a plain server certificate (`CA:FALSE`), so even if someone installed it on a device it couldn't vouch
+for other websites. It's deliberately not offered for download; tablets accept the browser warning once.
 
 ## Testing the add-on image locally
 

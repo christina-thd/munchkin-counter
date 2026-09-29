@@ -62,5 +62,7 @@ test('the add-on serves https with a certificate made by run.sh', () => {
   const run = read('run.sh');
   assert.match(run, /^export HTTPS_PORT=\d+$/m);
   assert.match(run, /openssl req -x509/);
+  assert.match(run, /basicConstraints=critical,CA:FALSE/);   // a server certificate, not a CA
+  assert.doesNotMatch(run, /keyCertSign/);
   assert.match(read('Dockerfile'), /^\s+openssl\b/m);
 });

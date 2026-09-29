@@ -12,7 +12,7 @@ munchkin-counter/                  Home Assistant add-on containing the app
 ├── src/                           server (Node, no framework)
 │   ├── server.js                  entry point: http (+ https on 3443), graceful shutdown
 │   ├── config.js                  environment variables (PORT, HOST, HOST_IP, STATE_FILE, LOGO_FILE)
-│   ├── app.js                     HTTP routes: pages, static files, /logo, /qr.svg, /munchkin-counter.crt, API (incl. /api/log)
+│   ├── app.js                     HTTP routes: pages, static files, /logo, /qr.svg, API (incl. /api/log)
 │   ├── game/state.js              state shape, migrations, view for clients
 │   ├── game/actions.js            every game action, validated, recorded in the activity log
 │   ├── game/activity.js           activity log: recording, merging quick same-direction taps, limits
