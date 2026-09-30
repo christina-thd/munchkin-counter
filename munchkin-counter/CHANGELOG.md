@@ -1,7 +1,9 @@
 # Changelog
 
 ## 2.6.3
-- Update shortcut logo
+- The app logo is used as the icon when adding the app to the home screen of a phone or tablet (instead of a plain letter)
+- Also on the secure address (port 3443), where the tablet doesn't trust the add-on's own certificate
+- iPhone and iPad: the home-screen icon has the app's dark background instead of white
 
 ## 2.6.2
 - Fix fullscreen mode

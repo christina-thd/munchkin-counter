@@ -2,7 +2,8 @@
 # Renders the Home Assistant store images from the SVG sources:
 #   icon.png  128×128  ← public/img/logo.svg
 #   logo.png  250×100  ← art/store-logo.svg
-#   public/img/icon-{180,192,512}.png  home-screen icons ← public/img/logo.svg
+#   public/img/icon-{192,512}.png      home-screen icons ← public/img/logo.svg
+#   public/img/icon-180.png            iPhone / iPad home-screen icon ← art/icon-apple.svg
 #   public/img/icon-maskable-512.png   Android home-screen icon ← art/icon-maskable.svg
 #
 # Runs in a throwaway container, from the add-on folder:
@@ -17,18 +18,20 @@ fc-cache -f >/dev/null
 
 rsvg-convert -w 128 -h 128 public/img/logo.svg -o icon.png
 
-# home-screen icons (web app manifest and iOS "Add to Home Screen")
-for size in 180 192 512; do
+# home-screen icons (web app manifest); the iOS one (icon-180) is rendered below, on a background
+for size in 192 512; do
   rsvg-convert -w "$size" -h "$size" public/img/logo.svg -o "public/img/icon-$size.png"
 done
 
-# rsvg only loads images next to (or below) the SVG, so render the banner from a temp folder
+# rsvg only loads images next to (or below) the SVG, so render the ones that embed the logo from a temp folder
 work=$(mktemp -d)
 cp public/img/logo.svg "$work/logo.svg"
 sed 's#\.\./public/img/logo\.svg#logo.svg#g' art/store-logo.svg > "$work/store-logo.svg"
 rsvg-convert -w 250 -h 100 "$work/store-logo.svg" -o logo.png
 sed 's#\.\./public/img/logo\.svg#logo.svg#g' art/icon-maskable.svg > "$work/icon-maskable.svg"
 rsvg-convert -w 512 -h 512 "$work/icon-maskable.svg" -o public/img/icon-maskable-512.png
+sed 's#\.\./public/img/logo\.svg#logo.svg#g' art/icon-apple.svg > "$work/icon-apple.svg"
+rsvg-convert -w 180 -h 180 "$work/icon-apple.svg" -o public/img/icon-180.png
 rm -rf "$work"
 
 echo "icon.png and logo.png updated"

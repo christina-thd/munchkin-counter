@@ -7,7 +7,7 @@ munchkin-counter/                  Home Assistant add-on containing the app
 ├── DOCS.md                        add-on Documentation tab: usage, rules, sound, custom logo
 ├── CHANGELOG.md                   release notes (shown in Home Assistant)
 ├── icon.png, logo.png             add-on store icon (128×128) and banner (250×100)
-├── art/                           store-logo.svg, icon-maskable.svg, render.sh (PNG images), wake-video.sh (keep-awake video)
+├── art/                           store-logo.svg, icon-apple.svg, icon-maskable.svg, render.sh (PNG images), wake-video.sh (keep-awake video)
 ├── package.json                   version, scripts (start, dev, test), one dependency (qrcode)
 ├── src/                           server (Node, no framework)
 │   ├── server.js                  entry point: http (+ https on 3443), graceful shutdown

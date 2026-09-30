@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 180 180" width="180" height="180">
+  <!-- iPhone / iPad home-screen icon (rendered to ../public/img/icon-180.png, see render.sh).
+       iOS fills see-through parts with white and rounds the corners itself, so the logo sits on the
+       app's dark background. -->
+  <rect width="180" height="180" fill="#1b120b"/>
+  <image x="20" y="20" width="140" height="140" xlink:href="../public/img/logo.svg" href="../public/img/logo.svg"/>
+</svg>
