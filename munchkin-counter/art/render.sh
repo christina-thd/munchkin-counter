@@ -3,6 +3,7 @@
 #   icon.png  128×128  ← public/img/logo.svg
 #   logo.png  250×100  ← art/store-logo.svg
 #   public/img/icon-{180,192,512}.png  home-screen icons ← public/img/logo.svg
+#   public/img/icon-maskable-512.png   Android home-screen icon ← art/icon-maskable.svg
 #
 # Runs in a throwaway container, from the add-on folder:
 #   docker run --rm -v "$PWD:/addon" -w /addon alpine:3.20 sh art/render.sh
@@ -26,6 +27,8 @@ work=$(mktemp -d)
 cp public/img/logo.svg "$work/logo.svg"
 sed 's#\.\./public/img/logo\.svg#logo.svg#g' art/store-logo.svg > "$work/store-logo.svg"
 rsvg-convert -w 250 -h 100 "$work/store-logo.svg" -o logo.png
+sed 's#\.\./public/img/logo\.svg#logo.svg#g' art/icon-maskable.svg > "$work/icon-maskable.svg"
+rsvg-convert -w 512 -h 512 "$work/icon-maskable.svg" -o public/img/icon-maskable-512.png
 rm -rf "$work"
 
 echo "icon.png and logo.png updated"

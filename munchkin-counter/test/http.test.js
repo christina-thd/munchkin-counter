@@ -147,6 +147,16 @@ describe('home screen and always-on screen', () => {
     const manifest = await res.json();
     assert.equal(manifest.display, 'fullscreen');
     for (const icon of manifest.icons) assert.equal((await fetch(`${base}/${icon.src}`)).status, 200, icon.src);
+    assert.ok(manifest.icons.some((icon) => icon.purpose === 'maskable'), 'an Android (maskable) icon');
+  });
+
+  test('tablet and phone pages link the home-screen icons (not only the SVG logo)', async () => {
+    for (const page of ['/', '/join']) {
+      const html = await (await fetch(`${base}${page}`)).text();
+      assert.match(html, /<link rel="manifest" href="manifest\.webmanifest">/, page);
+      assert.match(html, /<link rel="apple-touch-icon" href="img\/icon-180\.png">/, page);
+      assert.match(html, /<link rel="icon" type="image\/png" sizes="192x192" href="img\/icon-192\.png">/, page);
+    }
   });
 
   test('the keep-awake video is served, with byte ranges (Safari needs them for video)', async () => {
@@ -194,6 +204,13 @@ describe('https (keeps tablet screens on)', () => {
       const page = await get(`${origin}/table`, { ca });
       assert.equal(page.status, 200);
       assert.match(page.body, /<title>Munchkin Counter<\/title>/);
+      // home-screen icons are inside the page, so the untrusted certificate can't block them
+      for (const url of ['/table', '/join']) {
+        const { body } = url === '/table' ? page : await get(`${origin}${url}`, { ca });
+        assert.match(body, /<link rel="apple-touch-icon" href="data:image\/png;base64,iVBOR/, url);
+        assert.match(body, /<link rel="icon" type="image\/png" sizes="192x192" href="data:image\/png;base64,iVBOR/, url);
+        assert.doesNotMatch(body, /href="img\/icon-/, url);
+      }
 
       const info = JSON.parse((await get(`${origin}/api/info`, { ca })).body);
       assert.equal(info.secureUrl, 'https://192.0.2.10:3443/');

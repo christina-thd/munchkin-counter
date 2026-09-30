@@ -47,6 +47,7 @@ public/                   browser (plain ES modules, no build step)
   phone.html              phone controls (markup only)
   css/                    base.css (theme, shared components), lobby.css, table.css, phone.css
   img/logo.svg            app logo and browser icon; icon-*.png home-screen icons
+                          (icon-maskable-512.png: Android, logo on a dark background)
   media/wake.*            tiny silent video that keeps the screen on over plain http
   manifest.webmanifest    web app manifest (home screen opens full screen)
   js/shared/              rules.js (also used by the server), activity (log dialog), api, dialog, dom,
@@ -86,6 +87,10 @@ version reloads itself.
 and the dashboard are two views of `index.html`. `js/app.js` switches between them with
 `history.pushState` (the address still changes to `/table` and back, and the back button works). The
 dashboard's announcer, sounds and level watching only run while its view is shown.
+
+**Home-screen icons over https:** the tablet doesn't trust the add-on's own certificate, and "Add to Home
+Screen" then may not download the icons (it shows a plain letter). So over https, `src/app.js` puts
+`img/icon-180.png` and `img/icon-192.png` into the page as `data:` URLs; over http the pages are sent as they are.
 
 **Paths are relative** (`api/actions`, `css/…`), so the app also works in the Home Assistant
 sidebar, which serves it under `/api/hassio_ingress/<token>/`.

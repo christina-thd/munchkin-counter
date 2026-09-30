@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.6.3
+- Update shortcut logo
+
 ## 2.6.2
 - Fix fullscreen mode
 

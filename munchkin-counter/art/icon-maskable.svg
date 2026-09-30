@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Android home-screen icon (rendered to ../public/img/icon-maskable-512.png, see render.sh).
+       Android crops it to a circle or rounded square, so the logo sits inside the middle 80% safe zone
+       on the app's dark background. -->
+  <rect width="512" height="512" fill="#1b120b"/>
+  <image x="91" y="91" width="330" height="330" xlink:href="../public/img/logo.svg" href="../public/img/logo.svg"/>
+</svg>

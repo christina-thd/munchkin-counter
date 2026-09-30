@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import QRCode from 'qrcode';
 import { EMOJIS } from '../public/js/shared/rules.js';
@@ -98,6 +99,37 @@ export function createApp({
   }
 
 
+  // Over https the pages carry their home-screen icons inline (data: URLs). The add-on's own certificate
+  // isn't trusted by the tablet, and "Add to Home Screen" then may not download the icons, showing a
+  // plain letter instead of the logo.
+  const INLINE_ICONS = ['img/icon-180.png', 'img/icon-192.png'];
+  const iconData = new Map();
+  function inlineIcon(icon) {
+    if (!iconData.has(icon)) {
+      try {
+        iconData.set(icon, `data:image/png;base64,${fs.readFileSync(path.join(config.publicDir, icon)).toString('base64')}`);
+      } catch {
+        iconData.set(icon, icon);   // missing: keep the plain link
+      }
+    }
+    return iconData.get(icon);
+  }
+
+  function sendPage(req, res, file) {
+    if (!req.socket.encrypted || !file.endsWith('.html')) return sendFile(req, res, file, () => notFound(res));
+    fs.readFile(file, 'utf8', (err, html) => {
+      if (err) return notFound(res);
+      for (const icon of INLINE_ICONS) html = html.replaceAll(`href="${icon}"`, `href="${inlineIcon(icon)}"`);
+      res.writeHead(200, {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-cache',
+        'X-Content-Type-Options': 'nosniff',
+        'Content-Length': Buffer.byteLength(html),
+      });
+      res.end(req.method === 'HEAD' ? undefined : html);
+    });
+  }
+
   const defaultLogo = path.join(config.publicDir, 'img', 'logo.svg');
   function sendLogo(req, res) {
     const fallback = () => sendFile(req, res, defaultLogo, () => notFound(res));
@@ -128,7 +160,7 @@ export function createApp({
       return res.end(await qrSvg());
     }
     if (Object.hasOwn(PAGES, pathname)) {
-      return sendFile(req, res, path.join(config.publicDir, PAGES[pathname]), () => notFound(res));
+      return sendPage(req, res, path.join(config.publicDir, PAGES[pathname]));
     }
     if (STATIC_DIRS.some((dir) => pathname.startsWith(dir))) {
       let decoded;
