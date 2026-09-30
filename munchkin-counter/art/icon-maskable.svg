@@ -1,7 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" width="512" height="512">
   <!-- Android home-screen icon (rendered to ../public/img/icon-maskable-512.png, see render.sh).
-       Android crops it to a circle or rounded square, so the logo sits inside the middle 80% safe zone
-       on the app's dark background. -->
-  <rect width="512" height="512" fill="#1b120b"/>
+       Android crops it to a circle or rounded square, so the logo sits inside the middle 80% safe zone. -->
+  <defs>
+    <radialGradient id="glow" cx=".5" cy=".5" r=".72">
+      <stop offset=".35" stop-color="#fff3c4" stop-opacity=".55"/>
+      <stop offset=".7" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#5a1d08" stop-opacity=".6"/>
+    </radialGradient>
+  </defs>
+  <!-- gold comic sunburst: every other ray lighter, a glow behind the die, darker edges -->
+  <rect width="512" height="512" fill="#e8a93a"/>
+  <path fill="#f5c75a" d="M256 256 L635.8 379.4 L579.1 490.7 Z M256 256 L490.7 579.1 L379.4 635.8 Z M256 256 L256.0 655.4 L132.6 635.8 Z M256 256 L21.3 579.1 L-67.1 490.7 Z M256 256 L-123.8 379.4 L-143.4 256.0 Z M256 256 L-123.8 132.6 L-67.1 21.3 Z M256 256 L21.3 -67.1 L132.6 -123.8 Z M256 256 L256.0 -143.4 L379.4 -123.8 Z M256 256 L490.7 -67.1 L579.1 21.3 Z M256 256 L635.8 132.6 L655.4 256.0 Z"/>
+  <rect width="512" height="512" fill="url(#glow)"/>
   <image x="91" y="91" width="330" height="330" xlink:href="../public/img/logo.svg" href="../public/img/logo.svg"/>
 </svg>

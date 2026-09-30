@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.6.5
+- Better home-screen icon on phones and tablets: the logo on a gold comic-style sunburst
+
 ## 2.6.4
 - Fix iphone shortcut logo
 

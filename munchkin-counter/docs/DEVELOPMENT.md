@@ -47,7 +47,7 @@ public/                   browser (plain ES modules, no build step)
   phone.html              phone controls (markup only)
   css/                    base.css (theme, shared components), lobby.css, table.css, phone.css
   img/logo.svg            app logo and browser icon; icon-*.png home-screen icons
-                          (icon-180.png: iPhone / iPad, icon-maskable-512.png: Android; both on a dark background)
+                          (icon-180.png: iPhone / iPad, icon-maskable-512.png: Android; both on a gold sunburst)
   media/wake.*            tiny silent video that keeps the screen on over plain http
   manifest.webmanifest    web app manifest (home screen opens full screen)
   js/shared/              rules.js (also used by the server), activity (log dialog), api, dialog, dom,
