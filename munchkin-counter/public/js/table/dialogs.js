@@ -1,6 +1,6 @@
 // Dialogs used by the dashboard.
 import { openDialog } from '../shared/dialog.js';
-import { $, escapeHtml } from '../shared/dom.js';
+import { $, closest, escapeHtml } from '../shared/dom.js';
 import { formatGear } from '../shared/format.js';
 import { MAX_PLAYER_NAME, strengthOf } from '../shared/rules.js';
 import { SOUND_TEST } from './sounds.js';
@@ -50,7 +50,7 @@ export function showSoundTest(soundboard) {
       </div>`,
   });
   $('sheet').querySelector('.list').addEventListener('click', (e) => {
-    const button = e.target.closest('[data-sound]');
+    const button = closest(e, '[data-sound]');
     if (!button) return;
     soundboard.unlock();
     setTimeout(() => soundboard.play(button.dataset.sound, { force: true }), 30);

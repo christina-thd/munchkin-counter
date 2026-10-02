@@ -1,0 +1,19 @@
+# Dependencies (the dev tools: ESLint and TypeScript as a checker; the add-on itself only needs qrcode)
+node_modules/
+
+# Local saved games, written by the dev server
+munchkin-counter/data/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local tooling
+.claude/
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini

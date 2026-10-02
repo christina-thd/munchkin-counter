@@ -1,13 +1,16 @@
 // Start page: continue the current game, start a new one, or reopen / delete a past game.
 import { sendAction } from '../shared/api.js';
-import { $, escapeHtml } from '../shared/dom.js';
+import { $, closest, escapeHtml } from '../shared/dom.js';
 import { askNewGame, confirmDeleteGame, describeGame } from '../shared/games.js';
+
+/** @typedef {import('../shared/rules.js').View} View */
 
 /**
  * @param {{ openDashboard: () => void }} options  switches the page to the dashboard view
- * @returns {{ update(view: object): void }}
+ * @returns {{ update(view: View): void }}
  */
 export function createLobby({ openDashboard }) {
+  /** @type {View | null} */
   let view = null;
 
   function send(action) {
@@ -53,8 +56,8 @@ export function createLobby({ openDashboard }) {
   });
 
   $('games').addEventListener('click', async (e) => {
-    const open = e.target.closest('[data-open]');
-    const del = e.target.closest('[data-delete]');
+    const open = closest(e, '[data-open]');
+    const del = closest(e, '[data-delete]');
     if (open) {
       await send({ type: 'switchGame', gameId: open.dataset.open });
       openDashboard();

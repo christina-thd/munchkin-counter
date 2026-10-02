@@ -49,14 +49,16 @@ function createWakeVideo() {
   return video;
 }
 
-const root = document.documentElement;
+// Older iPads and Android web views only have the webkit-prefixed full screen API.
+const root = /** @type {HTMLElement & { webkitRequestFullscreen?: () => Promise<void> | void }} */ (document.documentElement);
+const doc = /** @type {Document & { webkitExitFullscreen?: () => void, webkitFullscreenElement?: Element | null }} */ (document);
 const enterFullscreen = root.requestFullscreen ?? root.webkitRequestFullscreen;
-const exitFullscreen = document.exitFullscreen ?? document.webkitExitFullscreen;
-const isFullscreen = () => Boolean(document.fullscreenElement ?? document.webkitFullscreenElement);
+const exitFullscreen = doc.exitFullscreen ?? doc.webkitExitFullscreen;
+const isFullscreen = () => Boolean(doc.fullscreenElement ?? doc.webkitFullscreenElement);
 
 /** Already running as a home-screen app, where the browser UI is gone anyway. */
 const isInstalledApp = () => matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches
-  || navigator.standalone === true;
+  || /** @type {Navigator & { standalone?: boolean }} */ (navigator).standalone === true;   // iOS Safari
 
 function goFullscreen() {
   try {

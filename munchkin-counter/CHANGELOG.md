@@ -1,97 +1,80 @@
 # Changelog
 
+## 2.7.0
+- Lint and type checks on every release
+- Runs on Node 22
+- Removed the rename-player action
+
 ## 2.6.5
-- Better home-screen icon on phones and tablets: the logo on a gold comic-style sunburst
+- Better home-screen icon
 
 ## 2.6.4
-- Fix iphone shortcut logo
+- Fix the iPhone icon
 
 ## 2.6.3
-- Fix shortcut logo
+- Fix the home-screen icon
 
 ## 2.6.2
-- Fix fullscreen mode
+- Fix full screen
 
 ## 2.6.1
-- Safer https certificate: a plain server certificate that can't vouch for other websites (replaces the old one
-  automatically, so the tablet asks to accept it once more)
-- The certificate is no longer offered for download
-- The start page no longer shows the note pointing Android tablets to the secure address
-- Activity log: opens from the dashboard only (no longer from the start page)
-- Activity log: quick taps are grouped only in the same direction, so going up and back down shows both changes
+- Safer https certificate, no longer downloadable
+- Activity log opens from the dashboard only
+- Taps up and back down show as two changes
 
 ## 2.6.0
-- Activity log for every game: who changed what, when, and from the tablet or a phone
-- Open it with 📜 in the dashboard's top bar, or for any game on the start page
-- Quick taps in a row show as one change ("level 3 → 6")
+- **Activity log** per game, 📜 in the top bar
+- Quick taps show as one change
 
 ## 2.5.0
-- Secure address `https://<homeassistant-ip>:3443` so Android tablets keep the screen on (the add-on makes its own certificate)
-- Start page on an Android tablet points to the secure address
+- Secure address on port 3443 keeps Android tablets on
 
 ## 2.4.1
-- Fix: TVs showed the phone controls instead of the dashboard
-- Open the app once with `?dashboard` to keep any device on the dashboard (`?auto` to undo)
+- Fix TVs showing the phone controls
+- `?dashboard` keeps a device on the dashboard, `?auto` undoes it
 
 ## 2.4.0
-- The tablet or TV screen stays on while the start page or dashboard is open
-- Full-screen button on the start page and the dashboard
-- "Add to Home Screen" opens the app full screen, with its own icon
+- Screen stays on
+- Full-screen button
+- "Add to Home Screen" opens full screen
 
 ## 2.3.3
-- Add-on icon and logo in the Home Assistant store
+- Store icon and logo
 
 ## 2.3.2
-- Fix: install failed on newer Home Assistant ("base name ($BUILD_FROM) should not be blank")
+- Fix install on newer Home Assistant
 
 ## 2.3.1
-- Start page: games show only their date and number of players
+- Start page shows date and player count only
 
 ## 2.3.0
-- Create logo
-- Use your own logo: put `logo.png` in the `share` folder under `munchkin-counter/` (see Documentation)
+- New logo
+- Custom logo via `share/munchkin-counter/logo.png`
 
 ## 2.2.0
-- Start page: continue the current game, start a new one, or reopen and delete past games
-- The game name in the top bar goes back to the start page
+- **Start page**: continue, new game, reopen or delete past games
 
 ## 2.1.0
-- Packaged like the other add-ons: Home Assistant base image, `run.sh` with bashio
-- Install and update from the add-on store
-- Supports aarch64, amd64, armhf, armv7 and i386
+- Install from the add-on store, all architectures
 
 ## 2.0.0
-
-Rebuilt with a proper project structure
-
-- Server split into modules: game rules, state and migrations, file storage, live updates, HTTP routes.
-- Games are saved atomically, so a power cut can't corrupt them.
-- Every action is validated; bad requests get a clear error.
-- Browser code split into modules; styles shared between the dashboard and phones.
-- Automated tests for the game rules, saved-data migration, the announcer and the HTTP API.
-- Pages reload themselves after an update.
-- Older saved games are migrated automatically.
+- Rebuilt: validated actions, safe saving, tests
+- Old games migrate, pages reload after updates
 
 ## 1.8.0
-
-- Announcer messages stay 30 seconds.
+- Announcer messages stay 30 seconds
 
 ## 1.7.0
-
-- Announcer rewritten in Munchkin style, about 80 lines, no repeats until a situation's lines are used up.
+- Munchkin-style announcer, no repeats
 
 ## 1.6.0
-
-- Phones can't open the dashboard; they go to the phone controls.
+- Phones always get the phone controls
 
 ## 1.5.0
-
-- Sounds when someone gains or loses a level.
+- Level up and down sounds
 
 ## 1.4.0
-
-- Sounds only for death, win, level 9, stuck at level 1 and negative gear.
+- Sounds for death, win, level 9, stuck and cursed
 
 ## 1.0.0
-
-- First Home Assistant add-on release.
+- First release

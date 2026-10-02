@@ -1,4 +1,4 @@
-import { $, escapeHtml } from './dom.js';
+import { $, escapeHtml, input as field } from './dom.js';
 
 // In-page dialogs. Built in because some tablet browsers (and embedded web views) block
 // window.prompt / window.confirm. The page needs: <div id="modal"><div class="sheet" id="sheet"></div></div>
@@ -37,8 +37,8 @@ export function openDialog({ title, body = '', ok = 'OK', cancel = 'Cancel', dan
       resolve(result);
     };
     const confirm = () => close({
-      value: input ? $('dialogInput').value : null,
-      checked: check ? $('dialogCheck').checked : null,
+      value: input ? field('dialogInput').value : null,
+      checked: check ? field('dialogCheck').checked : null,
     });
 
     $('dialogOk')?.addEventListener('click', confirm);
@@ -46,14 +46,10 @@ export function openDialog({ title, body = '', ok = 'OK', cancel = 'Cancel', dan
     modal.onclick = (e) => { if (e.target === modal) close(null); };
 
     if (input) {
-      const field = $('dialogInput');
-      field.focus();
-      field.select();
-      field.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirm(); });
+      const text = field('dialogInput');
+      text.focus();
+      text.select();
+      text.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirm(); });
     }
   });
-}
-
-export function closeDialog() {
-  $('modal').classList.remove('open');
 }
