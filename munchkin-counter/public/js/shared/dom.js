@@ -1,4 +1,24 @@
+/**
+ * An element of the page by its id (the page always has it).
+ * @param {string} id
+ * @returns {HTMLElement}
+ */
 export const $ = (id) => document.getElementById(id);
+
+/**
+ * A form field by its id: the same as `$`, typed so `.value`, `.checked` and `.disabled` are known.
+ * @param {string} id
+ * @returns {HTMLInputElement}
+ */
+export const input = (id) => /** @type {HTMLInputElement} */ ($(id));
+
+/**
+ * The element a tap was on, or inside, that matches `selector`, or null: one listener for a whole list.
+ * @param {Event} event
+ * @param {string} selector
+ * @returns {HTMLElement | null}
+ */
+export const closest = (event, selector) => /** @type {Element} */ (event.target).closest(selector);
 
 const ENTITIES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 

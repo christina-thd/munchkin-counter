@@ -27,10 +27,8 @@ describe('players', () => {
     assert.equal(add('  Konstantina Papadopoulou  ').name.length, 20);
   });
 
-  test('removePlayer and renamePlayer', () => {
+  test('removePlayer', () => {
     const a = add('Ana');
-    act({ type: 'renamePlayer', playerId: a.id, name: 'Anna' });
-    assert.equal(players()[0].name, 'Anna');
     act({ type: 'removePlayer', playerId: a.id });
     assert.equal(players().length, 0);
   });

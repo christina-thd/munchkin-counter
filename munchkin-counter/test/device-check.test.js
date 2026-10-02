@@ -8,7 +8,7 @@ import { ROOT_DIR } from '../src/config.js';
 
 const SCRIPT = fs.readFileSync(path.join(ROOT_DIR, 'public/js/shared/device-check.js'), 'utf8');
 
-/** @returns {'phone' | 'dashboard'} where the device ends up */
+/** @returns {{ device: 'phone' | 'dashboard', store: Map<string, string> }} where the device ends up, and what it remembered */
 function check({ ua, width, height, touch = 0, coarse = touch > 0, search = '', stored = {} }) {
   let redirected = false;
   const store = new Map(Object.entries(stored));

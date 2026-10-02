@@ -21,8 +21,6 @@ export function describeEntry(e) {
       return `${who(e)} joined`;
     case 'remove':
       return `${who(e)} was removed`;
-    case 'rename':
-      return `<b>${escapeHtml(e.from)}</b> is now called ${who(e)}`;
     case 'emoji':
       return `<b>${escapeHtml(e.name)}</b> changed emoji ${escapeHtml(e.from)} → ${escapeHtml(e.to)}`;
     case 'level':

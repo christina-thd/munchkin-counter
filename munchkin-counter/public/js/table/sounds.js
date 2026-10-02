@@ -101,7 +101,9 @@ export class Soundboard {
 
   unlock() {
     try {
-      this.#ctx ??= new (window.AudioContext || window.webkitAudioContext)();
+      // older Safari only has the webkit-prefixed name
+      const AudioContextClass = window.AudioContext || /** @type {any} */ (window).webkitAudioContext;
+      this.#ctx ??= new AudioContextClass();
       if (this.#ctx.state === 'suspended') this.#ctx.resume();
     } catch {
       // no Web Audio: stay silent

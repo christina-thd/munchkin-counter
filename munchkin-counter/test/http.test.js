@@ -15,6 +15,9 @@ let app;
 let base;
 let dir;
 
+/** Starts a server on a free local port and returns the port. */
+const listen = (srv) => new Promise((resolve) => srv.listen(0, '127.0.0.1', () => resolve(srv.address().port)));
+
 before(async () => {
   dir = fs.mkdtempSync(path.join(os.tmpdir(), 'munchkin-http-'));
   const config = {
@@ -24,8 +27,7 @@ before(async () => {
   const store = new JsonFileStore(config.stateFile, { debounceMs: 0 });
   app = createApp({ config, state: createInitialState(), store, logger: { error() {} } });
   server = http.createServer(app.handle);
-  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
-  base = `http://127.0.0.1:${server.address().port}`;
+  base = `http://127.0.0.1:${await listen(server)}`;
 });
 
 after(async () => {
@@ -111,8 +113,7 @@ describe('logo', () => {
       stateFile: path.join(dir, 'logo-state.json'), publicDir: path.join(ROOT_DIR, 'public') };
     const logoApp = createApp({ config, state: createInitialState(), store: new JsonFileStore(config.stateFile) });
     const logoServer = http.createServer(logoApp.handle);
-    await new Promise((resolve) => logoServer.listen(0, '127.0.0.1', resolve));
-    const res = await fetch(`http://127.0.0.1:${logoServer.address().port}/logo`);
+    const res = await fetch(`http://127.0.0.1:${await listen(logoServer)}/logo`);
     const body = Buffer.from(await res.arrayBuffer());
     logoApp.hub.close();
     await new Promise((resolve) => logoServer.close(resolve));
@@ -196,8 +197,7 @@ describe('https (keeps tablet screens on)', () => {
     };
     const secureApp = createApp({ config, state: createInitialState(), store: new JsonFileStore(config.stateFile), httpsActive: () => true });
     const server = https.createServer({ cert: fs.readFileSync(config.tlsCert), key: fs.readFileSync(config.tlsKey) }, secureApp.handle);
-    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
-    const origin = `https://localhost:${server.address().port}`;
+    const origin = `https://localhost:${await listen(server)}`;
     const ca = fs.readFileSync(config.tlsCert);   // trust the test certificate
 
     try {

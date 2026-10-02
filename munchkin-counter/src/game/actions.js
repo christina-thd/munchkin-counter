@@ -62,15 +62,6 @@ const handlers = {
     record(game, { kind: 'remove', ...aboutPlayer(player) }, ctx);
   },
 
-  renamePlayer(state, { playerId, name }, ctx) {
-    const game = currentGame(state);
-    const player = findPlayer(game, playerId);
-    const from = player.name;
-    player.name = text(name, MAX_PLAYER_NAME) || player.name;
-    record(game, { kind: 'rename', ...aboutPlayer(player), from, to: player.name }, ctx);
-    return player;
-  },
-
   setEmoji(state, { playerId, emoji }, ctx) {
     if (!EMOJIS.includes(emoji)) throw new ActionError('Unknown emoji');
     const game = currentGame(state);
@@ -146,8 +137,6 @@ const handlers = {
     state.games = state.games.filter((g) => g.id !== gameId);
   },
 };
-
-export const ACTION_TYPES = Object.freeze(Object.keys(handlers));
 
 /**
  * Applies one action to the state (mutating it) and returns the handler's result.

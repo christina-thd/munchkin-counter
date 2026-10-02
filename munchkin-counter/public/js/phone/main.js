@@ -1,7 +1,7 @@
 // Phone controls: pick (or create) your player, then change your own level, gear and emoji.
 import { fetchInfo, sendAction, setActionSource, subscribe } from '../shared/api.js';
 import { openDialog } from '../shared/dialog.js';
-import { $, escapeHtml, restartAnimation } from '../shared/dom.js';
+import { $, closest, escapeHtml, input, restartAnimation } from '../shared/dom.js';
 import { formatGear } from '../shared/format.js';
 import { MAX_LEVEL, MIN_LEVEL, strengthOf } from '../shared/rules.js';
 import { storage } from '../shared/storage.js';
@@ -10,6 +10,7 @@ const PLAYER_KEY = 'playerId';   // remembered per phone
 
 setActionSource('phone');
 
+/** @type {import('../shared/rules.js').Player[]} */
 let players = [];
 let myId = storage.get(PLAYER_KEY);
 
@@ -38,14 +39,14 @@ function renderPlayer(player) {
   const won = player.level >= MAX_LEVEL;
   $('emojiButton').textContent = player.emoji;
   $('playerName').textContent = player.name;
-  $('strength').textContent = strengthOf(player);
-  $('level').textContent = player.level;
+  $('strength').textContent = String(strengthOf(player));
+  $('level').textContent = String(player.level);
   $('gear').textContent = formatGear(player.gear);
   $('levelLabel').textContent = won ? '👑 Level 10 — You win!' : 'Level';
   $('levelPanel').classList.toggle('won', won);
-  $('levelDown').disabled = player.level <= MIN_LEVEL;
-  $('levelUp').disabled = player.level >= MAX_LEVEL;
-  for (const button of $('emojiGrid').children) {
+  input('levelDown').disabled = player.level <= MIN_LEVEL;
+  input('levelUp').disabled = player.level >= MAX_LEVEL;
+  for (const button of $('emojiGrid').querySelectorAll('button')) {
     button.classList.toggle('selected', button.dataset.emoji === player.emoji);
   }
 }
@@ -61,16 +62,16 @@ function render() {
 // ----- picking a player -----
 
 $('playerList').addEventListener('click', (e) => {
-  const button = e.target.closest('[data-player]');
+  const button = closest(e, '[data-player]');
   if (button) choosePlayer(button.dataset.player);
 });
 
 $('joinForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const input = $('newName');
-  const player = await sendAction({ type: 'addPlayer', name: input.value }).catch(() => null);
+  const name = input('newName');
+  const player = await sendAction({ type: 'addPlayer', name: name.value }).catch(() => null);
   if (!player) return;
-  input.value = '';
+  name.value = '';
   choosePlayer(player.id);
 });
 
@@ -78,7 +79,7 @@ $('switchPlayer').addEventListener('click', () => choosePlayer(null));
 
 // ----- controls -----
 
-for (const button of document.querySelectorAll('[data-action]')) {
+for (const button of /** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('button[data-action]'))) {
   button.addEventListener('click', () => {
     send({ type: button.dataset.action, playerId: myId, delta: Number(button.dataset.delta) });
   });
@@ -89,7 +90,7 @@ $('emojiButton').addEventListener('click', () => {
 });
 
 $('emojiGrid').addEventListener('click', (e) => {
-  const button = e.target.closest('[data-emoji]');
+  const button = closest(e, '[data-emoji]');
   if (!button) return;
   send({ type: 'setEmoji', playerId: myId, emoji: button.dataset.emoji });
   $('emojiGrid').hidden = true;

@@ -20,17 +20,16 @@ describe('recording actions', () => {
   test('every player action is logged, with who did it and from which screen', () => {
     const ana = act({ type: 'addPlayer', name: 'Ana' }, 'dashboard');
     act({ type: 'setEmoji', playerId: ana.id, emoji: '🧝' }, 'phone');
-    act({ type: 'renamePlayer', playerId: ana.id, name: 'Anna' }, 'phone');
     act({ type: 'setLevel', playerId: ana.id, level: 5 }, 'dashboard');
     act({ type: 'changeGear', playerId: ana.id, delta: 1 }, 'phone');
     act({ type: 'die', playerId: ana.id }, 'phone');
     act({ type: 'removePlayer', playerId: ana.id }, 'dashboard');
 
-    assert.deepEqual(kinds(), ['join', 'emoji', 'rename', 'level', 'gear', 'death', 'remove']);
-    assert.deepEqual(log().map((e) => e.source), ['dashboard', 'phone', 'phone', 'dashboard', 'phone', 'phone', 'dashboard']);
-    assert.deepEqual(log()[3], { at: clock, source: 'dashboard', kind: 'level', playerId: ana.id, name: 'Anna', emoji: '🧝', from: 1, to: 5 });
-    assert.deepEqual([log()[5].from, log()[5].to], [1, 0]);           // death: lost +1 gear
-    assert.equal(log()[6].name, 'Anna');                                // removed players still have a name
+    assert.deepEqual(kinds(), ['join', 'emoji', 'level', 'gear', 'death', 'remove']);
+    assert.deepEqual(log().map((e) => e.source), ['dashboard', 'phone', 'dashboard', 'phone', 'phone', 'dashboard']);
+    assert.deepEqual(log()[2], { at: clock, source: 'dashboard', kind: 'level', playerId: ana.id, name: 'Ana', emoji: '🧝', from: 1, to: 5 });
+    assert.deepEqual([log()[4].from, log()[4].to], [1, 0]);           // death: lost +1 gear
+    assert.equal(log()[5].name, 'Ana');                                 // removed players still have a name
   });
 
   test('an unknown source is not trusted', () => {
@@ -71,7 +70,7 @@ describe('recording actions', () => {
     const ana = act({ type: 'addPlayer', name: 'Ana' });
     act({ type: 'changeLevel', playerId: ana.id, delta: -1 }, 'phone');   // already level 1
     act({ type: 'setLevel', playerId: ana.id, level: 1 }, 'dashboard');
-    act({ type: 'renamePlayer', playerId: ana.id, name: 'Ana' }, 'phone');
+    act({ type: 'setEmoji', playerId: ana.id, emoji: ana.emoji }, 'phone');
     assert.deepEqual(kinds(), ['join']);
   });
 
@@ -120,7 +119,6 @@ describe('describing entries', () => {
     assert.equal(plain({ kind: 'level', ...ana, from: 9, to: 10 }), '🧙 Ana ▲ level 9 → 10 👑');
     assert.equal(plain({ kind: 'gear', ...ana, from: 2, to: -1 }), '🧙 Ana ▼ gear +2 → -1');
     assert.equal(plain({ kind: 'death', ...ana, from: 3, to: 0 }), '💀 🧙 Ana died and lost +3 gear');
-    assert.equal(plain({ kind: 'rename', ...ana, from: 'Ann', to: 'Ana' }), 'Ann is now called 🧙 Ana');
     assert.equal(plain({ kind: 'start', kept: 4 }), '🎲 Game started with the same 4 players');
   });
 

@@ -41,7 +41,7 @@ The app is plain Node.js with no build step. See
 ```sh
 cd munchkin-counter
 npm install
-npm test
+npm run check   # lint, types and tests
 npm run dev
 ```
 

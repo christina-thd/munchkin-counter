@@ -1,10 +1,15 @@
 # Changelog
 
+## 2.7.0
+- Lint and type checks on every release
+- Runs on Node 22
+- Removed the rename-player action
+
 ## 2.6.5
-- Better home-screen icon on phones and tablets
+- Better home-screen icon
 
 ## 2.6.4
-- Fix the iPhone home-screen icon
+- Fix the iPhone icon
 
 ## 2.6.3
 - Fix the home-screen icon
@@ -13,68 +18,63 @@
 - Fix full screen
 
 ## 2.6.1
-- Safer https certificate (the tablet asks to accept it once more)
-- The certificate is no longer offered for download
+- Safer https certificate, no longer downloadable
 - Activity log opens from the dashboard only
-- Quick taps up and back down show as two changes
+- Taps up and back down show as two changes
 
 ## 2.6.0
-- **Activity log** for every game: who changed what, when, and from where
-- Open it with 📜 in the top bar
-- Quick taps in a row show as one change
+- **Activity log** per game, 📜 in the top bar
+- Quick taps show as one change
 
 ## 2.5.0
-- Secure address `https://<homeassistant-ip>:3443` keeps Android tablet screens on
+- Secure address on port 3443 keeps Android tablets on
 
 ## 2.4.1
 - Fix TVs showing the phone controls
-- `?dashboard` keeps any device on the dashboard (`?auto` to undo)
+- `?dashboard` keeps a device on the dashboard, `?auto` undoes it
 
 ## 2.4.0
-- The screen stays on while the app is open
+- Screen stays on
 - Full-screen button
-- "Add to Home Screen" opens the app full screen
+- "Add to Home Screen" opens full screen
 
 ## 2.3.3
-- Add-on icon and logo in the store
+- Store icon and logo
 
 ## 2.3.2
 - Fix install on newer Home Assistant
 
 ## 2.3.1
-- Start page shows only date and number of players
+- Start page shows date and player count only
 
 ## 2.3.0
 - New logo
-- Use your own logo: `logo.png` in `share/munchkin-counter/`
+- Custom logo via `share/munchkin-counter/logo.png`
 
 ## 2.2.0
-- **Start page**: continue, start a new game, or reopen and delete past games
-- The game name in the top bar goes back to the start page
+- **Start page**: continue, new game, reopen or delete past games
 
 ## 2.1.0
-- Install and update from the add-on store
-- Supports aarch64, amd64, armhf, armv7 and i386
+- Install from the add-on store, all architectures
 
 ## 2.0.0
-- Rebuilt: validated actions, safe saving, automated tests
-- Older saved games are migrated
-- Pages reload themselves after an update
+- Rebuilt: validated actions, safe saving, tests
+- Old games migrate, pages reload after updates
 
 ## 1.8.0
 - Announcer messages stay 30 seconds
 
 ## 1.7.0
-- Announcer rewritten in Munchkin style, no repeats
+- Munchkin-style announcer, no repeats
 
 ## 1.6.0
 - Phones always get the phone controls
 
 ## 1.5.0
-- Sounds when someone gains or loses a level
+- Level up and down sounds
 
 ## 1.4.0
-- Sounds for death, win, level 9, stuck at level 1 and negative gear
+- Sounds for death, win, level 9, stuck and cursed
 
 ## 1.0.0
 - First release

@@ -18,6 +18,8 @@ import { clampLevel, EMOJIS, MAX_GAME_NAME, MAX_PLAYER_NAME } from '../../public
  */
 export const SCHEMA_VERSION = 2;
 
+/** @typedef {ReturnType<typeof createInitialState>} State */
+
 export const newId = () => randomBytes(4).toString('hex');
 
 export function createGame(name, players = [], now = Date.now()) {
@@ -93,7 +95,10 @@ export function gameLog(state, gameId) {
   return game ? { gameId: game.id, name: game.name, entries: game.log } : null;
 }
 
-/** What every screen receives: the current game in full, plus a summary of all games. */
+/**
+ * What every screen receives: the current game in full, plus a summary of all games.
+ * @returns {import('../../public/js/shared/rules.js').View}
+ */
 export function toView(state, appVersion) {
   const game = currentGame(state);
   return {

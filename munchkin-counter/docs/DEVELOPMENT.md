@@ -1,11 +1,16 @@
 # Development
 
-Requires Node.js 20+.
+Requires Node.js 22+ (the add-on runs Node 22: the Dockerfile's Alpine 3.22). `npm install` brings the one
+runtime dependency (`qrcode`, for the QR code) and the dev tools (ESLint, TypeScript as a checker), which
+aren't shipped.
 
 ```sh
 npm install
-npm run dev     # http://localhost:3000, restarts on changes
-npm test        # unit, HTTP and add-on packaging tests (Node's built-in test runner)
+npm run dev         # http://localhost:3000, restarts on changes
+npm test            # unit, HTTP and add-on packaging tests (Node's built-in test runner)
+npm run lint        # ESLint (eslint.config.js)
+npm run typecheck   # type checks the JavaScript from its JSDoc comments (tsconfig.json); nothing is compiled
+npm run check       # all three, as the pull request checks do
 ```
 
 Open `/#sounds` on the dashboard to hear every sound.
@@ -29,6 +34,7 @@ This folder is a Home Assistant add-on (the files at the top) that contains the 
 ```
 config.yaml, Dockerfile, run.sh     Home Assistant add-on
 README.md, DOCS.md, CHANGELOG.md    add-on store page, Documentation tab, changelog
+eslint.config.js, tsconfig.json     lint and type-check settings (dev only)
 
 src/                      server (Node, no framework)
   server.js               entry point: load config and state, start HTTP, graceful shutdown
@@ -50,8 +56,8 @@ public/                   browser (plain ES modules, no build step)
                           (icon-180.png: iPhone / iPad, icon-maskable-512.png: Android; both on a gold sunburst)
   media/wake.*            tiny silent video that keeps the screen on over plain http
   manifest.webmanifest    web app manifest (home screen opens full screen)
-  js/shared/              rules.js (also used by the server), activity (log dialog), api, dialog, dom,
-                          format, games, screen, storage;
+  js/shared/              rules.js (also used by the server; the Player and View types every screen gets),
+                          activity (log dialog), api, dialog, dom, format, games, screen, storage;
                           device-check.js (plain script: sends phones to /join, keeps tablets and TVs)
   js/app.js               tablet / TV entry: switches between the start page and dashboard views
   js/lobby/               start page (lobby.js)
@@ -74,8 +80,8 @@ Screens send `source: "dashboard"` or `"phone"` with their actions so the log ca
 came from. The log isn't part of the live view (it would grow every update); screens fetch it from
 `GET /api/log?game=<id>` when it's opened.
 
-**Actions:** `addPlayer`, `removePlayer`, `renamePlayer`, `setEmoji`, `changeLevel`, `setLevel`,
-`changeGear`, `die`, `newGame`, `switchGame`, `deleteGame`. See `src/game/actions.js`.
+**Actions:** `addPlayer`, `removePlayer`, `setEmoji`, `changeLevel`, `setLevel`, `changeGear`, `die`,
+`newGame`, `switchGame`, `deleteGame`. See `src/game/actions.js`.
 
 **Saved data** is versioned (`schema`). `normalizeState` upgrades older files on load, so
 updates never lose games.
@@ -99,7 +105,9 @@ sidebar, which serves it under `/api/hassio_ingress/<token>/`.
 
 1. Bump `version` in **both** `config.yaml` and `package.json` (a test fails if they differ).
 2. Add an entry at the top of `CHANGELOG.md`.
-3. Run `npm test`, then commit and push. Home Assistant shows the update in the add-on store.
+3. Run `npm run check`, then open a pull request into `main`: it checks the version went up and runs lint, types
+   and tests (`.github/workflows/pull-request.yml`). Merging releases it: Home Assistant shows the update in the
+   add-on store.
 
 Games are kept in the add-on's `/data` folder across updates.
 

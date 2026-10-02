@@ -1,14 +1,14 @@
 // Activity log: what happened in a game, so players can check it if something looks wrong.
 //
 // Entry shape: { at, kind, source, playerId?, name?, emoji?, from?, to?, kept? }
-//   kind     start | join | remove | rename | emoji | level | gear | death
+//   kind     start | join | remove | emoji | level | gear | death
 //   source   'dashboard' | 'phone' | null (which kind of screen did it)
 //   name, emoji   the player as they were at that moment (so removed players still read well)
 
 export const MAX_ENTRIES = 500;      // per game; the oldest are dropped
 export const MERGE_WINDOW_MS = 15_000;
 
-export const KINDS = Object.freeze(['start', 'join', 'remove', 'rename', 'emoji', 'level', 'gear', 'death']);
+export const KINDS = Object.freeze(['start', 'join', 'remove', 'emoji', 'level', 'gear', 'death']);
 export const SOURCES = Object.freeze(['dashboard', 'phone']);
 
 /**
@@ -17,7 +17,7 @@ export const SOURCES = Object.freeze(['dashboard', 'phone']);
  */
 const MERGEABLE = new Set(['level', 'gear']);
 /** Entries that describe a change; they're skipped when nothing changed (e.g. + at level 10). */
-const CHANGES = new Set(['level', 'gear', 'rename', 'emoji']);
+const CHANGES = new Set(['level', 'gear', 'emoji']);
 
 /** Who an entry is about, as they are right now. */
 export const aboutPlayer = (player) => ({ playerId: player.id, name: player.name, emoji: player.emoji });

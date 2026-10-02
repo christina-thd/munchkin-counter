@@ -32,6 +32,7 @@ export async function fetchLog(gameId) {
  * Calls `onView` with the full view on connect and after every change.
  * If the server was updated to a new version while the page stayed open, reloads the page
  * so it never runs old code against the new server.
+ * @param {(view: import('./rules.js').View) => void} onView
  */
 export function subscribe(onView) {
   let version = null;

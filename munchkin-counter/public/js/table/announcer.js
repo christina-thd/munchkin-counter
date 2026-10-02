@@ -28,8 +28,8 @@ const namesHtml = (players) => (players.length > 2
 
 /**
  * Lists the situations that apply to these players.
- * @param {Array} players
- * @param {{ playerId: string } | null} activeDeath  a death that should currently be announced
+ * @param {import('../shared/rules.js').Player[]} players
+ * @param {{ playerId: string, at?: number } | null} activeDeath  a death that should currently be announced
  * @returns {Situation[]}
  */
 export function situations(players, activeDeath = null) {

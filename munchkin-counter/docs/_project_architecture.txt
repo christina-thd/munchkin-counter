@@ -8,7 +8,9 @@ munchkin-counter/                  Home Assistant add-on containing the app
 ├── CHANGELOG.md                   release notes (shown in Home Assistant)
 ├── icon.png, logo.png             add-on store icon (128×128) and banner (250×100)
 ├── art/                           store-logo.svg, icon-apple.svg, icon-maskable.svg, render.sh (PNG images), wake-video.sh (keep-awake video)
-├── package.json                   version, scripts (start, dev, test), one dependency (qrcode)
+├── package.json                   version, scripts (start, dev, test, lint, typecheck, check), one dependency (qrcode) + dev tools
+├── eslint.config.js               lint rules (npm run lint)
+├── tsconfig.json                  type checking of the JavaScript from JSDoc, nothing compiled (npm run typecheck)
 ├── src/                           server (Node, no framework)
 │   ├── server.js                  entry point: http (+ https on 3443), graceful shutdown
 │   ├── config.js                  environment variables (PORT, HOST, HOST_IP, STATE_FILE, LOGO_FILE)
@@ -27,7 +29,7 @@ munchkin-counter/                  Home Assistant add-on containing the app
 │   ├── img/   logo.svg            built-in logo (a custom one can replace it via LOGO_FILE), icon-*.png
 │   ├── media/ wake.mp4, wake.webm tiny silent video that keeps the screen on over plain http
 │   └── js/
-│       ├── shared/  rules.js (used by server too), activity (log dialog), api, dialog, dom, format, games, screen, storage,
+│       ├── shared/  rules.js (used by server too; Player and View types), activity (log dialog), api, dialog, dom, format, games, screen, storage,
 │       │            device-check.js (phones → /join; tablets and TVs keep the dashboard)
 │       ├── app.js                 switches between the start page and dashboard (keeps full screen)
 │       ├── lobby/   lobby.js      start page
@@ -39,5 +41,8 @@ munchkin-counter/                  Home Assistant add-on containing the app
 └── docs/
     ├── DEVELOPMENT.md             dev setup, architecture, releasing, local Docker test
     └── _project_architecture.txt  this overview
+
+Next to it in the repository: repository.yaml and README.md (the add-on repository), .github/workflows/pull-request.yml
+(version goes up; lint, types and tests), .gitignore, .gitattributes (Unix line endings for the container files)
 
 Not in the repository: node_modules/ (npm install), data/ (local saved games)

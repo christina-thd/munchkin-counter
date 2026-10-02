@@ -1,7 +1,7 @@
 // Dashboard (tablet / TV): the board, announcer and sounds for the current game.
 import { refreshActivityLog, showActivityLog } from '../shared/activity.js';
 import { fetchInfo, sendAction } from '../shared/api.js';
-import { $ } from '../shared/dom.js';
+import { $, closest } from '../shared/dom.js';
 import { LevelWatcher } from './announcer.js';
 import { renderBoard } from './board.js';
 import { askPlayerName, confirmDeath, confirmRemovePlayer, showSoundTest } from './dialogs.js';
@@ -11,16 +11,20 @@ import { Ticker } from './ticker.js';
 
 const DEATH_FLASH_MS = 1600;
 
+/** @typedef {import('../shared/rules.js').View} View */
+
 /**
  * The dashboard only works while it's on screen: the announcer, sounds and level watching start
  * fresh (and silently, like a page load) each time it's shown, so nothing plays on the start page.
  * @param {{ openLobby: () => void }} options  switches the page to the start page view
+ * @returns {{ update(view: View): void, show(): void, hide(): void }}
  */
 export function createDashboard({ openLobby }) {
   const board = $('board');
   const sounds = new Soundboard();
   const flashIds = new Set();   // players who just died: their row flashes red
-  let view = { game: {}, players: [], games: [] };
+  /** @type {View} */
+  let view = { version: '', game: { id: '', name: '', lastDeath: null }, players: [], games: [] };
   let active = null;           // { ticker, levels } while shown
 
   const send = (action) => sendAction(action).catch((err) => console.warn(`${action.type} failed:`, err.message));
@@ -44,7 +48,7 @@ export function createDashboard({ openLobby }) {
   // ----- player rows -----
 
   board.addEventListener('click', async (e) => {
-    const button = e.target.closest('button[data-action]');
+    const button = closest(e, 'button[data-action]');
     if (!button) return;
     const { action, player: playerId } = button.dataset;
     const player = view.players.find((p) => p.id === playerId);

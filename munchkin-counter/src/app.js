@@ -69,6 +69,15 @@ function readJsonBody(req) {
  *   GET  /api/events    live view (Server-Sent Events)
  *   GET  /api/log?game=<id>   activity log of a game (the current one if no id)
  *   POST /api/actions   apply one action, e.g. { "type": "changeLevel", "playerId": "…", "delta": 1 }
+ *
+ * @param {object} options
+ * @param {Partial<import('./config.js').Config>} options.config   the tests pass only what they need
+ * @param {import('./game/state.js').State} options.state          changed in place by the actions
+ * @param {import('./store.js').JsonFileStore} options.store
+ * @param {SseHub} [options.hub]
+ * @param {() => number} [options.now]
+ * @param {{ error(...args: unknown[]): void }} [options.logger]
+ * @param {() => boolean} [options.httpsActive]
  */
 export function createApp({
   config, state, store, hub = new SseHub(), now = Date.now, logger = console,
