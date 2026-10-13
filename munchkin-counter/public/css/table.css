@@ -161,6 +161,24 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* ♂ / ♀ toggle: blue for male, pink for female, so the table can tell at a glance */
+.sex {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: calc(var(--pip) * 1.1);
+  height: calc(var(--pip) * 1.1);
+  border: 1px solid #ffffff26;
+  border-radius: 50%;
+  background: #00000055;
+  font-size: calc(var(--pip) * 0.7);
+  font-weight: 700;
+  line-height: 1;
+}
+.sex.male { color: var(--male); }
+.sex.female { color: var(--female); }
+.sex:active { background: #ffffff26; }
+
 .tag {
   flex: none;
   padding: 3px 9px;

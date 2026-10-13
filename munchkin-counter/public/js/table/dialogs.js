@@ -2,19 +2,20 @@
 import { openDialog } from '../shared/dialog.js';
 import { $, closest, escapeHtml } from '../shared/dom.js';
 import { formatGear } from '../shared/format.js';
-import { MAX_PLAYER_NAME, strengthOf } from '../shared/rules.js';
+import { MAX_PLAYER_NAME, SEX_OPTIONS, strengthOf } from '../shared/rules.js';
 import { SOUND_TEST } from './sounds.js';
 
 const playerLabel = (p) => `<b>${escapeHtml(p.emoji)} ${escapeHtml(p.name)}</b>`;
 
-/** @returns {Promise<string|null>} the name, or null if cancelled */
-export async function askPlayerName() {
+/** @returns {Promise<{ name: string, sex: string } | null>} the new player, or null if cancelled */
+export async function askNewPlayer() {
   const result = await openDialog({
     title: 'Add player',
     ok: 'Add',
     input: { placeholder: 'Player name', maxLength: MAX_PLAYER_NAME },
+    choice: { options: [...SEX_OPTIONS] },
   });
-  return result && result.value;
+  return result && { name: result.value, sex: result.choice };
 }
 
 export async function confirmRemovePlayer(player, gameName) {

@@ -4,7 +4,7 @@ import { fetchInfo, sendAction } from '../shared/api.js';
 import { $, closest } from '../shared/dom.js';
 import { LevelWatcher } from './announcer.js';
 import { renderBoard } from './board.js';
-import { askPlayerName, confirmDeath, confirmRemovePlayer, showSoundTest } from './dialogs.js';
+import { askNewPlayer, confirmDeath, confirmRemovePlayer, showSoundTest } from './dialogs.js';
 import { fitRows } from './sizing.js';
 import { LEVEL_SOUNDS, NEWS_SOUNDS, Soundboard } from './sounds.js';
 import { Ticker } from './ticker.js';
@@ -62,6 +62,9 @@ export function createDashboard({ openLobby }) {
       case 'setLevel':
         send({ type: 'setLevel', playerId, level: Number(button.dataset.level) });
         break;
+      case 'setSex':
+        send({ type: 'setSex', playerId, sex: button.dataset.sex });
+        break;
       case 'die':
         if (await confirmDeath(player)) {
           flashIds.add(playerId);
@@ -85,8 +88,8 @@ export function createDashboard({ openLobby }) {
   $('activity').addEventListener('click', () => showActivityLog(view.game.id, view.game.name));
 
   $('addPlayer').addEventListener('click', async () => {
-    const name = await askPlayerName();
-    if (name !== null) send({ type: 'addPlayer', name });
+    const player = await askNewPlayer();
+    if (player) send({ type: 'addPlayer', ...player });
   });
 
   function showSoundState() {

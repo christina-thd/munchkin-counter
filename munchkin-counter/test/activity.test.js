@@ -71,7 +71,17 @@ describe('recording actions', () => {
     act({ type: 'changeLevel', playerId: ana.id, delta: -1 }, 'phone');   // already level 1
     act({ type: 'setLevel', playerId: ana.id, level: 1 }, 'dashboard');
     act({ type: 'setEmoji', playerId: ana.id, emoji: ana.emoji }, 'phone');
+    act({ type: 'setSex', playerId: ana.id, sex: 'male' }, 'phone');            // already male
     assert.deepEqual(kinds(), ['join']);
+  });
+
+  test('a change of sex is logged each time, never merged', () => {
+    const ana = act({ type: 'addPlayer', name: 'Ana' });
+    act({ type: 'setSex', playerId: ana.id, sex: 'female' }, 'phone');
+    act({ type: 'setSex', playerId: ana.id, sex: 'male' }, 'phone');
+    assert.deepEqual(log().slice(1).map((e) => [e.kind, e.from, e.to, e.source]),
+      [['sex', 'male', 'female', 'phone'], ['sex', 'female', 'male', 'phone']]);
+    assert.deepEqual(normalizeLog(log()), log());                               // survives a save and load
   });
 
   test('a new game starts its own log', () => {
@@ -119,6 +129,7 @@ describe('describing entries', () => {
     assert.equal(plain({ kind: 'level', ...ana, from: 9, to: 10 }), '🧙 Ana ▲ level 9 → 10 👑');
     assert.equal(plain({ kind: 'gear', ...ana, from: 2, to: -1 }), '🧙 Ana ▼ gear +2 → -1');
     assert.equal(plain({ kind: 'death', ...ana, from: 3, to: 0 }), '💀 🧙 Ana died and lost +3 gear');
+    assert.equal(plain({ kind: 'sex', ...ana, from: 'male', to: 'female' }), '🧙 Ana is now female ♂ → ♀');
     assert.equal(plain({ kind: 'start', kept: 4 }), '🎲 Game started with the same 4 players');
   });
 

@@ -3,7 +3,7 @@ import { fetchLog } from './api.js';
 import { openDialog } from './dialog.js';
 import { $, escapeHtml } from './dom.js';
 import { formatGear, plural } from './format.js';
-import { MAX_LEVEL } from './rules.js';
+import { MAX_LEVEL, SEX_SYMBOLS } from './rules.js';
 
 const SOURCE_LABELS = { dashboard: 'Tablet', phone: 'Phone' };
 
@@ -23,6 +23,8 @@ export function describeEntry(e) {
       return `${who(e)} was removed`;
     case 'emoji':
       return `<b>${escapeHtml(e.name)}</b> changed emoji ${escapeHtml(e.from)} → ${escapeHtml(e.to)}`;
+    case 'sex':
+      return `${who(e)} is now ${e.to === 'female' ? 'female' : 'male'} ${SEX_SYMBOLS[e.from] ?? ''} → ${SEX_SYMBOLS[e.to] ?? ''}`;
     case 'level':
       return `${who(e)} ${arrow(e.from, e.to)} level ${e.from} → ${e.to}${e.to >= MAX_LEVEL ? ' 👑' : ''}`;
     case 'gear':

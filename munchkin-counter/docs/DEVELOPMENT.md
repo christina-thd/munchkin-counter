@@ -80,7 +80,7 @@ Screens send `source: "dashboard"` or `"phone"` with their actions so the log ca
 came from. The log isn't part of the live view (it would grow every update); screens fetch it from
 `GET /api/log?game=<id>` when it's opened.
 
-**Actions:** `addPlayer`, `removePlayer`, `setEmoji`, `changeLevel`, `setLevel`, `changeGear`, `die`,
+**Actions:** `addPlayer`, `removePlayer`, `setEmoji`, `setSex`, `changeLevel`, `setLevel`, `changeGear`, `die`,
 `newGame`, `switchGame`, `deleteGame`. See `src/game/actions.js`.
 
 **Saved data** is versioned (`schema`). `normalizeState` upgrades older files on load, so

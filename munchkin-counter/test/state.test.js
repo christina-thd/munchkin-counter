@@ -14,7 +14,16 @@ describe('normalizeState', () => {
   test('migrates the original single-game format', () => {
     const state = normalizeState({ players: [{ id: 'a', name: 'Ana', emoji: '🧙', level: 3, bonus: 2 }] }, 0);
     assert.equal(state.schema, SCHEMA_VERSION);
-    assert.deepEqual(currentGame(state).players, [{ id: 'a', name: 'Ana', emoji: '🧙', level: 3, gear: 2 }]);
+    assert.deepEqual(currentGame(state).players, [{ id: 'a', name: 'Ana', emoji: '🧙', sex: 'male', level: 3, gear: 2 }]);
+  });
+
+  test('players saved before 2.8.0 become male; a saved sex is kept, an invalid one is repaired', () => {
+    const raw = { games: [{ id: 'g', players: [
+      { id: 'a', name: 'Ana' },
+      { id: 'b', name: 'Bo', sex: 'female' },
+      { id: 'c', name: 'Cy', sex: 'robot' },
+    ] }] };
+    assert.deepEqual(currentGame(normalizeState(raw, 0)).players.map((p) => p.sex), ['male', 'female', 'male']);
   });
 
   test('migrates schema 1 (current, bonus, lastDeath.id)', () => {

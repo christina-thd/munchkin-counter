@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.8.0
+- Add character's gender
+
 ## 2.7.0
 - Lint and type checks on every release
 - Runs on Node 22

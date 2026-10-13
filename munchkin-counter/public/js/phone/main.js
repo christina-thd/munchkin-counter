@@ -1,9 +1,9 @@
-// Phone controls: pick (or create) your player, then change your own level, gear and emoji.
+// Phone controls: pick (or create) your player, then change your own level, gear, emoji and sex.
 import { fetchInfo, sendAction, setActionSource, subscribe } from '../shared/api.js';
-import { openDialog } from '../shared/dialog.js';
+import { choiceHtml, openDialog } from '../shared/dialog.js';
 import { $, closest, escapeHtml, input, restartAnimation } from '../shared/dom.js';
 import { formatGear } from '../shared/format.js';
-import { MAX_LEVEL, MIN_LEVEL, strengthOf } from '../shared/rules.js';
+import { MAX_LEVEL, MIN_LEVEL, otherSex, SEX_ICON_OPTIONS, SEX_LABELS, SEX_SYMBOLS, strengthOf } from '../shared/rules.js';
 import { storage } from '../shared/storage.js';
 
 const PLAYER_KEY = 'playerId';   // remembered per phone
@@ -31,7 +31,11 @@ function choosePlayer(id) {
 function renderPicker() {
   $('playerList').innerHTML = players.length
     ? players.map((p) => `
-        <button data-player="${p.id}"><span class="emoji">${escapeHtml(p.emoji)}</span>${escapeHtml(p.name)}</button>`).join('')
+        <button data-player="${p.id}">
+          <span class="emoji">${escapeHtml(p.emoji)}</span>
+          <span class="player-name">${escapeHtml(p.name)}</span>
+          <span class="sex-icon ${p.sex}" title="${SEX_LABELS[p.sex]}">${SEX_SYMBOLS[p.sex]}</span>
+        </button>`).join('')
     : '<p class="hint">No players yet — enter your name below.</p>';
 }
 
@@ -39,6 +43,10 @@ function renderPlayer(player) {
   const won = player.level >= MAX_LEVEL;
   $('emojiButton').textContent = player.emoji;
   $('playerName').textContent = player.name;
+  const sexButton = $('sexButton');
+  sexButton.textContent = SEX_SYMBOLS[player.sex];
+  sexButton.className = `sex-icon ${player.sex}`;
+  sexButton.title = `${SEX_LABELS[player.sex]} (tap to change sex)`;
   $('strength').textContent = String(strengthOf(player));
   $('level').textContent = String(player.level);
   $('gear').textContent = formatGear(player.gear);
@@ -66,10 +74,13 @@ $('playerList').addEventListener('click', (e) => {
   if (button) choosePlayer(button.dataset.player);
 });
 
+$('newSex').innerHTML = choiceHtml('newSex', [...SEX_ICON_OPTIONS], { className: 'icons' });
+
 $('joinForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const name = input('newName');
-  const player = await sendAction({ type: 'addPlayer', name: name.value }).catch(() => null);
+  const sex = /** @type {HTMLInputElement} */ ($('joinForm').querySelector('input[name="newSex"]:checked')).value;
+  const player = await sendAction({ type: 'addPlayer', name: name.value, sex }).catch(() => null);
   if (!player) return;
   name.value = '';
   choosePlayer(player.id);
@@ -84,6 +95,11 @@ for (const button of /** @type {NodeListOf<HTMLButtonElement>} */ (document.quer
     send({ type: button.dataset.action, playerId: myId, delta: Number(button.dataset.delta) });
   });
 }
+
+$('sexButton').addEventListener('click', () => {
+  const player = me();
+  if (player) send({ type: 'setSex', playerId: myId, sex: otherSex(player.sex) });
+});
 
 $('emojiButton').addEventListener('click', () => {
   $('emojiGrid').hidden = !$('emojiGrid').hidden;

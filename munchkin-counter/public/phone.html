@@ -25,15 +25,22 @@
     <h2>Who are you?</h2>
     <div class="player-list" id="playerList"></div>
     <form class="join" id="joinForm">
-      <input id="newName" placeholder="New player name" maxlength="20" autocomplete="off">
-      <button type="submit">Join</button>
+      <div class="label">New player</div>
+      <div class="join-row">
+        <input id="newName" placeholder="Your name" maxlength="20" autocomplete="off" aria-label="Your name">
+        <div id="newSex"></div>
+      </div>
+      <button type="submit" class="join-button">Join the game</button>
     </form>
   </section>
 
   <section id="playView" hidden>
     <div class="me">
       <button class="emoji-button" id="emojiButton" aria-label="Change emoji"></button>
-      <div class="name" id="playerName"></div>
+      <div class="who">
+        <div class="name" id="playerName"></div>
+        <button class="sex-icon" id="sexButton" aria-label="Change sex"></button>
+      </div>
       <div class="strength"><b id="strength"></b><span>Strength</span></div>
     </div>
     <div class="emoji-grid" id="emojiGrid" hidden></div>

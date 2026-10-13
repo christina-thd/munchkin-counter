@@ -1,4 +1,6 @@
-import { clampLevel, EMOJIS, MAX_GAME_NAME, MAX_LEVEL, MAX_PLAYER_NAME, MIN_LEVEL } from '../../public/js/shared/rules.js';
+import {
+  clampLevel, EMOJIS, MAX_GAME_NAME, MAX_LEVEL, MAX_PLAYER_NAME, MIN_LEVEL, SEXES,
+} from '../../public/js/shared/rules.js';
 import { aboutPlayer, record, SOURCES } from './activity.js';
 import { createGame, currentGame, newId } from './state.js';
 
@@ -24,6 +26,12 @@ function step(delta) {
   return n;
 }
 
+/** 'male' or 'female'; anything else is an error. */
+function validSex(sex) {
+  if (!SEXES.includes(sex)) throw new ActionError(`sex must be ${SEXES.join(' or ')}`);
+  return sex;
+}
+
 function findPlayer(game, playerId) {
   const player = game.players.find((p) => p.id === playerId);
   if (!player) throw new ActionError(`No player ${playerId} in this game`, 404);
@@ -41,12 +49,14 @@ function findGame(state, gameId) {
 // and may return a result for the caller. `ctx` is { now, source }.
 
 const handlers = {
-  addPlayer(state, { name }, ctx) {
+  /** `sex` is chosen when adding; without one (older screens) the character starts male. */
+  addPlayer(state, { name, sex = SEXES[0] }, ctx) {
     const game = currentGame(state);
     const player = {
       id: newId(),
       name: text(name, MAX_PLAYER_NAME) || `Player ${game.players.length + 1}`,
       emoji: EMOJIS[game.players.length % EMOJIS.length],
+      sex: validSex(sex),
       level: MIN_LEVEL,
       gear: 0,
     };
@@ -69,6 +79,17 @@ const handlers = {
     const from = player.emoji;
     player.emoji = emoji;
     record(game, { kind: 'emoji', ...aboutPlayer(player), from, to: emoji }, ctx);
+    return player;
+  },
+
+  /** The character's sex (Change Sex curse, sex-specific items). It's kept when a new game keeps the players. */
+  setSex(state, { playerId, sex }, ctx) {
+    const to = validSex(sex);
+    const game = currentGame(state);
+    const player = findPlayer(game, playerId);
+    const from = player.sex;
+    player.sex = to;
+    record(game, { kind: 'sex', ...aboutPlayer(player), from, to }, ctx);
     return player;
   },
 

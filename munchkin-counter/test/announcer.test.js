@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 import { LevelWatcher, LineDeck, situations, SituationTracker } from '../public/js/table/announcer.js';
 
-const player = (id, level = 1, gear = 0) => ({ id, name: id, emoji: '🧙', level, gear });
+/** @returns {import('../public/js/shared/rules.js').Player} */
+const player = (id, level = 1, gear = 0) => ({ id, name: id, emoji: '🧙', sex: 'male', level, gear });
 const categories = (list) => list.map((s) => s.category);
 
 describe('situations', () => {

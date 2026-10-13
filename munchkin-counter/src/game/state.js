@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { normalizeLog } from './activity.js';
-import { clampLevel, EMOJIS, MAX_GAME_NAME, MAX_PLAYER_NAME } from '../../public/js/shared/rules.js';
+import { clampLevel, EMOJIS, MAX_GAME_NAME, MAX_PLAYER_NAME, SEXES } from '../../public/js/shared/rules.js';
 
 /**
  * State shape (saved to disk as JSON):
@@ -10,7 +10,7 @@ import { clampLevel, EMOJIS, MAX_GAME_NAME, MAX_PLAYER_NAME } from '../../public
  *     currentGameId: string,
  *     games: [{
  *       id, name, createdAt,
- *       players: [{ id, name, emoji, level, gear }],
+ *       players: [{ id, name, emoji, sex, level, gear }],   (sex: 'male' | 'female', added in 2.8.0)
  *       lastDeath: { playerId, at } | null,
  *       log: [activity entries],          (see activity.js)
  *     }],
@@ -43,6 +43,7 @@ function normalizePlayer(raw, index) {
     id: String(raw.id ?? newId()),
     name: toText(raw.name, MAX_PLAYER_NAME, `Player ${index + 1}`),
     emoji: typeof raw.emoji === 'string' && raw.emoji ? raw.emoji : EMOJIS[index % EMOJIS.length],
+    sex: SEXES.includes(raw.sex) ? raw.sex : SEXES[0],   // saved before 2.8.0: none yet
     level: clampLevel(toInt(raw.level, 1)),
     gear: toInt(raw.gear ?? raw.bonus, 0),              // schema 1 called it "bonus"
   };

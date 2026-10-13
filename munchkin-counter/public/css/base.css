@@ -12,6 +12,8 @@
   --green: #4f8a2f;
   --shadow-red: #7a1a12;
   --on-gold: #2a1c12;
+  --male: #7cc4ff;      /* ♂ */
+  --female: #ff8fc8;    /* ♀ */
 
   --font-display: "Luckiest Guy", "Arial Black", Impact, sans-serif;   /* titles, names, numbers */
   --font-body: Fredoka, "Trebuchet MS", system-ui, sans-serif;
@@ -101,6 +103,37 @@ button { border: 0; background: none; cursor: pointer; }
 }
 .sheet label { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; font-size: 16px; }
 .sheet label input { width: 22px; height: 22px; accent-color: var(--gold); }
+
+/* one-of-several buttons (radio inputs underneath): ♂ Male / ♀ Female when adding a player */
+.choice { display: flex; gap: 8px; margin-bottom: 14px; }
+.choice label {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.choice label input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.choice label:has(input:checked) { border-color: var(--gold); color: var(--ink); }
+.choice label.male:has(input:checked) {
+  border-color: var(--male); color: var(--male); background: color-mix(in srgb, var(--male) 12%, var(--surface));
+}
+.choice label.female:has(input:checked) {
+  border-color: var(--female); color: var(--female); background: color-mix(in srgb, var(--female) 12%, var(--surface));
+}
+/* icon-only choice: round ♂ / ♀ buttons */
+.choice.icons label { flex: none; width: 46px; height: 46px; padding: 0; border-radius: 50%; font-size: 22px; font-weight: 700; }
+.choice label:has(input:focus-visible) { outline: 2px solid var(--gold); outline-offset: 2px; }
 
 .sheet .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
 .sheet .actions button {
