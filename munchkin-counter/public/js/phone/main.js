@@ -5,8 +5,9 @@ import { choiceHtml, openDialog } from '../shared/dialog.js';
 import { $, closest, escapeHtml, input, restartAnimation } from '../shared/dom.js';
 import { formatGear } from '../shared/format.js';
 import {
-  AVATAR_IDS, MAX_LEVEL, MIN_LEVEL, otherSex, SEX_ICON_OPTIONS, SEX_LABELS, SEX_SYMBOLS, strengthOf,
+  AVATAR_IDS, MAX_LEVEL, MIN_LEVEL, otherSex, SEX_LABELS, strengthOf,
 } from '../shared/rules.js';
+import { SEX_ICON_OPTIONS, sexIcon } from '../shared/sex-icons.js';
 import { storage } from '../shared/storage.js';
 import { showMyReport } from './report.js';
 
@@ -40,7 +41,7 @@ function renderPicker() {
         <button data-player="${p.id}">
           ${avatarHtml(p.avatar, { className: 'list-avatar' })}
           <span class="player-name">${escapeHtml(p.name)}</span>
-          <span class="sex-icon ${p.sex}" title="${SEX_LABELS[p.sex]}">${SEX_SYMBOLS[p.sex]}</span>
+          <span class="sex-icon ${p.sex}" title="${SEX_LABELS[p.sex]}">${sexIcon(p.sex)}</span>
         </button>`).join('')
     : '<p class="hint">No players yet — enter your name below.</p>';
 }
@@ -50,7 +51,7 @@ function renderPlayer(player) {
   $('avatarButton').innerHTML = avatarHtml(player.avatar);
   $('playerName').textContent = player.name;
   const sexButton = $('sexButton');
-  sexButton.textContent = SEX_SYMBOLS[player.sex];
+  sexButton.innerHTML = sexIcon(player.sex);
   sexButton.className = `sex-icon ${player.sex}`;
   sexButton.title = `${SEX_LABELS[player.sex]} (tap to change sex)`;
   $('strength').textContent = String(strengthOf(player));

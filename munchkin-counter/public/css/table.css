@@ -169,13 +169,12 @@
   place-items: center;
   width: calc(var(--pip) * 1.1);
   height: calc(var(--pip) * 1.1);
+  padding: 0;               /* a button's default side padding would push the icon off-center */
   border: 1px solid #ffffff26;
   border-radius: 50%;
   background: #00000055;
-  font-size: calc(var(--pip) * 0.7);
-  font-weight: 700;
-  line-height: 1;
 }
+.sex .sex-glyph { width: calc(var(--pip) * 0.76); height: calc(var(--pip) * 0.76); }
 .sex.male { color: var(--male); }
 .sex.female { color: var(--female); }
 .sex:active { background: #ffffff26; }

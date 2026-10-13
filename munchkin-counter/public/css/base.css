@@ -33,6 +33,9 @@ button, input { font: inherit; color: inherit; }
 button { border: 0; background: none; cursor: pointer; }
 [hidden] { display: none !important; }
 
+/* ♂ / ♀ icons (js/shared/sex-icons.js): inline in text by default; round buttons size them themselves */
+.sex-glyph { display: inline-block; flex: none; width: 1.1em; height: 1.1em; vertical-align: -0.2em; }
+
 /* avatar tokens (img/avatars/*.svg): sized by where they sit; `inline` follows the text around it */
 .avatar-img { display: block; aspect-ratio: 1; -webkit-user-drag: none; }
 .avatar-img.inline { display: inline-block; width: 1.35em; height: 1.35em; vertical-align: -0.32em; }
@@ -137,6 +140,8 @@ button { border: 0; background: none; cursor: pointer; }
 }
 /* icon-only choice: round ♂ / ♀ buttons */
 .choice.icons label { flex: none; width: 46px; height: 46px; padding: 0; border-radius: 50%; font-size: 22px; font-weight: 700; }
+.choice label .sex-glyph { width: 20px; height: 20px; margin-right: 6px; }
+.choice.icons label .sex-glyph { width: 24px; height: 24px; margin: 0; }
 .choice label:has(input:focus-visible) { outline: 2px solid var(--gold); outline-offset: 2px; }
 
 .sheet .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }

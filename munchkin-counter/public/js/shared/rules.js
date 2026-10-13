@@ -49,16 +49,8 @@ export function freeAvatar(players) {
  * The first is the default for players saved before 2.8.0 and for screens that don't send one.
  */
 export const SEXES = Object.freeze(['male', 'female']);
-export const SEX_SYMBOLS = Object.freeze({ male: '♂', female: '♀' });
 export const SEX_LABELS = Object.freeze({ male: 'Male', female: 'Female' });
-/** The picker shown when adding a player in the dashboard's dialog: "♂ Male", "♀ Female". */
-export const SEX_OPTIONS = Object.freeze(SEXES.map((sex) => ({
-  value: sex, label: `${SEX_SYMBOLS[sex]} ${SEX_LABELS[sex]}`, className: sex,
-})));
-/** The same, icon only (the phone's join form): "♂", "♀", named for screen readers. */
-export const SEX_ICON_OPTIONS = Object.freeze(SEXES.map((sex) => ({
-  value: sex, label: SEX_SYMBOLS[sex], title: SEX_LABELS[sex], className: sex,
-})));
+// Their ♂ / ♀ icons, and the pickers: js/shared/sex-icons.js
 
 /** @param {'male' | 'female'} sex */
 export const otherSex = (sex) => (sex === 'female' ? 'male' : 'female');
