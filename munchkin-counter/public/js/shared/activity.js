@@ -4,7 +4,8 @@ import { avatarHtml, avatarLabel } from './avatars.js';
 import { openDialog } from './dialog.js';
 import { $, escapeHtml } from './dom.js';
 import { formatGear, plural } from './format.js';
-import { MAX_LEVEL, SEX_SYMBOLS } from './rules.js';
+import { MAX_LEVEL } from './rules.js';
+import { sexIcon } from './sex-icons.js';
 
 const SOURCE_LABELS = { dashboard: 'Tablet', phone: 'Phone' };
 
@@ -29,7 +30,7 @@ export function describeEntry(e) {
     case 'emoji':     // logged before 2.8.0
       return `<b>${escapeHtml(e.name)}</b> changed emoji ${escapeHtml(e.from)} → ${escapeHtml(e.to)}`;
     case 'sex':
-      return `${who(e)} is now ${e.to === 'female' ? 'female' : 'male'} ${SEX_SYMBOLS[e.from] ?? ''} → ${SEX_SYMBOLS[e.to] ?? ''}`;
+      return `${who(e)} is now ${e.to === 'female' ? 'female' : 'male'} ${sexIcon(e.from)} → ${sexIcon(e.to)}`;
     case 'level':
       return `${who(e)} ${arrow(e.from, e.to)} level ${e.from} → ${e.to}${e.to >= MAX_LEVEL ? ' 👑' : ''}`;
     case 'gear':

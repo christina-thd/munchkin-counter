@@ -2,7 +2,8 @@
 import { avatarHtml } from '../shared/avatars.js';
 import { escapeHtml } from '../shared/dom.js';
 import { formatGear } from '../shared/format.js';
-import { MAX_LEVEL, MIN_LEVEL, otherSex, SEX_LABELS, SEX_SYMBOLS, strengthOf } from '../shared/rules.js';
+import { MAX_LEVEL, MIN_LEVEL, otherSex, SEX_LABELS, strengthOf } from '../shared/rules.js';
+import { sexIcon } from '../shared/sex-icons.js';
 
 const EMPTY = `
   <div class="empty">
@@ -34,7 +35,7 @@ function stepper({ label, className, action, player, value, canDown = true, canU
 function sexToggle(player) {
   const next = otherSex(player.sex);
   return `<button class="sex ${player.sex}" data-action="setSex" data-player="${player.id}" data-sex="${next}"
-            title="${SEX_LABELS[player.sex]} (tap to change sex)" aria-label="Change sex to ${next}">${SEX_SYMBOLS[player.sex]}</button>`;
+            title="${SEX_LABELS[player.sex]} (tap to change sex)" aria-label="Change sex to ${next}">${sexIcon(player.sex)}</button>`;
 }
 
 function rowHtml(player, { rank, leading, flash }) {

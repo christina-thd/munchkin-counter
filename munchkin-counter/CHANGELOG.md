@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.8.1
+- Fix gender icons on iPhone
+
 ## 2.8.0
 - Add character's gender
 - Add character avatars

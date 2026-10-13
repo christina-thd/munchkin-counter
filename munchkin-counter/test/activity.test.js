@@ -135,7 +135,8 @@ describe('describing entries', () => {
     assert.equal(plain({ kind: 'level', ...ana, from: 9, to: 10 }), ' Ana ▲ level 9 → 10 👑');
     assert.equal(plain({ kind: 'gear', ...ana, from: 2, to: -1 }), ' Ana ▼ gear +2 → -1');
     assert.equal(plain({ kind: 'death', ...ana, from: 3, to: 0 }), '💀  Ana died and lost +3 gear');
-    assert.equal(plain({ kind: 'sex', ...ana, from: 'male', to: 'female' }), ' Ana is now female ♂ → ♀');
+    assert.equal(plain({ kind: 'sex', ...ana, from: 'male', to: 'female' }), ' Ana is now female  → ');   // ♂ → ♀ as icons
+    assert.equal((describeEntry({ kind: 'sex', ...ana, from: 'male', to: 'female' }).match(/class="sex-glyph"/g) ?? []).length, 2);
     assert.equal(plain({ kind: 'avatar', ...ana, from: 'elf', to: 'dragon' }), 'Ana is now  Dragon');
     assert.equal(plain({ kind: 'start', kept: 4 }), '🎲 Game started with the same 4 players');
     assert.match(describeEntry({ kind: 'join', ...ana }), /<img class="avatar-img inline" src="img\/avatars\/elf\.svg" alt="Elf"/);

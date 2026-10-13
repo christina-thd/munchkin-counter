@@ -3,7 +3,8 @@ import { avatarHtml } from '../shared/avatars.js';
 import { openDialog } from '../shared/dialog.js';
 import { $, closest, escapeHtml } from '../shared/dom.js';
 import { formatGear } from '../shared/format.js';
-import { MAX_PLAYER_NAME, SEX_OPTIONS, strengthOf } from '../shared/rules.js';
+import { MAX_PLAYER_NAME, strengthOf } from '../shared/rules.js';
+import { SEX_OPTIONS } from '../shared/sex-icons.js';
 import { SOUND_TEST } from './sounds.js';
 
 const playerLabel = (p) => `<b>${avatarHtml(p.avatar, { inline: true })} ${escapeHtml(p.name)}</b>`;
