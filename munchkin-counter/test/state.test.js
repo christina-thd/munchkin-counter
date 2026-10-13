@@ -18,6 +18,20 @@ describe('normalizeState', () => {
     assert.deepEqual(currentGame(state).players, [{ id: 'a', name: 'Ana', avatar: 'wizard', sex: 'male', level: 3, gear: 2 }]);
   });
 
+  test('a game saved with a shared avatar: the first player keeps it, the next gets a free one', () => {
+    const raw = { games: [
+      { id: 'g', players: [{ id: 'a', emoji: '🐸' }, { id: 'b', emoji: '🐙' }, { id: 'c', avatar: 'elf' }] },
+      { id: 'h', players: [{ id: 'd', avatar: 'slime' }] },                // other games are separate
+    ] };
+    const state = normalizeState(raw, 0);
+    const avatars = state.games[0].players.map((p) => p.avatar);
+    assert.equal(avatars[0], 'slime');                                     // both emojis meant the slime
+    assert.equal(avatars[1], 'dwarf');                                     // the first one nobody had
+    assert.equal(avatars[2], 'elf');
+    assert.equal(new Set(avatars).size, 3);
+    assert.equal(state.games[1].players[0].avatar, 'slime');
+  });
+
   test('players saved before 2.8.0 get the avatar closest to their emoji; a saved avatar is kept', () => {
     const raw = { games: [{ id: 'g', players: [
       { id: 'a', emoji: '🧝' }, { id: 'b', emoji: '💀' }, { id: 'c', emoji: '🐼' }, { id: 'd', avatar: 'mimic' },

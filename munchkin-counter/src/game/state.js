@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { normalizeLog } from './activity.js';
-import { AVATAR_IDS, clampLevel, MAX_GAME_NAME, MAX_PLAYER_NAME, SEXES } from '../../public/js/shared/rules.js';
+import { AVATAR_IDS, clampLevel, freeAvatar, MAX_GAME_NAME, MAX_PLAYER_NAME, SEXES } from '../../public/js/shared/rules.js';
 
 /**
  * State shape (saved to disk as JSON):
@@ -61,8 +61,21 @@ function normalizePlayer(raw, index) {
   };
 }
 
+/**
+ * Every avatar belongs to one player per game. Games saved earlier could share one (two emojis that became the
+ * same avatar, or picked before 2.8.2): the first player keeps it, the next ones get the first free avatars.
+ */
+function uniqueAvatars(players) {
+  const seen = new Set();
+  for (const player of players) {
+    if (seen.has(player.avatar)) player.avatar = freeAvatar(players.filter((p) => p !== player));
+    seen.add(player.avatar);
+  }
+  return players;
+}
+
 function normalizeGame(raw, index, now) {
-  const players = Array.isArray(raw.players) ? raw.players.map(normalizePlayer) : [];
+  const players = uniqueAvatars(Array.isArray(raw.players) ? raw.players.map(normalizePlayer) : []);
   const death = raw.lastDeath;
   const deathPlayerId = death && String(death.playerId ?? death.id ?? '');   // schema 1 called it "id"
   return {

@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.8.2
+- Each avatar can only be used by one player per game
+
 ## 2.8.1
 - Fix gender icons on iPhone
 
