@@ -72,10 +72,13 @@ const handlers = {
     record(game, { kind: 'remove', ...aboutPlayer(player) }, ctx);
   },
 
+  /** Each avatar belongs to one player per game: one someone else has is refused (two phones picking at once). */
   setAvatar(state, { playerId, avatar }, ctx) {
     if (!AVATAR_IDS.includes(avatar)) throw new ActionError('Unknown avatar');
     const game = currentGame(state);
     const player = findPlayer(game, playerId);
+    const owner = game.players.find((p) => p.avatar === avatar && p.id !== player.id);
+    if (owner) throw new ActionError(`${owner.name} already has that avatar`, 409);
     const from = player.avatar;
     player.avatar = avatar;
     record(game, { kind: 'avatar', ...aboutPlayer(player), from, to: avatar }, ctx);

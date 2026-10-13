@@ -61,8 +61,15 @@ function renderPlayer(player) {
   $('levelPanel').classList.toggle('won', won);
   input('levelDown').disabled = player.level <= MIN_LEVEL;
   input('levelUp').disabled = player.level >= MAX_LEVEL;
-  for (const button of $('avatarGrid').querySelectorAll('button')) {
-    button.classList.toggle('selected', button.dataset.avatar === player.avatar);
+  // Each avatar belongs to one player per game: the ones others have can't be picked
+  const owners = new Map(players.filter((p) => p.id !== player.id).map((p) => [p.avatar, p.name]));
+  for (const button of /** @type {NodeListOf<HTMLButtonElement>} */ ($('avatarGrid').querySelectorAll('button'))) {
+    const id = button.dataset.avatar;
+    const owner = owners.get(id);
+    button.classList.toggle('selected', id === player.avatar);
+    button.classList.toggle('taken', Boolean(owner));
+    button.disabled = Boolean(owner);
+    button.title = owner ? `${avatarLabel(id)}: ${owner} has it` : avatarLabel(id);
   }
 }
 

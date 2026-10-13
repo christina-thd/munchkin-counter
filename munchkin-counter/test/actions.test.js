@@ -45,6 +45,17 @@ describe('players', () => {
     assert.throws(() => act({ type: 'setEmoji', playerId: a.id, emoji: '🧙' }), /Unknown action/);   // gone in 2.8.0
   });
 
+  test("setAvatar refuses an avatar another player in the game has; your own is fine", () => {
+    const a = add('Ana');
+    const b = add('Bo');
+    assert.throws(() => act({ type: 'setAvatar', playerId: b.id, avatar: a.avatar }), { status: 409, message: /Ana/ });
+    assert.notEqual(players()[1].avatar, a.avatar);
+    act({ type: 'setAvatar', playerId: a.id, avatar: a.avatar });           // already hers: nothing to refuse
+    act({ type: 'removePlayer', playerId: a.id });
+    act({ type: 'setAvatar', playerId: b.id, avatar: 'elf' });             // free again once she left
+    assert.equal(players()[0].avatar, 'elf');
+  });
+
   test('addPlayer takes the sex chosen when adding, and rejects an invalid one', () => {
     assert.equal(act({ type: 'addPlayer', name: 'Ana', sex: 'female' }).sex, 'female');
     assert.equal(act({ type: 'addPlayer', name: 'Bo', sex: 'male' }).sex, 'male');
