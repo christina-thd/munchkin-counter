@@ -62,13 +62,14 @@ public/                   browser (plain ES modules, no build step)
   manifest.webmanifest    web app manifest (home screen opens full screen)
   js/shared/              rules.js (also used by the server; the Player and View types every screen gets),
                           activity (log dialog), api, avatars (the avatar pictures as HTML), dialog, dom,
-                          format, games, screen, storage;
+                          format, games, report (levels over the game from the log, pure), report-chart (its
+                          chart, full or compact), screen, storage;
                           device-check.js (plain script: sends phones to /join, keeps tablets and TVs)
   js/app.js               tablet / TV entry: switches between the start page and dashboard views
   js/lobby/               start page (lobby.js)
-  js/table/               dashboard: dashboard.js, board, sizing, dialogs,
+  js/table/               dashboard: dashboard.js, board, sizing, dialogs, report (📈 chart dialog),
                           announcer (situations, pure) + lines (texts) + ticker (UI), sounds
-  js/phone/               phone controls
+  js/phone/               phone controls (main.js) and the phone's simpler 📈 report (report.js)
 
 test/                     node:test suites
 ```

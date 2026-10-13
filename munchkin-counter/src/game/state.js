@@ -102,10 +102,13 @@ function summarize(game) {
   };
 }
 
-/** The activity log of one game (oldest first), or null if there's no such game. */
+/**
+ * The activity log of one game (oldest first), or null if there's no such game. With the game's players as
+ * they are now, for its report: players kept from a previous game never "joined" this one in the log.
+ */
 export function gameLog(state, gameId) {
   const game = state.games.find((g) => g.id === gameId);
-  return game ? { gameId: game.id, name: game.name, entries: game.log } : null;
+  return game ? { gameId: game.id, name: game.name, players: game.players, entries: game.log } : null;
 }
 
 /**

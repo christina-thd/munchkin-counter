@@ -8,6 +8,7 @@ import {
   AVATAR_IDS, MAX_LEVEL, MIN_LEVEL, otherSex, SEX_ICON_OPTIONS, SEX_LABELS, SEX_SYMBOLS, strengthOf,
 } from '../shared/rules.js';
 import { storage } from '../shared/storage.js';
+import { showMyReport } from './report.js';
 
 const PLAYER_KEY = 'playerId';   // remembered per phone
 
@@ -15,6 +16,8 @@ setActionSource('phone');
 
 /** @type {import('../shared/rules.js').Player[]} */
 let players = [];
+/** @type {import('../shared/rules.js').View | null} */
+let view = null;
 let myId = storage.get(PLAYER_KEY);
 
 const me = () => players.find((p) => p.id === myId);
@@ -135,7 +138,10 @@ $('died').addEventListener('click', async () => {
 $('avatarGrid').innerHTML = AVATAR_IDS.map((id) => `
   <button data-avatar="${id}" title="${avatarLabel(id)}" aria-label="${avatarLabel(id)}">${avatarHtml(id)}</button>`).join('');
 
-subscribe((view) => {
-  players = view.players;
+$('report').addEventListener('click', () => { if (view) showMyReport(view, myId); });
+
+subscribe((next) => {
+  view = next;
+  players = next.players;
   render();
 });

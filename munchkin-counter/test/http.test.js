@@ -252,6 +252,8 @@ describe('activity log API', () => {
     const entry = log.entries.at(-1);
     assert.deepEqual([entry.kind, entry.playerId, entry.source], ['join', player.id, 'phone']);
 
+    assert.ok(log.players.some((p) => p.id === player.id));            // the game's players, for its report
+
     const same = await (await fetch(`${base}/api/log?game=${log.gameId}`)).json();
     assert.equal(same.entries.length, log.entries.length);
     assert.equal((await fetch(`${base}/api/log?game=nope`)).status, 404);

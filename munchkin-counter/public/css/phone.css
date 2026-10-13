@@ -162,6 +162,29 @@ h2 { margin: 8px 0 16px; font: 400 20px var(--font-display); letter-spacing: 0.0
 }
 .died-button:active { background: var(--red); }
 
+/* 💀 I died, with 📈 (the game report) beside it */
+.bottom-row { display: flex; gap: 10px; }
+.bottom-row .died-button { flex: 1; width: auto; }
+.report-button {
+  flex: none;
+  width: 60px;
+  border: 1px solid #ffffff22;
+  border-radius: 16px;
+  background: #00000055;
+  font-size: 24px;
+}
+.report-button:active { background: var(--surface); }
+
+/* the phone's report: standings as a plain list */
+.standings { margin: 0 0 6px; padding: 0; list-style: none; }
+.standings li { display: flex; align-items: center; gap: 10px; padding: 7px 2px; border-bottom: 1px solid #ffffff12; font-size: 17px; }
+.standings li.mine { font-weight: 700; }
+.standings .standings-avatar { width: 30px; height: 30px; flex: none; }
+.standings .who { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.standings .you { margin-left: 4px; padding: 1px 6px; border-radius: 6px; background: var(--surface); color: var(--muted); font-size: 12px; font-weight: 600; }
+.standings b { font: 400 22px var(--font-display); font-variant-numeric: tabular-nums; }
+.report-legend.compact { margin-bottom: 8px; font-size: 14px; }
+
 .switch { display: block; margin: 0 auto; padding: 6px 12px; color: var(--muted); font-size: 15px; text-decoration: underline; }
 
 /* dialogs open as a bottom sheet with full-width buttons */

@@ -57,6 +57,15 @@ Open it with 📜 in the dashboard's top bar. It updates live while open.
 Quick taps in a row in the same direction are shown as one change; going up and back down shows both.
 The newest 500 entries are kept per game.
 
+### Game report
+
+Tap 📈 in the dashboard's top bar, or next to any game on the start page, to see the whole game as a chart: every
+player's level over time, with 💀 where someone died, who won and how long it took, and a table of each player's
+final and highest level and deaths. Touch or hover the chart to see everyone's level at that moment.
+
+On a phone, tap 📈 next to **💀 I died** for a simpler version: your own line in color over everyone else's in gray,
+and the standings as a list. It's built from the activity log, so in a very long game only the newest 500 changes are shown.
+
 ### Sound
 
 The dashboard plays a sound for a win, a death, someone reaching level 9, someone stuck at level 1,

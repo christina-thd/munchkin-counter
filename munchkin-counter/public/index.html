@@ -40,7 +40,10 @@
           <div class="game-name" id="currentName"></div>
           <div class="players" id="currentPlayers"></div>
           <div class="meta" id="currentMeta"></div>
-          <button class="big primary" id="continueButton">▶ Play</button>
+          <div class="play-row">
+            <button class="big primary" id="continueButton">▶ Play</button>
+            <button class="big report" id="currentReport" title="Game report: levels over time" aria-label="Game report">📈</button>
+          </div>
         </div>
 
         <button class="big" id="newGame">+ New game</button>
@@ -61,6 +64,7 @@
       <div class="announcer" id="announcer" aria-live="polite"></div>
       <button class="bar-button primary" id="addPlayer">+ Player</button>
       <button class="bar-button icon" id="activity" title="Activity log" aria-label="Activity log">📜</button>
+      <button class="bar-button icon" id="report" title="Game report: levels over time" aria-label="Game report">📈</button>
       <button class="bar-button icon" id="sound" title="Sound on/off">🔊</button>
       <button class="bar-button icon fullscreen-button" title="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="expand" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><path class="collapse" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></button>
       <img class="qr-thumb" id="qrButton" src="qr.svg" alt="Join QR code" title="Show join QR code">

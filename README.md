@@ -10,6 +10,8 @@ with an announcer, sound effects and a game history.
 
 ![Start page with past games](images/start-page.png)
 
+![Game report: every player's level over the game, on the tablet and on a phone](images/report.png)
+
 ## Installation
 
 Add this repository to Home Assistant:
@@ -28,8 +30,10 @@ Tablet dashboard and phone controls for Munchkin, over your home network.
 **Features:**
 - Dashboard for up to 6 players on one screen, phones join by QR code
 - Levels 1–10, gear, strength, and Munchkin death rules
+- Male / female characters and character avatars
 - Munchkin-style announcer and sound effects
 - Start page with past games
+- Game report: every player's level over the whole game
 
 [Documentation →](./munchkin-counter/README.md)
 

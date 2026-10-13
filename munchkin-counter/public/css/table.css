@@ -371,3 +371,11 @@
 }
 
 .bar-button.icon { display: grid; place-items: center; }
+
+/* ----- 📈 game report dialog (js/table/report.js; the chart's styles are in base.css) ----- */
+.sheet.wide { width: min(860px, 100%); }
+.report-table { width: 100%; margin-bottom: 8px; border-collapse: collapse; font-size: 15px; }
+.report-table th { padding: 6px 8px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.06em; text-align: left; text-transform: uppercase; }
+.report-table td { padding: 7px 8px; border-bottom: 1px solid #ffffff12; }
+.report-table td:not(:first-child), .report-table th:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }

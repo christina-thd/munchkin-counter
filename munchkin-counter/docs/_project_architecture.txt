@@ -36,9 +36,9 @@ munchkin-counter/                  Home Assistant add-on containing the app
 │       │            device-check.js (phones → /join; tablets and TVs keep the dashboard)
 │       ├── app.js                 switches between the start page and dashboard (keeps full screen)
 │       ├── lobby/   lobby.js      start page
-│       ├── table/   dashboard, board, sizing, dialogs, sounds,
+│       ├── table/   dashboard, board, sizing, dialogs, report (📈 levels over the game), sounds,
 │       │            announcer (situations, pure) + lines (texts) + ticker (UI)
-│       └── phone/   main.js       phone controls
+│       └── phone/   main.js       phone controls; report.js: the simpler 📈 report
 ├── test/                          automated tests (Node's built-in runner, no extra deps):
 │                                  actions, activity log, state, announcer, store, http, addon packaging, device check
 └── docs/

@@ -29,12 +29,14 @@ export function choiceHtml(name, options, { selected = options[0]?.value, classN
  * @param {{value?: string, placeholder?: string, maxLength?: number}} [options.input]
  * @param {{label: string, checked?: boolean}} [options.check]
  * @param {{ options: { value: string, label: string, className?: string }[], value?: string }} [options.choice]
+ * @param {boolean} [options.wide]      room for a chart (the game report)
  */
 export function openDialog({
-  title, body = '', ok = 'OK', cancel = 'Cancel', danger = false, input = null, check = null, choice = null,
+  title, body = '', ok = 'OK', cancel = 'Cancel', danger = false, input = null, check = null, choice = null, wide = false,
 }) {
   const modal = $('modal');
   const sheet = $('sheet');
+  sheet.classList.toggle('wide', wide);
 
   sheet.innerHTML = `
     <h3>${title}</h3>${body}

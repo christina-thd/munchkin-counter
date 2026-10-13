@@ -21,7 +21,7 @@ export async function sendAction(action) {
 
 export const fetchInfo = () => fetch('api/info').then((res) => res.json());
 
-/** The activity log of a game: { gameId, name, entries } (oldest first). */
+/** The activity log of a game: { gameId, name, players, entries } (oldest first). */
 export async function fetchLog(gameId) {
   const res = await fetch(`api/log?game=${encodeURIComponent(gameId)}`);
   if (!res.ok) throw new Error(`Log not available (${res.status})`);

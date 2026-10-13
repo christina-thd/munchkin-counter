@@ -4,6 +4,7 @@
 - Add character's gender
 - Add character avatars
 - Use Home Assistant's certificate, so Android can install the app
+- Add game report
 
 ## 2.7.0
 - Lint and type checks on every release

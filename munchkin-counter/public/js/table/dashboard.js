@@ -5,6 +5,7 @@ import { $, closest } from '../shared/dom.js';
 import { LevelWatcher } from './announcer.js';
 import { renderBoard } from './board.js';
 import { askNewPlayer, confirmDeath, confirmRemovePlayer, showSoundTest } from './dialogs.js';
+import { showReport } from './report.js';
 import { fitRows } from './sizing.js';
 import { LEVEL_SOUNDS, NEWS_SOUNDS, Soundboard } from './sounds.js';
 import { Ticker } from './ticker.js';
@@ -86,6 +87,7 @@ export function createDashboard({ openLobby }) {
   });
 
   $('activity').addEventListener('click', () => showActivityLog(view.game.id, view.game.name));
+  $('report').addEventListener('click', () => showReport(view.game.id));
 
   $('addPlayer').addEventListener('click', async () => {
     const player = await askNewPlayer();

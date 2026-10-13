@@ -59,6 +59,10 @@ h1 {
   font-weight: 700;
 }
 .big.primary { background: var(--gold); border-color: var(--gold); color: var(--on-gold); box-shadow: 0 4px 0 #8a6420; }
+/* ▶ Play with 📈 (the game report) beside it */
+.play-row { display: flex; gap: 10px; }
+.play-row .primary { flex: 1; }
+.big.report { flex: none; width: 58px; padding: 0; font-size: 24px; }
 .big:active { transform: translateY(2px); }
 
 /* ----- right: past games ----- */
@@ -85,7 +89,7 @@ h2 {
 .game .meta { font-size: 13px; color: var(--muted); }
 .game button { height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 12px; font-size: 16px; font-weight: 700; }
 .game .open { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
-.game .delete { width: 44px; padding: 0; background: #00000040; }
+.game .icon { width: 44px; padding: 0; background: #00000040; }
 .empty { color: var(--muted); }
 
 /* ----- portrait: one column ----- */

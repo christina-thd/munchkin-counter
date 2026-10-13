@@ -178,3 +178,50 @@ button { border: 0; background: none; cursor: pointer; }
 }
 .activity .up { color: #7ccf5a; }
 .activity .down { color: #e8675a; }
+
+/* ----- 📈 game report chart (js/shared/report-chart.js): dashboard and phone ----- */
+.report-chart { position: relative; margin: 6px 0 10px; }
+.report-svg { display: block; width: 100%; height: auto; overflow: visible; outline: none; touch-action: pan-y; }
+.report-svg:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; border-radius: 6px; }
+.report-svg .tick { fill: var(--muted); font: 600 12px var(--font-body); font-variant-numeric: tabular-nums; }
+.report-svg .death { font-size: 11px; }
+.report-svg .crown { font-size: 17px; }
+.report-tip {
+  position: absolute;
+  top: 6px;
+  min-width: 130px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #1b120bf2;
+  box-shadow: 0 8px 24px #0009;
+  font-size: 14px;
+  pointer-events: none;
+}
+.report-tip .when { margin-bottom: 4px; font-size: 12px; color: var(--muted); }
+.report-tip .row { display: flex; align-items: center; gap: 8px; line-height: 1.6; }
+.report-tip .row.mine { font-weight: 700; }
+/* phones: the readout is a strip under the chart, so it never covers it */
+.report-tip.compact {
+  position: static;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 14px;
+  min-height: 52px;
+  margin: -2px 0 12px;
+  box-shadow: none;
+  background: var(--surface);
+}
+.report-tip.compact .when { flex-basis: 100%; margin: 0; }
+.report-tip.compact .row { gap: 5px; }
+.report-tip.compact .row b { min-width: 0; }
+.report-tip.compact .hint { color: var(--muted); font-size: 13px; }
+.report-tip .row b { min-width: 1.4em; text-align: right; font-variant-numeric: tabular-nums; }
+.report-tip .key, .report-legend .key { flex: none; width: 14px; height: 3px; border-radius: 2px; }
+.report-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 14px; font-size: 15px; }
+.report-legend .item { display: inline-flex; align-items: center; gap: 6px; }
+.report-legend .item.left { opacity: 0.7; }
+.report-legend .note { color: var(--muted); font-size: 13px; }
+.report-legend .key.wide { height: 4px; }
+.report-legend .key.others { height: 2px; background: #8a7560; }
