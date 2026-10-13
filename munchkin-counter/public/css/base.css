@@ -33,6 +33,10 @@ button, input { font: inherit; color: inherit; }
 button { border: 0; background: none; cursor: pointer; }
 [hidden] { display: none !important; }
 
+/* avatar tokens (img/avatars/*.svg): sized by where they sit; `inline` follows the text around it */
+.avatar-img { display: block; aspect-ratio: 1; -webkit-user-drag: none; }
+.avatar-img.inline { display: inline-block; width: 1.35em; height: 1.35em; vertical-align: -0.32em; }
+
 /* ----- − / + buttons: the symbols are drawn as bars so they sit exactly in the centre ----- */
 
 .pm {

@@ -1,5 +1,6 @@
 // Activity log dialog: what happened in a game, newest first. Opened from the dashboard.
 import { fetchLog } from './api.js';
+import { avatarHtml, avatarLabel } from './avatars.js';
 import { openDialog } from './dialog.js';
 import { $, escapeHtml } from './dom.js';
 import { formatGear, plural } from './format.js';
@@ -7,7 +8,9 @@ import { MAX_LEVEL, SEX_SYMBOLS } from './rules.js';
 
 const SOURCE_LABELS = { dashboard: 'Tablet', phone: 'Phone' };
 
-const who = (e) => `<b>${escapeHtml(e.emoji ?? '')} ${escapeHtml(e.name ?? 'Someone')}</b>`;
+// The player's picture: their avatar, or the emoji in entries logged before 2.8.0
+const picture = (e) => (e.avatar ? avatarHtml(e.avatar, { inline: true }) : escapeHtml(e.emoji ?? ''));
+const who = (e) => `<b>${picture(e)} ${escapeHtml(e.name ?? 'Someone')}</b>`;
 const arrow = (from, to) => `<span class="${to > from ? 'up' : 'down'}">${to > from ? '▲' : '▼'}</span>`;
 
 /** One entry as a line of HTML. Pure, so it can be tested. */
@@ -21,7 +24,9 @@ export function describeEntry(e) {
       return `${who(e)} joined`;
     case 'remove':
       return `${who(e)} was removed`;
-    case 'emoji':
+    case 'avatar':
+      return `<b>${escapeHtml(e.name)}</b> is now ${avatarHtml(e.to, { inline: true })} ${escapeHtml(avatarLabel(e.to) ?? '')}`;
+    case 'emoji':     // logged before 2.8.0
       return `<b>${escapeHtml(e.name)}</b> changed emoji ${escapeHtml(e.from)} → ${escapeHtml(e.to)}`;
     case 'sex':
       return `${who(e)} is now ${e.to === 'female' ? 'female' : 'male'} ${SEX_SYMBOLS[e.from] ?? ''} → ${SEX_SYMBOLS[e.to] ?? ''}`;

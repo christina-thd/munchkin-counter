@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { beforeEach, describe, test } from 'node:test';
 import { ActionError, applyAction } from '../src/game/actions.js';
 import { createInitialState, currentGame } from '../src/game/state.js';
-import { EMOJIS, MAX_LEVEL } from '../public/js/shared/rules.js';
+import { AVATAR_IDS, MAX_LEVEL } from '../public/js/shared/rules.js';
 
 let state;
 const act = (action, now) => applyAction(state, action, now);
@@ -14,12 +14,14 @@ beforeEach(() => {
 });
 
 describe('players', () => {
-  test('addPlayer starts male at level 1 with no gear and cycles emojis', () => {
+  test('addPlayer starts male at level 1 with no gear, and with an avatar nobody else has', () => {
     const a = add('Ana');
     const b = add('Bo');
-    assert.deepEqual({ ...a, id: undefined }, { id: undefined, name: 'Ana', emoji: EMOJIS[0], sex: 'male', level: 1, gear: 0 });
-    assert.equal(b.emoji, EMOJIS[1]);
+    assert.deepEqual({ ...a, id: undefined }, { id: undefined, name: 'Ana', avatar: AVATAR_IDS[0], sex: 'male', level: 1, gear: 0 });
+    assert.equal(b.avatar, AVATAR_IDS[1]);
     assert.notEqual(a.id, b.id);
+    act({ type: 'setAvatar', playerId: a.id, avatar: AVATAR_IDS[2] });
+    assert.equal(add('Cy').avatar, AVATAR_IDS[0]);                     // the first free one, not the next in line
   });
 
   test('addPlayer trims, limits and defaults the name', () => {
@@ -33,11 +35,14 @@ describe('players', () => {
     assert.equal(players().length, 0);
   });
 
-  test('setEmoji only accepts emojis from the list', () => {
+  test('setAvatar only accepts avatars from the list', () => {
     const a = add('Ana');
-    act({ type: 'setEmoji', playerId: a.id, emoji: EMOJIS[5] });
-    assert.equal(players()[0].emoji, EMOJIS[5]);
-    assert.throws(() => act({ type: 'setEmoji', playerId: a.id, emoji: '<script>' }), ActionError);
+    act({ type: 'setAvatar', playerId: a.id, avatar: 'dragon' });
+    assert.equal(players()[0].avatar, 'dragon');
+    for (const avatar of ['<script>', '🧙', '', undefined]) {
+      assert.throws(() => act({ type: 'setAvatar', playerId: a.id, avatar }), ActionError);
+    }
+    assert.throws(() => act({ type: 'setEmoji', playerId: a.id, emoji: '🧙' }), /Unknown action/);   // gone in 2.8.0
   });
 
   test('addPlayer takes the sex chosen when adding, and rejects an invalid one', () => {

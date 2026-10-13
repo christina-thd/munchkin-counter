@@ -1,5 +1,6 @@
 // Start page: continue the current game, start a new one, or reopen / delete a past game.
 import { sendAction } from '../shared/api.js';
+import { avatarHtml } from '../shared/avatars.js';
 import { $, closest, escapeHtml } from '../shared/dom.js';
 import { askNewGame, confirmDeleteGame, describeGame } from '../shared/games.js';
 
@@ -25,7 +26,7 @@ export function createLobby({ openDashboard }) {
     $('continue').hidden = false;
     $('currentName').textContent = view.game.name;
     $('currentPlayers').innerHTML = view.players.length
-      ? view.players.map((p) => `<span title="${escapeHtml(p.name)}">${escapeHtml(p.emoji)}</span>`).join('')
+      ? view.players.map((p) => `<span title="${escapeHtml(p.name)}">${avatarHtml(p.avatar)}</span>`).join('')
       : '<span class="none">No players yet</span>';
     $('currentMeta').innerHTML = describeGame(current);
   }

@@ -19,15 +19,16 @@ beforeEach(() => {
 describe('recording actions', () => {
   test('every player action is logged, with who did it and from which screen', () => {
     const ana = act({ type: 'addPlayer', name: 'Ana' }, 'dashboard');
-    act({ type: 'setEmoji', playerId: ana.id, emoji: '🧝' }, 'phone');
+    act({ type: 'setAvatar', playerId: ana.id, avatar: 'dragon' }, 'phone');
     act({ type: 'setLevel', playerId: ana.id, level: 5 }, 'dashboard');
     act({ type: 'changeGear', playerId: ana.id, delta: 1 }, 'phone');
     act({ type: 'die', playerId: ana.id }, 'phone');
     act({ type: 'removePlayer', playerId: ana.id }, 'dashboard');
 
-    assert.deepEqual(kinds(), ['join', 'emoji', 'level', 'gear', 'death', 'remove']);
+    assert.deepEqual(kinds(), ['join', 'avatar', 'level', 'gear', 'death', 'remove']);
     assert.deepEqual(log().map((e) => e.source), ['dashboard', 'phone', 'dashboard', 'phone', 'phone', 'dashboard']);
-    assert.deepEqual(log()[2], { at: clock, source: 'dashboard', kind: 'level', playerId: ana.id, name: 'Ana', emoji: '🧝', from: 1, to: 5 });
+    assert.deepEqual([log()[1].from, log()[1].to], ['elf', 'dragon']);
+    assert.deepEqual(log()[2], { at: clock, source: 'dashboard', kind: 'level', playerId: ana.id, name: 'Ana', avatar: 'dragon', from: 1, to: 5 });
     assert.deepEqual([log()[4].from, log()[4].to], [1, 0]);           // death: lost +1 gear
     assert.equal(log()[5].name, 'Ana');                                 // removed players still have a name
   });
@@ -70,7 +71,7 @@ describe('recording actions', () => {
     const ana = act({ type: 'addPlayer', name: 'Ana' });
     act({ type: 'changeLevel', playerId: ana.id, delta: -1 }, 'phone');   // already level 1
     act({ type: 'setLevel', playerId: ana.id, level: 1 }, 'dashboard');
-    act({ type: 'setEmoji', playerId: ana.id, emoji: ana.emoji }, 'phone');
+    act({ type: 'setAvatar', playerId: ana.id, avatar: ana.avatar }, 'phone');
     act({ type: 'setSex', playerId: ana.id, sex: 'male' }, 'phone');            // already male
     assert.deepEqual(kinds(), ['join']);
   });
@@ -118,22 +119,36 @@ describe('saved logs', () => {
       { at: 3, kind: 'join', source: null },
     ]);
   });
+
+  test('entries logged before 2.8.0 (with an emoji) are kept', () => {
+    const old = { at: 1, kind: 'emoji', source: 'phone', playerId: 'a', name: 'Ana', emoji: '🧝', from: '🧙', to: '🧝' };
+    assert.deepEqual(normalizeLog([old]), [old]);
+  });
 });
 
 describe('describing entries', () => {
-  const ana = { name: 'Ana', emoji: '🧙' };
+  const ana = { name: 'Ana', avatar: 'elf' };
+  const plain = (e) => describeEntry(e).replace(/<[^>]+>/g, '');
 
-  test('reads like a sentence', () => {
-    const plain = (e) => describeEntry(e).replace(/<[^>]+>/g, '');
-    assert.equal(plain({ kind: 'level', ...ana, from: 3, to: 6 }), '🧙 Ana ▲ level 3 → 6');
-    assert.equal(plain({ kind: 'level', ...ana, from: 9, to: 10 }), '🧙 Ana ▲ level 9 → 10 👑');
-    assert.equal(plain({ kind: 'gear', ...ana, from: 2, to: -1 }), '🧙 Ana ▼ gear +2 → -1');
-    assert.equal(plain({ kind: 'death', ...ana, from: 3, to: 0 }), '💀 🧙 Ana died and lost +3 gear');
-    assert.equal(plain({ kind: 'sex', ...ana, from: 'male', to: 'female' }), '🧙 Ana is now female ♂ → ♀');
+  test('reads like a sentence, with the avatar as a picture', () => {
+    assert.equal(plain({ kind: 'level', ...ana, from: 3, to: 6 }), ' Ana ▲ level 3 → 6');
+    assert.equal(plain({ kind: 'level', ...ana, from: 9, to: 10 }), ' Ana ▲ level 9 → 10 👑');
+    assert.equal(plain({ kind: 'gear', ...ana, from: 2, to: -1 }), ' Ana ▼ gear +2 → -1');
+    assert.equal(plain({ kind: 'death', ...ana, from: 3, to: 0 }), '💀  Ana died and lost +3 gear');
+    assert.equal(plain({ kind: 'sex', ...ana, from: 'male', to: 'female' }), ' Ana is now female ♂ → ♀');
+    assert.equal(plain({ kind: 'avatar', ...ana, from: 'elf', to: 'dragon' }), 'Ana is now  Dragon');
     assert.equal(plain({ kind: 'start', kept: 4 }), '🎲 Game started with the same 4 players');
+    assert.match(describeEntry({ kind: 'join', ...ana }), /<img class="avatar-img inline" src="img\/avatars\/elf\.svg" alt="Elf"/);
   });
 
-  test('names are HTML-escaped', () => {
-    assert.ok(!describeEntry({ kind: 'join', name: '<img onerror=alert(1)>', emoji: '🧙' }).includes('<img'));
+  test('entries logged before 2.8.0 still show their emoji', () => {
+    const old = { name: 'Ana', emoji: '🧙' };
+    assert.equal(plain({ kind: 'level', ...old, from: 3, to: 6 }), '🧙 Ana ▲ level 3 → 6');
+    assert.equal(plain({ kind: 'emoji', ...old, from: '🧙', to: '🧝' }), 'Ana changed emoji 🧙 → 🧝');
+  });
+
+  test('names are HTML-escaped, and unknown avatars show nothing', () => {
+    const html = describeEntry({ kind: 'join', name: '<img onerror=alert(1)>', avatar: '"><script>' });
+    assert.ok(!html.includes('<img onerror') && !html.includes('<script>'));
   });
 });

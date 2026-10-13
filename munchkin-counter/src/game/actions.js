@@ -1,5 +1,5 @@
 import {
-  clampLevel, EMOJIS, MAX_GAME_NAME, MAX_LEVEL, MAX_PLAYER_NAME, MIN_LEVEL, SEXES,
+  AVATAR_IDS, clampLevel, freeAvatar, MAX_GAME_NAME, MAX_LEVEL, MAX_PLAYER_NAME, MIN_LEVEL, SEXES,
 } from '../../public/js/shared/rules.js';
 import { aboutPlayer, record, SOURCES } from './activity.js';
 import { createGame, currentGame, newId } from './state.js';
@@ -55,7 +55,7 @@ const handlers = {
     const player = {
       id: newId(),
       name: text(name, MAX_PLAYER_NAME) || `Player ${game.players.length + 1}`,
-      emoji: EMOJIS[game.players.length % EMOJIS.length],
+      avatar: freeAvatar(game.players),
       sex: validSex(sex),
       level: MIN_LEVEL,
       gear: 0,
@@ -72,13 +72,13 @@ const handlers = {
     record(game, { kind: 'remove', ...aboutPlayer(player) }, ctx);
   },
 
-  setEmoji(state, { playerId, emoji }, ctx) {
-    if (!EMOJIS.includes(emoji)) throw new ActionError('Unknown emoji');
+  setAvatar(state, { playerId, avatar }, ctx) {
+    if (!AVATAR_IDS.includes(avatar)) throw new ActionError('Unknown avatar');
     const game = currentGame(state);
     const player = findPlayer(game, playerId);
-    const from = player.emoji;
-    player.emoji = emoji;
-    record(game, { kind: 'emoji', ...aboutPlayer(player), from, to: emoji }, ctx);
+    const from = player.avatar;
+    player.avatar = avatar;
+    record(game, { kind: 'avatar', ...aboutPlayer(player), from, to: avatar }, ctx);
     return player;
   },
 

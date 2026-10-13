@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import QRCode from 'qrcode';
-import { EMOJIS } from '../public/js/shared/rules.js';
 import { ActionError, applyAction } from './game/actions.js';
 import { gameLog, toView } from './game/state.js';
 import { lanAddress } from './network.js';
@@ -65,7 +64,7 @@ function readJsonBody(req) {
  *   GET  /css/*, /js/*, /img/*, /media/*   static files (byte ranges supported, for video)
  *   GET  /logo          the logo: LOGO_FILE if set and present, else public/img/logo.svg
  *   GET  /qr.svg        QR code pointing phones at /join
- *   GET  /api/info      { version, joinUrl, secureUrl, emojis }
+ *   GET  /api/info      { version, joinUrl, secureUrl }
  *   GET  /api/events    live view (Server-Sent Events)
  *   GET  /api/log?game=<id>   activity log of a game (the current one if no id)
  *   POST /api/actions   apply one action, e.g. { "type": "changeLevel", "playerId": "…", "delta": 1 }
@@ -161,7 +160,7 @@ export function createApp({
       return log ? sendJson(res, 200, log) : sendJson(res, 404, { error: 'No such game' });
     }
     if (pathname === '/api/info') {
-      return sendJson(res, 200, { version: config.version, joinUrl: joinUrl(), secureUrl: secureUrl(), emojis: EMOJIS });
+      return sendJson(res, 200, { version: config.version, joinUrl: joinUrl(), secureUrl: secureUrl() });
     }
     if (pathname === '/logo') return sendLogo(req, res);
     if (pathname === '/qr.svg') {

@@ -1,9 +1,12 @@
-// Phone controls: pick (or create) your player, then change your own level, gear, emoji and sex.
-import { fetchInfo, sendAction, setActionSource, subscribe } from '../shared/api.js';
+// Phone controls: pick (or create) your player, then change your own level, gear, avatar and sex.
+import { sendAction, setActionSource, subscribe } from '../shared/api.js';
+import { avatarHtml, avatarLabel } from '../shared/avatars.js';
 import { choiceHtml, openDialog } from '../shared/dialog.js';
 import { $, closest, escapeHtml, input, restartAnimation } from '../shared/dom.js';
 import { formatGear } from '../shared/format.js';
-import { MAX_LEVEL, MIN_LEVEL, otherSex, SEX_ICON_OPTIONS, SEX_LABELS, SEX_SYMBOLS, strengthOf } from '../shared/rules.js';
+import {
+  AVATAR_IDS, MAX_LEVEL, MIN_LEVEL, otherSex, SEX_ICON_OPTIONS, SEX_LABELS, SEX_SYMBOLS, strengthOf,
+} from '../shared/rules.js';
 import { storage } from '../shared/storage.js';
 
 const PLAYER_KEY = 'playerId';   // remembered per phone
@@ -32,7 +35,7 @@ function renderPicker() {
   $('playerList').innerHTML = players.length
     ? players.map((p) => `
         <button data-player="${p.id}">
-          <span class="emoji">${escapeHtml(p.emoji)}</span>
+          ${avatarHtml(p.avatar, { className: 'list-avatar' })}
           <span class="player-name">${escapeHtml(p.name)}</span>
           <span class="sex-icon ${p.sex}" title="${SEX_LABELS[p.sex]}">${SEX_SYMBOLS[p.sex]}</span>
         </button>`).join('')
@@ -41,7 +44,7 @@ function renderPicker() {
 
 function renderPlayer(player) {
   const won = player.level >= MAX_LEVEL;
-  $('emojiButton').textContent = player.emoji;
+  $('avatarButton').innerHTML = avatarHtml(player.avatar);
   $('playerName').textContent = player.name;
   const sexButton = $('sexButton');
   sexButton.textContent = SEX_SYMBOLS[player.sex];
@@ -54,8 +57,8 @@ function renderPlayer(player) {
   $('levelPanel').classList.toggle('won', won);
   input('levelDown').disabled = player.level <= MIN_LEVEL;
   input('levelUp').disabled = player.level >= MAX_LEVEL;
-  for (const button of $('emojiGrid').querySelectorAll('button')) {
-    button.classList.toggle('selected', button.dataset.emoji === player.emoji);
+  for (const button of $('avatarGrid').querySelectorAll('button')) {
+    button.classList.toggle('selected', button.dataset.avatar === player.avatar);
   }
 }
 
@@ -101,15 +104,15 @@ $('sexButton').addEventListener('click', () => {
   if (player) send({ type: 'setSex', playerId: myId, sex: otherSex(player.sex) });
 });
 
-$('emojiButton').addEventListener('click', () => {
-  $('emojiGrid').hidden = !$('emojiGrid').hidden;
+$('avatarButton').addEventListener('click', () => {
+  $('avatarGrid').hidden = !$('avatarGrid').hidden;
 });
 
-$('emojiGrid').addEventListener('click', (e) => {
-  const button = closest(e, '[data-emoji]');
+$('avatarGrid').addEventListener('click', (e) => {
+  const button = closest(e, '[data-avatar]');
   if (!button) return;
-  send({ type: 'setEmoji', playerId: myId, emoji: button.dataset.emoji });
-  $('emojiGrid').hidden = true;
+  send({ type: 'setAvatar', playerId: myId, avatar: button.dataset.avatar });
+  $('avatarGrid').hidden = true;
 });
 
 $('died').addEventListener('click', async () => {
@@ -129,10 +132,8 @@ $('died').addEventListener('click', async () => {
 
 // ----- start -----
 
-fetchInfo().then(({ emojis }) => {
-  $('emojiGrid').innerHTML = emojis.map((e) => `<button data-emoji="${e}">${e}</button>`).join('');
-  render();
-});
+$('avatarGrid').innerHTML = AVATAR_IDS.map((id) => `
+  <button data-avatar="${id}" title="${avatarLabel(id)}" aria-label="${avatarLabel(id)}">${avatarHtml(id)}</button>`).join('');
 
 subscribe((view) => {
   players = view.players;

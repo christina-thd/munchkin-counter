@@ -1,4 +1,5 @@
 // The player rows of the dashboard.
+import { avatarHtml } from '../shared/avatars.js';
 import { escapeHtml } from '../shared/dom.js';
 import { formatGear } from '../shared/format.js';
 import { MAX_LEVEL, MIN_LEVEL, otherSex, SEX_LABELS, SEX_SYMBOLS, strengthOf } from '../shared/rules.js';
@@ -42,7 +43,7 @@ function rowHtml(player, { rank, leading, flash }) {
   return `
     <div class="${classes}">
       <button class="remove" data-action="removePlayer" data-player="${player.id}" title="Remove player" aria-label="Remove player">✕</button>
-      <div class="avatar"><span class="emoji">${escapeHtml(player.emoji)}</span><span class="rank">${rank}</span></div>
+      <div class="avatar">${avatarHtml(player.avatar)}<span class="rank">${rank}</span></div>
       <div class="identity">
         <div class="name-line"><span class="name">${escapeHtml(player.name)}</span>${sexToggle(player)}${won ? '<span class="tag">WINNER</span>' : ''}</div>
         <div class="track-line">

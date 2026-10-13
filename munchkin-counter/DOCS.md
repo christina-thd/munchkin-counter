@@ -33,11 +33,13 @@ address (e.g. `http://<homeassistant-ip>:3000/?dashboard`); it remembers. Use `?
 - **♂ / ♀ Sex**: every character is male or female, which some cards check. Pick it when adding a player
   (on the dashboard or when joining from your phone). Tap ♂ / ♀ next to the name to switch it later, e.g.
   after a Change Sex curse. It carries over when a new game keeps the same players.
+- **Avatar**: every player gets a character token (races, classes, monsters and dungeon loot). Tap yours on
+  the phone to pick another.
 - **New game** (on the start page) adds a game to the list. Old games are kept and can be reopened or deleted.
 
 ### Activity log
 
-Every game keeps a log of what happened: players joining or being removed, emoji and sex changes,
+Every game keeps a log of what happened: players joining or being removed, avatar and sex changes,
 level and gear changes, and deaths, each with the time and whether it came from the tablet or a phone.
 Open it with 📜 in the dashboard's top bar. It updates live while open.
 Quick taps in a row in the same direction are shown as one change; going up and back down shows both.

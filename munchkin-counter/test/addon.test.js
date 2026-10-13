@@ -48,6 +48,12 @@ test('the Dockerfile builds without BUILD_FROM (newer Supervisors only pass BUIL
   assert.match(dockerfile, /^ARG BUILD_FROM=ghcr\.io\/home-assistant\/\$\{BUILD_ARCH\}-base:\S+$/m);
 });
 
+test('every avatar has its picture, and there are no pictures without an avatar', async () => {
+  const { AVATAR_IDS } = await import('../public/js/shared/rules.js');
+  const files = fs.readdirSync(path.join(ROOT_DIR, 'public', 'img', 'avatars')).map((f) => f.replace(/\.svg$/, '')).sort();
+  assert.deepEqual(files, [...AVATAR_IDS].sort());   // regenerate them with: node art/avatars.mjs
+});
+
 test('store images are PNGs of the sizes Home Assistant expects', () => {
   const pngSize = (file) => {
     const png = fs.readFileSync(path.join(ROOT_DIR, file));

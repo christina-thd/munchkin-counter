@@ -1,11 +1,12 @@
 // Dialogs used by the dashboard.
+import { avatarHtml } from '../shared/avatars.js';
 import { openDialog } from '../shared/dialog.js';
 import { $, closest, escapeHtml } from '../shared/dom.js';
 import { formatGear } from '../shared/format.js';
 import { MAX_PLAYER_NAME, SEX_OPTIONS, strengthOf } from '../shared/rules.js';
 import { SOUND_TEST } from './sounds.js';
 
-const playerLabel = (p) => `<b>${escapeHtml(p.emoji)} ${escapeHtml(p.name)}</b>`;
+const playerLabel = (p) => `<b>${avatarHtml(p.avatar, { inline: true })} ${escapeHtml(p.name)}</b>`;
 
 /** @returns {Promise<{ name: string, sex: string } | null>} the new player, or null if cancelled */
 export async function askNewPlayer() {

@@ -2,6 +2,7 @@
 
 ## 2.8.0
 - Add character's gender
+- Add character avatars
 
 ## 2.7.0
 - Lint and type checks on every release

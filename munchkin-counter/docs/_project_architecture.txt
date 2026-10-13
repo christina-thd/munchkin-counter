@@ -7,7 +7,8 @@ munchkin-counter/                  Home Assistant add-on containing the app
 ├── DOCS.md                        add-on Documentation tab: usage, rules, sound, custom logo
 ├── CHANGELOG.md                   release notes (shown in Home Assistant)
 ├── icon.png, logo.png             add-on store icon (128×128) and banner (250×100)
-├── art/                           store-logo.svg, icon-apple.svg, icon-maskable.svg, render.sh (PNG images), wake-video.sh (keep-awake video)
+├── art/                           store-logo.svg, icon-apple.svg, icon-maskable.svg, render.sh (PNG images), wake-video.sh (keep-awake video),
+│                                  avatars.mjs (draws public/img/avatars/*.svg)
 ├── package.json                   version, scripts (start, dev, test, lint, typecheck, check), one dependency (qrcode) + dev tools
 ├── eslint.config.js               lint rules (npm run lint)
 ├── tsconfig.json                  type checking of the JavaScript from JSDoc, nothing compiled (npm run typecheck)
@@ -26,7 +27,8 @@ munchkin-counter/                  Home Assistant add-on containing the app
 │   ├── phone.html                 phone controls (markup only)
 │   ├── css/   base.css, lobby.css, table.css, phone.css
 │   ├── manifest.webmanifest       "Add to Home Screen" opens the app full screen
-│   ├── img/   logo.svg            built-in logo (a custom one can replace it via LOGO_FILE), icon-*.png
+│   ├── img/   logo.svg            built-in logo (a custom one can replace it via LOGO_FILE), icon-*.png,
+│   │          avatars/*.svg       player avatars (tokens), drawn by art/avatars.mjs
 │   ├── media/ wake.mp4, wake.webm tiny silent video that keeps the screen on over plain http
 │   └── js/
 │       ├── shared/  rules.js (used by server too; Player and View types), activity (log dialog), api, dialog, dom, format, games, screen, storage,

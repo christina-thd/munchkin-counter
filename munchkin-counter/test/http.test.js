@@ -64,7 +64,9 @@ describe('pages and static files', () => {
   test('QR code and info point phones at /join', async () => {
     const info = await (await fetch(`${base}/api/info`)).json();
     assert.equal(info.joinUrl, 'http://192.0.2.10:3000/join');
-    assert.ok(info.emojis.length > 0);
+    const avatar = await fetch(`${base}/img/avatars/dragon.svg`);
+    assert.equal(avatar.status, 200);
+    assert.match(avatar.headers.get('content-type'), /image\/svg\+xml/);
     const qr = await fetch(`${base}/qr.svg`);
     assert.match(await qr.text(), /^<svg/);
   });

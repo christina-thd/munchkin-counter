@@ -5,7 +5,7 @@
  * @typedef {object} Player
  * @property {string} id
  * @property {string} name
- * @property {string} emoji      one of EMOJIS
+ * @property {string} avatar     id of one of AVATARS (picture: public/img/avatars/<id>.svg)
  * @property {'male' | 'female'} sex   the character's, which some cards check (Change Sex curse)
  * @property {number} level      MIN_LEVEL–MAX_LEVEL
  * @property {number} gear       may be negative: curses
@@ -25,11 +25,24 @@ export const MAX_LEVEL = 10;          // reaching it wins the game
 export const MAX_PLAYER_NAME = 20;
 export const MAX_GAME_NAME = 30;
 
-export const EMOJIS = Object.freeze([
-  '🧙', '🧝', '🧛', '🧟', '🧞', '🧜', '🦸', '🦹', '🥷', '🤴',
-  '👸', '🐉', '🦄', '🐺', '🦊', '🐸', '🐙', '💀', '👹', '👻',
-  '🤖', '👽', '🐱', '🐶', '🐼', '🦁', '🐯', '🍄', '⚔️', '🛡️',
-]);
+/**
+ * The pictures players choose from, in picker order: races, classes, monsters, dungeon stuff.
+ * Drawn by art/avatars.mjs into public/img/avatars/<id>.svg (original drawings, not the card art).
+ */
+export const AVATARS = Object.freeze([
+  ['elf', 'Elf'], ['dwarf', 'Dwarf'], ['halfling', 'Halfling'], ['gnome', 'Gnome'], ['orc', 'Orc'], ['human', 'Human'],
+  ['wizard', 'Wizard'], ['warrior', 'Warrior'], ['cleric', 'Cleric'], ['thief', 'Thief'], ['bard', 'Bard'],
+  ['dragon', 'Dragon'], ['skeleton', 'Skeleton'], ['slime', 'Slime'], ['ghost', 'Ghost'], ['troll', 'Troll'],
+  ['vampire', 'Vampire'], ['zombie', 'Zombie'], ['werewolf', 'Werewolf'], ['mimic', 'Mimic'],
+  ['door', 'Door'], ['loot', 'Loot'], ['potion', 'Potion'], ['crown', 'Crown'],
+].map(([id, label]) => Object.freeze({ id, label })));
+export const AVATAR_IDS = Object.freeze(AVATARS.map((a) => a.id));
+
+/** The first avatar nobody in the game has yet, so new players start out different. */
+export function freeAvatar(players) {
+  const taken = new Set(players.map((p) => p.avatar));
+  return AVATAR_IDS.find((id) => !taken.has(id)) ?? AVATAR_IDS[players.length % AVATAR_IDS.length];
+}
 
 /**
  * A character is male or female, picked when adding a player; cards like the Change Sex curse switch it.

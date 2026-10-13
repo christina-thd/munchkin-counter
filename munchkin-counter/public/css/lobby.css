@@ -44,6 +44,7 @@ h1 {
 .continue .label { font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
 .continue .game-name { margin: 4px 0 8px; font: 400 30px/1.1 var(--font-display); letter-spacing: 0.02em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .continue .players { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; min-height: 36px; font-size: 30px; }
+.continue .players .avatar-img { width: 40px; height: 40px; }
 .continue .players .none { font-size: 15px; color: var(--muted); align-self: center; }
 .continue .meta { margin: 6px 0 16px; font-size: 14px; color: var(--muted); }
 

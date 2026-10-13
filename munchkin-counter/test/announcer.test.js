@@ -3,7 +3,7 @@ import { describe, test } from 'node:test';
 import { LevelWatcher, LineDeck, situations, SituationTracker } from '../public/js/table/announcer.js';
 
 /** @returns {import('../public/js/shared/rules.js').Player} */
-const player = (id, level = 1, gear = 0) => ({ id, name: id, emoji: '🧙', sex: 'male', level, gear });
+const player = (id, level = 1, gear = 0) => ({ id, name: id, avatar: 'wizard', sex: 'male', level, gear });
 const categories = (list) => list.map((s) => s.category);
 
 describe('situations', () => {
@@ -39,7 +39,7 @@ describe('situations', () => {
 
   test('names are HTML-escaped', () => {
     const [s] = situations([{ ...player('x', 10), name: '<img onerror=alert(1)>' }]);
-    assert.ok(s.lines.every((line) => !line.includes('<img')));
+    assert.ok(s.lines.every((line) => !line.includes('<img onerror')));   // the avatar's own <img> is fine
   });
 });
 
