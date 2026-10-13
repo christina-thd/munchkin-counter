@@ -118,18 +118,19 @@
 @keyframes glow { from { box-shadow: 0 0 6px #e8b54a55; } to { box-shadow: 0 0 26px #ffd46b99; } }
 @keyframes died { 0% { background: #7a1010; } }
 
-/* emoji avatar with rank badge */
+/* avatar token with rank badge */
 .avatar {
   position: relative;
   display: grid;
   place-items: center;
   width: var(--avatar);
   height: var(--avatar);
+  padding: 2px;
   border: 2px solid #ffffff1f;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #5a3d25, #24170e);
+  background: #24170e;
 }
-.avatar .emoji { font-size: calc(var(--avatar) * 0.6); line-height: 1; }
+.avatar .avatar-img { width: 100%; height: 100%; }
 .avatar .rank {
   position: absolute;
   left: -4px;
@@ -161,6 +162,24 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* ♂ / ♀ toggle: blue for male, pink for female, so the table can tell at a glance */
+.sex {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: calc(var(--pip) * 1.1);
+  height: calc(var(--pip) * 1.1);
+  border: 1px solid #ffffff26;
+  border-radius: 50%;
+  background: #00000055;
+  font-size: calc(var(--pip) * 0.7);
+  font-weight: 700;
+  line-height: 1;
+}
+.sex.male { color: var(--male); }
+.sex.female { color: var(--female); }
+.sex:active { background: #ffffff26; }
+
 .tag {
   flex: none;
   padding: 3px 9px;
@@ -352,3 +371,11 @@
 }
 
 .bar-button.icon { display: grid; place-items: center; }
+
+/* ----- 📈 game report dialog (js/table/report.js; the chart's styles are in base.css) ----- */
+.sheet.wide { width: min(860px, 100%); }
+.report-table { width: 100%; margin-bottom: 8px; border-collapse: collapse; font-size: 15px; }
+.report-table th { padding: 6px 8px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.06em; text-align: left; text-transform: uppercase; }
+.report-table td { padding: 7px 8px; border-bottom: 1px solid #ffffff12; }
+.report-table td:not(:first-child), .report-table th:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }

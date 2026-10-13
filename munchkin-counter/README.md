@@ -7,10 +7,11 @@ and each player controls their own level and gear from their phone by scanning a
 
 - Dashboard for tablets and TVs: level, gear and strength for up to 6 players on one screen
 - Phone controls: players join by QR code, no app or login needed
-- Munchkin rules built in: levels 1–10, death keeps your level but loses your gear
+- Munchkin rules built in: levels 1–10, death keeps your level but loses your gear, male / female characters
 - Announcer with Munchkin-style table talk and sound effects
 - Start page: continue the current game, start a new one, or reopen a past game
 - Activity log per game: who changed what, when, from the tablet or a phone
+- Game report: a chart of every player's level over the whole game, with deaths and the winner
 - Live updates on every screen
 - Screen stays on (secure address for Android tablets), full-screen button, and "Add to Home Screen" as an app
 - Also available in the Home Assistant sidebar
@@ -28,6 +29,10 @@ and each player controls their own level and gear from their phone by scanning a
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | host_ip | str | (auto) | Address shown in the QR code. Only set it if the QR code shows the wrong address |
+| ssl | bool | false | Use Home Assistant's own certificate on the secure address (no browser warning; Android can install the app) |
+| certfile | str | fullchain.pem | Certificate in Home Assistant's `ssl` folder |
+| keyfile | str | privkey.pem | Its key, in the `ssl` folder |
+| domain | str | | The certificate's domain, e.g. `ha.example.com`: the secure address is `https://<domain>:3443/` |
 
 ## Usage
 

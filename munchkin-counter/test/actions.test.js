@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { beforeEach, describe, test } from 'node:test';
 import { ActionError, applyAction } from '../src/game/actions.js';
 import { createInitialState, currentGame } from '../src/game/state.js';
-import { EMOJIS, MAX_LEVEL } from '../public/js/shared/rules.js';
+import { AVATAR_IDS, MAX_LEVEL } from '../public/js/shared/rules.js';
 
 let state;
 const act = (action, now) => applyAction(state, action, now);
@@ -14,12 +14,14 @@ beforeEach(() => {
 });
 
 describe('players', () => {
-  test('addPlayer starts at level 1 with no gear and cycles emojis', () => {
+  test('addPlayer starts male at level 1 with no gear, and with an avatar nobody else has', () => {
     const a = add('Ana');
     const b = add('Bo');
-    assert.deepEqual({ ...a, id: undefined }, { id: undefined, name: 'Ana', emoji: EMOJIS[0], level: 1, gear: 0 });
-    assert.equal(b.emoji, EMOJIS[1]);
+    assert.deepEqual({ ...a, id: undefined }, { id: undefined, name: 'Ana', avatar: AVATAR_IDS[0], sex: 'male', level: 1, gear: 0 });
+    assert.equal(b.avatar, AVATAR_IDS[1]);
     assert.notEqual(a.id, b.id);
+    act({ type: 'setAvatar', playerId: a.id, avatar: AVATAR_IDS[2] });
+    assert.equal(add('Cy').avatar, AVATAR_IDS[0]);                     // the first free one, not the next in line
   });
 
   test('addPlayer trims, limits and defaults the name', () => {
@@ -33,11 +35,34 @@ describe('players', () => {
     assert.equal(players().length, 0);
   });
 
-  test('setEmoji only accepts emojis from the list', () => {
+  test('setAvatar only accepts avatars from the list', () => {
     const a = add('Ana');
-    act({ type: 'setEmoji', playerId: a.id, emoji: EMOJIS[5] });
-    assert.equal(players()[0].emoji, EMOJIS[5]);
-    assert.throws(() => act({ type: 'setEmoji', playerId: a.id, emoji: '<script>' }), ActionError);
+    act({ type: 'setAvatar', playerId: a.id, avatar: 'dragon' });
+    assert.equal(players()[0].avatar, 'dragon');
+    for (const avatar of ['<script>', '🧙', '', undefined]) {
+      assert.throws(() => act({ type: 'setAvatar', playerId: a.id, avatar }), ActionError);
+    }
+    assert.throws(() => act({ type: 'setEmoji', playerId: a.id, emoji: '🧙' }), /Unknown action/);   // gone in 2.8.0
+  });
+
+  test('addPlayer takes the sex chosen when adding, and rejects an invalid one', () => {
+    assert.equal(act({ type: 'addPlayer', name: 'Ana', sex: 'female' }).sex, 'female');
+    assert.equal(act({ type: 'addPlayer', name: 'Bo', sex: 'male' }).sex, 'male');
+    assert.throws(() => act({ type: 'addPlayer', name: 'Cy', sex: 'robot' }), ActionError);
+    assert.equal(players().length, 2);                                   // nothing added on an error
+  });
+
+  test('setSex switches between male and female, and rejects anything else', () => {
+    const a = add('Ana');
+    act({ type: 'setSex', playerId: a.id, sex: 'female' });
+    assert.equal(players()[0].sex, 'female');
+    act({ type: 'setSex', playerId: a.id, sex: 'male' });
+    assert.equal(players()[0].sex, 'male');
+    for (const sex of ['other', '', undefined, 'FEMALE']) {
+      assert.throws(() => act({ type: 'setSex', playerId: a.id, sex }), ActionError);
+    }
+    assert.equal(players()[0].sex, 'male');
+    assert.throws(() => act({ type: 'setSex', playerId: 'nope', sex: 'female' }), { status: 404 });
   });
 
   test('unknown player is a 404', () => {
@@ -100,12 +125,13 @@ describe('games', () => {
     assert.equal(state.games.find((g) => g.id === first).players.length, 1);
   });
 
-  test('newGame with keepPlayers keeps ids and resets level and gear', () => {
+  test('newGame with keepPlayers keeps ids and sex, and resets level and gear', () => {
     const a = add('Ana');
     act({ type: 'setLevel', playerId: a.id, level: 8 });
+    act({ type: 'setSex', playerId: a.id, sex: 'female' });
     act({ type: 'newGame', name: '', keepPlayers: true });
     assert.equal(currentGame(state).name, 'Game 2');
-    assert.deepEqual(players(), [{ ...a, level: 1, gear: 0 }]);
+    assert.deepEqual(players(), [{ ...a, sex: 'female', level: 1, gear: 0 }]);
   });
 
   test('switchGame and deleteGame', () => {

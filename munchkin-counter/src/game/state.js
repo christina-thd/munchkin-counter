@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { normalizeLog } from './activity.js';
-import { clampLevel, EMOJIS, MAX_GAME_NAME, MAX_PLAYER_NAME } from '../../public/js/shared/rules.js';
+import { AVATAR_IDS, clampLevel, MAX_GAME_NAME, MAX_PLAYER_NAME, SEXES } from '../../public/js/shared/rules.js';
 
 /**
  * State shape (saved to disk as JSON):
@@ -10,7 +10,7 @@ import { clampLevel, EMOJIS, MAX_GAME_NAME, MAX_PLAYER_NAME } from '../../public
  *     currentGameId: string,
  *     games: [{
  *       id, name, createdAt,
- *       players: [{ id, name, emoji, level, gear }],
+ *       players: [{ id, name, avatar, sex, level, gear }],   (both added in 2.8.0; avatar replaced emoji)
  *       lastDeath: { playerId, at } | null,
  *       log: [activity entries],          (see activity.js)
  *     }],
@@ -35,6 +35,18 @@ export function currentGame(state) {
   return state.games.find((g) => g.id === state.currentGameId);
 }
 
+/** Players saved before 2.8.0 had an emoji: each becomes the closest avatar (the rest get one by position). */
+const AVATAR_FOR_EMOJI = {
+  '🧙': 'wizard', '🧝': 'elf', '🧛': 'vampire', '🧟': 'zombie', '🧞': 'ghost', '🧜': 'slime', '🦸': 'warrior',
+  '🦹': 'thief', '🥷': 'thief', '🤴': 'crown', '👸': 'crown', '🐉': 'dragon', '🐺': 'werewolf', '🐸': 'slime',
+  '🐙': 'slime', '💀': 'skeleton', '👹': 'orc', '👻': 'ghost', '🍄': 'gnome', '⚔️': 'warrior', '🛡️': 'warrior',
+};
+
+function avatarOf(raw, index) {
+  if (AVATAR_IDS.includes(raw.avatar)) return raw.avatar;
+  return AVATAR_FOR_EMOJI[raw.emoji] ?? AVATAR_IDS[index % AVATAR_IDS.length];
+}
+
 const toInt = (value, fallback) => (Number.isFinite(Number(value)) ? Math.trunc(Number(value)) : fallback);
 const toText = (value, max, fallback) => String(value ?? '').trim().slice(0, max) || fallback;
 
@@ -42,7 +54,8 @@ function normalizePlayer(raw, index) {
   return {
     id: String(raw.id ?? newId()),
     name: toText(raw.name, MAX_PLAYER_NAME, `Player ${index + 1}`),
-    emoji: typeof raw.emoji === 'string' && raw.emoji ? raw.emoji : EMOJIS[index % EMOJIS.length],
+    avatar: avatarOf(raw, index),
+    sex: SEXES.includes(raw.sex) ? raw.sex : SEXES[0],   // saved before 2.8.0: none yet
     level: clampLevel(toInt(raw.level, 1)),
     gear: toInt(raw.gear ?? raw.bonus, 0),              // schema 1 called it "bonus"
   };
@@ -89,10 +102,13 @@ function summarize(game) {
   };
 }
 
-/** The activity log of one game (oldest first), or null if there's no such game. */
+/**
+ * The activity log of one game (oldest first), or null if there's no such game. With the game's players as
+ * they are now, for its report: players kept from a previous game never "joined" this one in the log.
+ */
 export function gameLog(state, gameId) {
   const game = state.games.find((g) => g.id === gameId);
-  return game ? { gameId: game.id, name: game.name, entries: game.log } : null;
+  return game ? { gameId: game.id, name: game.name, players: game.players, entries: game.log } : null;
 }
 
 /**

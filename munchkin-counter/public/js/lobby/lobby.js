@@ -1,7 +1,10 @@
-// Start page: continue the current game, start a new one, or reopen / delete a past game.
+// Start page: continue the current game, start a new one, or reopen / delete a past game; 📈 shows any
+// game's report.
 import { sendAction } from '../shared/api.js';
+import { avatarHtml } from '../shared/avatars.js';
 import { $, closest, escapeHtml } from '../shared/dom.js';
 import { askNewGame, confirmDeleteGame, describeGame } from '../shared/games.js';
+import { showReport } from '../table/report.js';
 
 /** @typedef {import('../shared/rules.js').View} View */
 
@@ -25,7 +28,7 @@ export function createLobby({ openDashboard }) {
     $('continue').hidden = false;
     $('currentName').textContent = view.game.name;
     $('currentPlayers').innerHTML = view.players.length
-      ? view.players.map((p) => `<span title="${escapeHtml(p.name)}">${escapeHtml(p.emoji)}</span>`).join('')
+      ? view.players.map((p) => `<span title="${escapeHtml(p.name)}">${avatarHtml(p.avatar)}</span>`).join('')
       : '<span class="none">No players yet</span>';
     $('currentMeta').innerHTML = describeGame(current);
   }
@@ -40,12 +43,14 @@ export function createLobby({ openDashboard }) {
               <div class="meta">${describeGame(g)}</div>
             </div>
             <button class="open" data-open="${g.id}">Open</button>
-            <button class="delete" data-delete="${g.id}" title="Delete game" aria-label="Delete game">🗑</button>
+            <button class="icon" data-report="${g.id}" title="Game report" aria-label="Game report">📈</button>
+            <button class="icon" data-delete="${g.id}" title="Delete game" aria-label="Delete game">🗑</button>
           </div>`).join('')
       : '<p class="empty">No past games yet. Finished games show up here.</p>';
   }
 
   $('continueButton').addEventListener('click', openDashboard);
+  $('currentReport').addEventListener('click', () => { if (view) showReport(view.game.id); });
 
   $('newGame').addEventListener('click', async () => {
     if (!view) return;
@@ -57,8 +62,11 @@ export function createLobby({ openDashboard }) {
 
   $('games').addEventListener('click', async (e) => {
     const open = closest(e, '[data-open]');
+    const report = closest(e, '[data-report]');
     const del = closest(e, '[data-delete]');
-    if (open) {
+    if (report) {
+      showReport(report.dataset.report);
+    } else if (open) {
       await send({ type: 'switchGame', gameId: open.dataset.open });
       openDashboard();
     } else if (del) {

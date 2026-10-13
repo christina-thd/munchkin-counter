@@ -1,7 +1,8 @@
 // The player rows of the dashboard.
+import { avatarHtml } from '../shared/avatars.js';
 import { escapeHtml } from '../shared/dom.js';
 import { formatGear } from '../shared/format.js';
-import { MAX_LEVEL, MIN_LEVEL, strengthOf } from '../shared/rules.js';
+import { MAX_LEVEL, MIN_LEVEL, otherSex, SEX_LABELS, SEX_SYMBOLS, strengthOf } from '../shared/rules.js';
 
 const EMPTY = `
   <div class="empty">
@@ -29,15 +30,22 @@ function stepper({ label, className, action, player, value, canDown = true, canU
     </div>`;
 }
 
+/** ♂ / ♀ next to the name: one tap switches it (Change Sex curse). */
+function sexToggle(player) {
+  const next = otherSex(player.sex);
+  return `<button class="sex ${player.sex}" data-action="setSex" data-player="${player.id}" data-sex="${next}"
+            title="${SEX_LABELS[player.sex]} (tap to change sex)" aria-label="Change sex to ${next}">${SEX_SYMBOLS[player.sex]}</button>`;
+}
+
 function rowHtml(player, { rank, leading, flash }) {
   const won = player.level >= MAX_LEVEL;
   const classes = ['player', won ? 'won' : leading && 'leading', flash && 'died'].filter(Boolean).join(' ');
   return `
     <div class="${classes}">
       <button class="remove" data-action="removePlayer" data-player="${player.id}" title="Remove player" aria-label="Remove player">✕</button>
-      <div class="avatar"><span class="emoji">${escapeHtml(player.emoji)}</span><span class="rank">${rank}</span></div>
+      <div class="avatar">${avatarHtml(player.avatar)}<span class="rank">${rank}</span></div>
       <div class="identity">
-        <div class="name-line"><span class="name">${escapeHtml(player.name)}</span>${won ? '<span class="tag">WINNER</span>' : ''}</div>
+        <div class="name-line"><span class="name">${escapeHtml(player.name)}</span>${sexToggle(player)}${won ? '<span class="tag">WINNER</span>' : ''}</div>
         <div class="track-line">
           <div class="track" title="Tap a number to set the level">${levelTrack(player)}</div>
           <button class="die" data-action="die" data-player="${player.id}" title="This player died" aria-label="Died">💀</button>

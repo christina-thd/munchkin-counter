@@ -1,14 +1,15 @@
 // Activity log: what happened in a game, so players can check it if something looks wrong.
 //
-// Entry shape: { at, kind, source, playerId?, name?, emoji?, from?, to?, kept? }
-//   kind     start | join | remove | emoji | level | gear | death
+// Entry shape: { at, kind, source, playerId?, name?, avatar?, from?, to?, kept? }
+//   kind     start | join | remove | avatar | sex | level | gear | death
+//            (emoji: a change of emoji, logged before 2.8.0; those entries carry `emoji` instead of `avatar`)
 //   source   'dashboard' | 'phone' | null (which kind of screen did it)
-//   name, emoji   the player as they were at that moment (so removed players still read well)
+//   name, avatar   the player as they were at that moment (so removed players still read well)
 
 export const MAX_ENTRIES = 500;      // per game; the oldest are dropped
 export const MERGE_WINDOW_MS = 15_000;
 
-export const KINDS = Object.freeze(['start', 'join', 'remove', 'emoji', 'level', 'gear', 'death']);
+export const KINDS = Object.freeze(['start', 'join', 'remove', 'avatar', 'emoji', 'sex', 'level', 'gear', 'death']);
 export const SOURCES = Object.freeze(['dashboard', 'phone']);
 
 /**
@@ -17,10 +18,10 @@ export const SOURCES = Object.freeze(['dashboard', 'phone']);
  */
 const MERGEABLE = new Set(['level', 'gear']);
 /** Entries that describe a change; they're skipped when nothing changed (e.g. + at level 10). */
-const CHANGES = new Set(['level', 'gear', 'emoji']);
+const CHANGES = new Set(['level', 'gear', 'avatar', 'sex']);
 
 /** Who an entry is about, as they are right now. */
-export const aboutPlayer = (player) => ({ playerId: player.id, name: player.name, emoji: player.emoji });
+export const aboutPlayer = (player) => ({ playerId: player.id, name: player.name, avatar: player.avatar });
 
 const direction = (e) => Math.sign(e.to - e.from);
 
@@ -47,7 +48,7 @@ export function record(game, entry, { now, source = null }) {
   if (log.length > MAX_ENTRIES) log.splice(0, log.length - MAX_ENTRIES);
 }
 
-const FIELDS = ['playerId', 'name', 'emoji'];
+const FIELDS = ['playerId', 'name', 'avatar', 'emoji'];   // emoji: entries logged before 2.8.0
 
 /** Cleans a saved log: keeps valid entries only, newest MAX_ENTRIES. */
 export function normalizeLog(raw) {

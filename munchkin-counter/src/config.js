@@ -19,7 +19,9 @@ function parsePort(value) {
  *   STATE_FILE  where games are saved (default ./data/state.json)
  *   LOGO_FILE   your own logo image (png, jpg, webp or svg) instead of the built-in one
  *   HTTPS_PORT, TLS_CERT, TLS_KEY   also serve https on that port with this certificate (PEM files);
- *               tablets need https for the Wake Lock API that keeps the screen on
+ *               tablets need https for the Wake Lock API that keeps the screen on. A renewed certificate
+ *               is picked up while running.
+ *   SECURE_HOST the secure address's host name, when the certificate is for a domain (default: as HOST_IP)
  */
 export function loadConfig(env = process.env) {
   const pkg = JSON.parse(readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf8'));
@@ -34,6 +36,7 @@ export function loadConfig(env = process.env) {
     httpsPort: parsePort(env.HTTPS_PORT),
     tlsCert: env.TLS_CERT || null,
     tlsKey: env.TLS_KEY || null,
+    secureHost: env.SECURE_HOST || null,
     publicDir: path.join(ROOT_DIR, 'public'),
   });
 }

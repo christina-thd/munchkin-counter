@@ -22,7 +22,8 @@ Open `/#sounds` on the dashboard to hear every sound.
 | `HOST_IP`    | auto-detected     | Address in the QR code, if detection picks the wrong one |
 | `STATE_FILE` | `data/state.json` | Where games are saved                                    |
 | `LOGO_FILE`  | built-in die logo | Your own logo image (png, jpg, webp, svg)                |
-| `HTTPS_PORT`, `TLS_CERT`, `TLS_KEY` | off | Also serve https (PEM certificate and key); the add-on uses 3443 and makes its own certificate in `run.sh` |
+| `HTTPS_PORT`, `TLS_CERT`, `TLS_KEY` | off | Also serve https (PEM certificate and key, reloaded when renewed); the add-on uses 3443 with Home Assistant's certificate (`ssl` option) or one it makes in `run.sh` |
+| `SECURE_HOST` | as `HOST_IP` | Host name in the secure address, when the certificate is for a domain |
 
 The server doesn't know about Home Assistant: in the add-on, `run.sh` reads the add-on options
 with bashio and sets these variables.
@@ -46,6 +47,7 @@ src/                      server (Node, no framework)
   store.js                JSON file storage: debounced, atomic writes
   sse.js                  Server-Sent Events hub for live updates
   static.js, network.js   safe static file serving, LAN address detection
+  tls.js                  https certificate: reading it, and reloading it when it's renewed
 
 public/                   browser (plain ES modules, no build step)
   index.html              tablet / TV page: start page and dashboard views (markup only);
@@ -54,16 +56,20 @@ public/                   browser (plain ES modules, no build step)
   css/                    base.css (theme, shared components), lobby.css, table.css, phone.css
   img/logo.svg            app logo and browser icon; icon-*.png home-screen icons
                           (icon-180.png: iPhone / iPad, icon-maskable-512.png: Android; both on a gold sunburst)
+  img/avatars/*.svg       player avatars, one token each, drawn by art/avatars.mjs (run it after changing one;
+                          the ids must match AVATARS in js/shared/rules.js, a test checks it)
   media/wake.*            tiny silent video that keeps the screen on over plain http
   manifest.webmanifest    web app manifest (home screen opens full screen)
   js/shared/              rules.js (also used by the server; the Player and View types every screen gets),
-                          activity (log dialog), api, dialog, dom, format, games, screen, storage;
+                          activity (log dialog), api, avatars (the avatar pictures as HTML), dialog, dom,
+                          format, games, report (levels over the game from the log, pure), report-chart (its
+                          chart, full or compact), screen, storage;
                           device-check.js (plain script: sends phones to /join, keeps tablets and TVs)
   js/app.js               tablet / TV entry: switches between the start page and dashboard views
   js/lobby/               start page (lobby.js)
-  js/table/               dashboard: dashboard.js, board, sizing, dialogs,
+  js/table/               dashboard: dashboard.js, board, sizing, dialogs, report (📈 chart dialog),
                           announcer (situations, pure) + lines (texts) + ticker (UI), sounds
-  js/phone/               phone controls
+  js/phone/               phone controls (main.js) and the phone's simpler 📈 report (report.js)
 
 test/                     node:test suites
 ```
@@ -80,7 +86,7 @@ Screens send `source: "dashboard"` or `"phone"` with their actions so the log ca
 came from. The log isn't part of the live view (it would grow every update); screens fetch it from
 `GET /api/log?game=<id>` when it's opened.
 
-**Actions:** `addPlayer`, `removePlayer`, `setEmoji`, `changeLevel`, `setLevel`, `changeGear`, `die`,
+**Actions:** `addPlayer`, `removePlayer`, `setAvatar`, `setSex`, `changeLevel`, `setLevel`, `changeGear`, `die`,
 `newGame`, `switchGame`, `deleteGame`. See `src/game/actions.js`.
 
 **Saved data** is versioned (`schema`). `normalizeState` upgrades older files on load, so

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+<clipPath id="c"><circle cx="50" cy="50" r="47"/></clipPath>
+<circle cx="50" cy="50" r="47" fill="#8a4a1a"/>
+<circle cx="50" cy="50" r="41" fill="none" stroke="#e8b54a" stroke-width="2" opacity=".6"/>
+<g clip-path="url(#c)" fill="#f3e3bf" stroke="#8a4a1a" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
+<rect x="23" y="56" width="54" height="30" rx="3"/>
+<path d="M22 50 Q22 28 50 28 Q78 28 78 50 Z"/>
+<rect x="25" y="49" width="50" height="9" fill="#8a4a1a" stroke="none"/>
+<path d="M26 49 L30 55 L34 49 L38 55 L42 49 L46 55 L50 49 L54 55 L58 49 L62 55 L66 49 L70 55 L74 49 Z" stroke-width="1.6"/>
+<path d="M26 58 L30 52.5 L34 58 L38 52.5 L42 58 L46 52.5 L50 58 L54 52.5 L58 58 L62 52.5 L66 58 L70 52.5 L74 58 Z" stroke-width="1.6"/>
+<path d="M23 70 L77 70 M36 30 L36 49 M64 30 L64 49" fill="none" stroke-width="2.2"/>
+<rect x="45.5" y="64" width="9" height="11" rx="1.5"/>
+<g stroke="none" fill="#8a4a1a"><circle cx="43" cy="40" r="3.4"/><circle cx="57" cy="40" r="3.4"/><circle cx="50" cy="69.5" r="1.6"/></g>
+</g>
+<circle cx="50" cy="50" r="47" fill="none" stroke="#e8b54a" stroke-width="3"/>
+</svg>

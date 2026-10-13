@@ -1,5 +1,6 @@
 // What the announcer can say about the table right now, and what counts as news.
 // Pure logic (no DOM, no timers) so it can be unit-tested in Node.
+import { avatarHtml } from '../shared/avatars.js';
 import { escapeHtml } from '../shared/dom.js';
 import { MAX_LEVEL, MIN_LEVEL } from '../shared/rules.js';
 import { LINES } from './lines.js';
@@ -13,7 +14,7 @@ const LOADED_GEAR = 8;
 /** Situations that interrupt the rotation (and make a sound), most important first. */
 export const NEWSWORTHY = Object.freeze(['win', 'death', 'nine', 'cursed', 'stuck']);
 
-const nameHtml = (p) => `<b>${escapeHtml(p.emoji)} ${escapeHtml(p.name)}</b>`;
+const nameHtml = (p) => `<b>${avatarHtml(p.avatar, { inline: true })} ${escapeHtml(p.name)}</b>`;
 const namesHtml = (players) => (players.length > 2
   ? `${nameHtml(players[0])} & ${players.length - 1} others`
   : players.map(nameHtml).join(' & '));

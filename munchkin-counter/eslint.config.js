@@ -6,7 +6,7 @@ export default [
   js.configs.recommended,
   {
     // the server, the tests and the tools run in Node
-    files: ['src/**/*.js', 'test/**/*.js', '*.js'],
+    files: ['src/**/*.js', 'test/**/*.js', '*.js', 'art/**/*.mjs'],
     languageOptions: { globals: globals.node },
   },
   {
