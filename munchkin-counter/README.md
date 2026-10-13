@@ -28,6 +28,10 @@ and each player controls their own level and gear from their phone by scanning a
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | host_ip | str | (auto) | Address shown in the QR code. Only set it if the QR code shows the wrong address |
+| ssl | bool | false | Use Home Assistant's own certificate on the secure address (no browser warning; Android can install the app) |
+| certfile | str | fullchain.pem | Certificate in Home Assistant's `ssl` folder |
+| keyfile | str | privkey.pem | Its key, in the `ssl` folder |
+| domain | str | | The certificate's domain, e.g. `ha.example.com`: the secure address is `https://<domain>:3443/` |
 
 ## Usage
 

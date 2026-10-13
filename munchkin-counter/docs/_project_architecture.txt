@@ -1,8 +1,8 @@
 munchkin-counter/                  Home Assistant add-on containing the app
                                    (in the repository it sits next to repository.yaml and the repo README)
-├── config.yaml                    add-on definition: version, ingress, host network, host_ip option, share:ro
+├── config.yaml                    add-on definition: version, ingress, host network, options (host_ip, ssl, certfile, keyfile, domain), share:ro, ssl:ro
 ├── Dockerfile                     Home Assistant base image + Node.js, copies src/ and public/
-├── run.sh                         bashio: add-on options → env vars (HOST_IP, LOGO_FILE), https certificate, starts the server
+├── run.sh                         bashio: add-on options → env vars (HOST_IP, LOGO_FILE, SECURE_HOST), https certificate (Home Assistant's or self-made), starts the server
 ├── README.md                      add-on store page: features, install, options
 ├── DOCS.md                        add-on Documentation tab: usage, rules, sound, custom logo
 ├── CHANGELOG.md                   release notes (shown in Home Assistant)
@@ -21,6 +21,7 @@ munchkin-counter/                  Home Assistant add-on containing the app
 │   ├── game/activity.js           activity log: recording, merging quick same-direction taps, limits
 │   ├── store.js                   safe JSON saving (atomic, debounced)
 │   ├── sse.js                     live updates to all screens
+│   ├── tls.js                     https certificate, reloaded when renewed
 │   └── network.js, static.js      LAN address detection, safe static file serving
 ├── public/                        browser (plain ES modules, no build step)
 │   ├── index.html                 tablet / TV page: start page + dashboard views (served at / and /table)

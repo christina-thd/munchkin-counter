@@ -22,7 +22,8 @@ Open `/#sounds` on the dashboard to hear every sound.
 | `HOST_IP`    | auto-detected     | Address in the QR code, if detection picks the wrong one |
 | `STATE_FILE` | `data/state.json` | Where games are saved                                    |
 | `LOGO_FILE`  | built-in die logo | Your own logo image (png, jpg, webp, svg)                |
-| `HTTPS_PORT`, `TLS_CERT`, `TLS_KEY` | off | Also serve https (PEM certificate and key); the add-on uses 3443 and makes its own certificate in `run.sh` |
+| `HTTPS_PORT`, `TLS_CERT`, `TLS_KEY` | off | Also serve https (PEM certificate and key, reloaded when renewed); the add-on uses 3443 with Home Assistant's certificate (`ssl` option) or one it makes in `run.sh` |
+| `SECURE_HOST` | as `HOST_IP` | Host name in the secure address, when the certificate is for a domain |
 
 The server doesn't know about Home Assistant: in the add-on, `run.sh` reads the add-on options
 with bashio and sets these variables.
@@ -46,6 +47,7 @@ src/                      server (Node, no framework)
   store.js                JSON file storage: debounced, atomic writes
   sse.js                  Server-Sent Events hub for live updates
   static.js, network.js   safe static file serving, LAN address detection
+  tls.js                  https certificate: reading it, and reloading it when it's renewed
 
 public/                   browser (plain ES modules, no build step)
   index.html              tablet / TV page: start page and dashboard views (markup only);

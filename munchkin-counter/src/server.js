@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // Munchkin Counter: tablet dashboard + phone controls over the home network.
-import { readFileSync } from 'node:fs';
 import http from 'node:http';
 import https from 'node:https';
 import { createApp } from './app.js';
 import { loadConfig } from './config.js';
 import { createInitialState, normalizeState } from './game/state.js';
 import { JsonFileStore } from './store.js';
+import { readTls, watchTls } from './tls.js';
 
 const config = loadConfig();
 const store = new JsonFileStore(config.stateFile);
@@ -27,12 +27,13 @@ servers[0].listen(config.port, config.host, () => {
 // Optional https, so tablets can use the Wake Lock API (keeps the screen on). http keeps working either way.
 if (config.httpsPort && config.tlsCert && config.tlsKey) {
   try {
-    const secure = https.createServer({ cert: readFileSync(config.tlsCert), key: readFileSync(config.tlsKey) }, app.handle);
+    const secure = https.createServer(readTls(config), app.handle);
     secure.on('error', (err) => console.warn(`https not available: ${err.message}`));
     secure.listen(config.httpsPort, config.host, () => {
       httpsRunning = true;
       console.log(`  Secure:       ${app.secureUrl()}  (keeps tablet screens on)`);
     });
+    watchTls(secure, config);
     servers.push(secure);
   } catch (err) {
     console.warn(`https not available: ${err.message}`);

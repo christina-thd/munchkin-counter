@@ -85,7 +85,8 @@ export function createApp({
   const view = () => toView(state, config.version);
   const host = () => config.publicHost ?? lanAddress();
   const joinUrl = () => `http://${host()}:${config.port}/join`;
-  const secureUrl = () => (httpsActive() ? `https://${host()}:${config.httpsPort}/` : null);
+  // A certificate for a domain is only valid by that name, so the secure address uses it when set
+  const secureUrl = () => (httpsActive() ? `https://${config.secureHost ?? host()}:${config.httpsPort}/` : null);
 
   let qr = { url: null, svg: null };
   async function qrSvg() {

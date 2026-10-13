@@ -8,6 +8,18 @@ This add-on runs a level counter for the Munchkin card game on your home network
 - The address shown in the QR code that phones scan
 - Leave it empty: the address is detected automatically. Set it only if the QR code shows the wrong address, e.g. `192.0.2.10`
 
+**ssl** (true / false, default false), **certfile** (default `fullchain.pem`), **keyfile** (default `privkey.pem`)
+- Turn **ssl** on to use Home Assistant's own certificate (for example from Let's Encrypt or DuckDNS) on the secure
+  address, instead of the add-on's self-made one. Browsers trust it, so there's no warning, and Android can install
+  the app (see [Install as an app on Android](#install-as-an-app-on-android))
+- **certfile** and **keyfile** are the certificate and key in Home Assistant's `ssl` folder. Only the file name counts,
+  so the paths from Home Assistant's own HTTP settings work as they are (e.g. `../../ssl/fullchain.pem`)
+- If a file isn't there, the add-on says so in its log and uses its self-made certificate
+
+**domain** (string, optional)
+- The name the certificate is for, e.g. `ha.example.com`: the secure address is shown with it
+  (`https://ha.example.com:3443/`). A certificate for a name only works when the page is opened by that name
+
 ## Usage
 
 1. Install and start the add-on
@@ -59,14 +71,31 @@ Use the 🔊 button to mute. Add `#sounds` to the end of the address to hear eve
   Android browsers only allow keeping the screen on for secure pages. The add-on makes its own certificate, so the
   browser warns that it isn't trusted: tap **Advanced → Proceed**. The browser remembers this for a while; if the
   NUC's address changes, the add-on makes a new certificate and the browser asks once more.
+  With the **ssl** option there's no warning: open `https://<domain>:3443/` instead.
 - **Full screen:** tap the ⛶ button in the top bar (or the top-right corner of the start page). It stays full screen
   when you move between the start page and the dashboard. Tap it again, or press Esc, to leave.
 - **Like an app:** use **Add to Home Screen** in the tablet's browser menu (on an iPad: Share → Add to Home Screen).
-  It then opens full screen from its own icon.
+  It then opens full screen from its own icon. On Android, see below.
 
 For a tablet that stays on the table for hours, also check its own settings: set the screen timeout to the longest
 value (Android: Settings → Display → Screen timeout; iPad: Settings → Display & Brightness → Auto-Lock → Never)
 and keep it plugged in.
+
+## Install as an app on Android
+
+Android browsers only install a web app from a page whose certificate they trust. The add-on's self-made one
+isn't, so they offer only a shortcut that opens in a browser tab. With a domain and a certificate for it, which
+Home Assistant often already has (Let's Encrypt, DuckDNS):
+
+1. In the add-on's configuration, turn on **ssl**, set **certfile** and **keyfile** to the certificate and key
+   (the same files as in Home Assistant's HTTP settings) and **domain** to its name. Restart the add-on
+2. Check that at home the domain leads to Home Assistant's local address: open `https://<domain>:3443/` on the
+   tablet. If it doesn't load, add a local DNS entry for the domain pointing to Home Assistant (in your router,
+   or with the AdGuard Home add-on's DNS rewrites)
+3. In Chrome's menu, choose **Install app** (or **Add to home screen → Install**)
+
+Don't forward port 3443 on your router to make the domain work: everything stays on your home network, and
+the app has no login. A renewed certificate is picked up by itself, without restarting the add-on.
 
 ## Custom logo
 

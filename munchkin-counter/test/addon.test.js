@@ -48,6 +48,19 @@ test('the Dockerfile builds without BUILD_FROM (newer Supervisors only pass BUIL
   assert.match(dockerfile, /^ARG BUILD_FROM=ghcr\.io\/home-assistant\/\$\{BUILD_ARCH\}-base:\S+$/m);
 });
 
+test("the ssl option uses Home Assistant's certificate, and falls back to the add-on's own", () => {
+  assert.match(config, /^ {2}- ssl:ro$/m);                                      // the ssl folder, read-only
+  assert.match(config, /^ {2}ssl: false$/m);                                    // off unless turned on
+  const run = read('run.sh');
+  assert.match(run, /bashio::config\.true 'ssl'/);
+  assert.match(run, /CERTFILE="\$\(bashio::config 'certfile'\)"/);
+  assert.match(run, /KEYFILE="\$\(bashio::config 'keyfile'\)"/);
+  assert.match(run, /CERTFILE="\/ssl\/\$\{CERTFILE##\*\/\}"/);                  // just the name, in /ssl
+  assert.match(run, /KEYFILE="\/ssl\/\$\{KEYFILE##\*\/\}"/);
+  assert.match(run, /export SECURE_HOST=/);
+  assert.match(run, /if \[ -z "\$\{TLS_CERT:-\}" \]; then/);                    // self-made only without it
+});
+
 test('every avatar has its picture, and there are no pictures without an avatar', async () => {
   const { AVATAR_IDS } = await import('../public/js/shared/rules.js');
   const files = fs.readdirSync(path.join(ROOT_DIR, 'public', 'img', 'avatars')).map((f) => f.replace(/\.svg$/, '')).sort();

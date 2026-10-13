@@ -229,6 +229,20 @@ describe('https (keeps tablet screens on)', () => {
     const info = await (await fetch(`${base}/api/info`)).json();
     assert.equal(info.secureUrl, null);
   });
+
+  test("with Home Assistant's certificate, the secure address uses its domain (phones stay on the IP)", () => {
+    const config = {
+      version: 'test', port: 3000, httpsPort: 3443, publicHost: '192.0.2.10', secureHost: 'ha.example.test',
+      publicDir: path.join(ROOT_DIR, 'public'),
+    };
+    const domainApp = createApp({ config, state: createInitialState(), store: null, httpsActive: () => true });
+    try {
+      assert.equal(domainApp.secureUrl(), 'https://ha.example.test:3443/');
+      assert.equal(domainApp.joinUrl(), 'http://192.0.2.10:3000/join');
+    } finally {
+      domainApp.hub.close();
+    }
+  });
 });
 
 describe('activity log API', () => {
