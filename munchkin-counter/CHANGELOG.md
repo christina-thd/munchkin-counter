@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.9.0
+- Up to 6 players, dashboard layout fixes
+
 ## 2.8.2
 - Each avatar can only be used by one player per game
 

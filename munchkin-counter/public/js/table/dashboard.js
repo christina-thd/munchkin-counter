@@ -2,11 +2,12 @@
 import { refreshActivityLog, showActivityLog } from '../shared/activity.js';
 import { fetchInfo, sendAction } from '../shared/api.js';
 import { $, closest } from '../shared/dom.js';
+import { MAX_PLAYERS } from '../shared/rules.js';
 import { LevelWatcher } from './announcer.js';
 import { renderBoard } from './board.js';
 import { askNewPlayer, confirmDeath, confirmRemovePlayer, showSoundTest } from './dialogs.js';
 import { showReport } from './report.js';
-import { fitRows } from './sizing.js';
+import { fitRows, keepRowsFitted } from './sizing.js';
 import { LEVEL_SOUNDS, NEWS_SOUNDS, Soundboard } from './sounds.js';
 import { Ticker } from './ticker.js';
 
@@ -32,6 +33,11 @@ export function createDashboard({ openLobby }) {
 
   function render() {
     $('gameName').textContent = view.game.name ?? '';
+    // Munchkin is for up to 6 players
+    const full = view.players.length >= MAX_PLAYERS;
+    const add = /** @type {HTMLButtonElement} */ ($('addPlayer'));
+    add.disabled = full;
+    add.title = full ? `The game is full: Munchkin is for up to ${MAX_PLAYERS} players` : 'Add a player';
     fitRows(board, view.players.length);
     renderBoard(board, view.players, flashIds);
   }
@@ -44,7 +50,8 @@ export function createDashboard({ openLobby }) {
     else if (levelChange) sounds.play(LEVEL_SOUNDS[levelChange]);
   }
 
-  addEventListener('resize', () => { if (active) fitRows(board, view.players.length); });
+  // the window, or the top bar when the announcer wraps onto more lines
+  keepRowsFitted(board, () => view.players.length);
 
   // ----- player rows -----
 

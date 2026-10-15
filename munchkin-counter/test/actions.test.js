@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { beforeEach, describe, test } from 'node:test';
 import { ActionError, applyAction } from '../src/game/actions.js';
 import { createInitialState, currentGame } from '../src/game/state.js';
-import { AVATAR_IDS, MAX_LEVEL } from '../public/js/shared/rules.js';
+import { AVATAR_IDS, MAX_LEVEL, MAX_PLAYERS } from '../public/js/shared/rules.js';
 
 let state;
 const act = (action, now) => applyAction(state, action, now);
@@ -22,6 +22,14 @@ describe('players', () => {
     assert.notEqual(a.id, b.id);
     act({ type: 'setAvatar', playerId: a.id, avatar: AVATAR_IDS[2] });
     assert.equal(add('Cy').avatar, AVATAR_IDS[0]);                     // the first free one, not the next in line
+  });
+
+  test('a game takes at most 6 players (Munchkin is for up to 6)', () => {
+    for (let i = 1; i <= MAX_PLAYERS; i++) add(`P${i}`);
+    assert.throws(() => add('Seventh'), { status: 409, message: /full/ });
+    assert.equal(players().length, MAX_PLAYERS);
+    act({ type: 'removePlayer', playerId: players()[0].id });
+    assert.equal(add('Seventh').name, 'Seventh');                         // a seat opened up
   });
 
   test('addPlayer trims, limits and defaults the name', () => {

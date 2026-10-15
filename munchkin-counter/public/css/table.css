@@ -3,15 +3,18 @@
 .table-view { position: fixed; inset: 0; display: flex; flex-direction: column; overflow: hidden; }
 
 /* ----- sizes: all scale from the row height --rh (set in js/table/sizing.js), capped by screen width ----- */
+/* The minimums are small enough for 6 rows on a TV, whose browser often reports a 960×540 screen: there a row is
+   about 64px, and everything in it has to fit inside, or the boxes stick out of their row. */
 :root {
   --rh: 100px;
-  --avatar:   clamp(56px, min(calc(var(--rh) * 0.74), 7vw), 104px);
-  --name:     clamp(24px, min(calc(var(--rh) * 0.30), 3.2vw), 40px);
-  --pip:      clamp(24px, calc(var(--rh) * 0.26), 36px);
-  --button:   clamp(38px, min(calc(var(--rh) * 0.42), 4.2vw), 54px);   /* − / + */
-  --value:    clamp(30px, min(calc(var(--rh) * 0.38), 4vw), 52px);     /* level & gear */
-  --strength: clamp(50px, min(calc(var(--rh) * 0.64), 7.4vw), 100px);  /* about twice level & gear */
-  --pad:      clamp(6px, calc(var(--rh) * 0.07), 14px);
+  --pad:      clamp(4px, calc(var(--rh) * 0.06), 14px);
+  --avatar:   clamp(44px, min(calc(var(--rh) * 0.74), 7vw), 104px);
+  --name:     clamp(19px, min(calc(var(--rh) * 0.30), 3.2vw), 40px);
+  --pip:      clamp(19px, calc(var(--rh) * 0.26), 36px);
+  --label:    clamp(9px, calc(var(--rh) * 0.14), 13px);                  /* LEVEL / GEAR / STRENGTH */
+  --button:   clamp(26px, min(calc(var(--rh) * 0.40), 4.2vw), 54px);   /* − / + */
+  --value:    clamp(22px, min(calc(var(--rh) * 0.36), 4vw), 52px);     /* level & gear */
+  --strength: clamp(26px, min(calc(var(--rh) * 0.52), 7.4vw), 100px);  /* about twice level & gear */
   --stepper:  calc(var(--button) * 2 + var(--value) * 1.6 + 22px);
 }
 
@@ -79,6 +82,7 @@
   font-weight: 700;
 }
 .bar-button.primary { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.bar-button:disabled { opacity: 0.4; cursor: not-allowed; }   /* + Player once the game has its 6 players */
 .bar-button.icon { width: 44px; padding: 0; font-size: 20px; }
 .qr-thumb { width: 48px; height: 48px; padding: 3px; border-radius: 8px; background: #fff; cursor: pointer; }
 
@@ -244,15 +248,16 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 5px 8px 8px;
+  padding: calc(var(--pad) * 0.6) 8px calc(var(--pad) * 0.8);
   border: 1px solid #ffffff14;
   border-radius: 16px;
   background: #00000045;
 }
 .stepper .label {
   text-align: center;
-  font-size: 13px;
+  font-size: var(--label);
   font-weight: 700;
+  line-height: 1.2;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
@@ -268,31 +273,41 @@
 .stepper.level .value { color: var(--gold); }
 .stepper .pm { width: var(--button); height: var(--button); border-radius: 50%; }
 
-/* Strength: the number people read from across the table */
+/* Strength: the number people read from across the table. The label sits on top, the number is centered in the
+   space below it, and the box is exactly the row's height (never taller: it used to stick out of short rows). */
 .strength {
   align-self: stretch;
-  display: flex;
-  flex-direction: column;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  justify-items: center;
   align-items: center;
-  justify-content: center;
-  gap: 2px;
+  padding: calc(var(--pad) * 0.7) 4px calc(var(--pad) * 0.5);
+  overflow: hidden;
   border: 2px solid #e8b54a66;
   border-radius: 16px;
   background: linear-gradient(180deg, #e8b54a22, #e8b54a08);
 }
 .strength span {
-  font-size: 13px;
+  max-width: 100%;
+  font-size: var(--label);
   font-weight: 700;
-  letter-spacing: 0.14em;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--gold);
 }
 .strength b {
-  padding-top: 0.08em;
+  padding-top: 0.06em;          /* the display font's digits sit high in their line */
   font: 400 var(--strength)/0.9 var(--font-display);
   font-variant-numeric: tabular-nums;
   color: var(--gold);
   text-shadow: 3px 3px 0 var(--shadow-red);
+}
+/* Where supported, trim the number to the digits themselves, so it's centered the same on every browser
+   (Safari and Chrome read the font's line metrics differently) */
+@supports (text-box: trim-both cap alphabetic) {
+  .strength b { padding-top: 0; line-height: 1; text-box: trim-both cap alphabetic; }
 }
 .player.leading .strength, .player.won .strength { border-color: var(--gold); }
 
@@ -341,7 +356,11 @@
 
 /* ----- portrait tablet: avatar + name + strength on top, level & gear below ----- */
 @media (max-width: 860px) {
-  :root { --button: clamp(40px, 6.2vw, 58px); --value: clamp(30px, 6vw, 52px); }   /* fill the panel width */
+  :root {
+    --button: clamp(40px, 6.2vw, 58px);                                  /* fill the panel width */
+    --value: clamp(30px, 6vw, 52px);
+    --strength: clamp(30px, min(calc(var(--rh) * 0.85), 9vw), 100px);   /* its box spans both lines of the row */
+  }
   .brand { font-size: 20px; }
   .brand img { width: 32px; height: 32px; }
   .announcer { display: none; }
