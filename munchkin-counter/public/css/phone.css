@@ -23,6 +23,18 @@ h2 { margin: 8px 0 16px; font: 400 20px var(--font-display); letter-spacing: 0.0
 .player-list .player-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .player-list .sex-icon { width: 26px; height: 26px; font-size: 16px; }
 
+/* in place of the new player form when the game has its 6 players */
+.game-full {
+  margin: 22px 0 0;
+  padding: 14px;
+  border: 1px dashed var(--line);
+  border-radius: 18px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.45;
+  text-align: center;
+}
+
 /* new player: name and ♂ / ♀ on one line, then Join */
 .join {
   margin-top: 22px;

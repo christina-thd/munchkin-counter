@@ -5,7 +5,7 @@ import { choiceHtml, openDialog } from '../shared/dialog.js';
 import { $, closest, escapeHtml, input, restartAnimation } from '../shared/dom.js';
 import { formatGear } from '../shared/format.js';
 import {
-  AVATAR_IDS, MAX_LEVEL, MIN_LEVEL, otherSex, SEX_LABELS, strengthOf,
+  AVATAR_IDS, MAX_LEVEL, MAX_PLAYERS, MIN_LEVEL, otherSex, SEX_LABELS, strengthOf,
 } from '../shared/rules.js';
 import { SEX_ICON_OPTIONS, sexIcon } from '../shared/sex-icons.js';
 import { storage } from '../shared/storage.js';
@@ -44,6 +44,10 @@ function renderPicker() {
           <span class="sex-icon ${p.sex}" title="${SEX_LABELS[p.sex]}">${sexIcon(p.sex)}</span>
         </button>`).join('')
     : '<p class="hint">No players yet — enter your name below.</p>';
+  // Munchkin is for up to 6: a full game can't take a new player
+  const full = players.length >= MAX_PLAYERS;
+  $('joinForm').hidden = full;
+  $('gameFull').hidden = !full;
 }
 
 function renderPlayer(player) {

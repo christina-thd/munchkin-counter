@@ -47,6 +47,8 @@ address (e.g. `http://<homeassistant-ip>:3000/?dashboard`); it remembers. Use `?
   after a Change Sex curse. It carries over when a new game keeps the same players.
 - **Avatar**: every player gets a character token (races, classes, monsters and dungeon loot). Tap yours on
   the phone to pick another.
+- **Players**: up to 6 per game, as in Munchkin. Once 6 have joined, **+ Player** is greyed out and phones can only
+  pick an existing player; removing one frees the seat.
 - **New game** (on the start page) adds a game to the list. Old games are kept and can be reopened or deleted.
 
 ### Activity log

@@ -23,6 +23,7 @@
 export const MIN_LEVEL = 1;
 export const MAX_LEVEL = 10;          // reaching it wins the game
 export const MAX_PLAYER_NAME = 20;
+export const MAX_PLAYERS = 6;         // Munchkin is for 3–6 players; the dashboard is sized for at most 6 rows
 export const MAX_GAME_NAME = 30;
 
 /**

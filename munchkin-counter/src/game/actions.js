@@ -1,5 +1,5 @@
 import {
-  AVATAR_IDS, clampLevel, freeAvatar, MAX_GAME_NAME, MAX_LEVEL, MAX_PLAYER_NAME, MIN_LEVEL, SEXES,
+  AVATAR_IDS, clampLevel, freeAvatar, MAX_GAME_NAME, MAX_LEVEL, MAX_PLAYER_NAME, MAX_PLAYERS, MIN_LEVEL, SEXES,
 } from '../../public/js/shared/rules.js';
 import { aboutPlayer, record, SOURCES } from './activity.js';
 import { createGame, currentGame, newId } from './state.js';
@@ -49,9 +49,12 @@ function findGame(state, gameId) {
 // and may return a result for the caller. `ctx` is { now, source }.
 
 const handlers = {
-  /** `sex` is chosen when adding; without one (older screens) the character starts male. */
+  /** `sex` is chosen when adding; without one (older screens) the character starts male. At most MAX_PLAYERS. */
   addPlayer(state, { name, sex = SEXES[0] }, ctx) {
     const game = currentGame(state);
+    if (game.players.length >= MAX_PLAYERS) {
+      throw new ActionError(`The game is full: Munchkin is for up to ${MAX_PLAYERS} players`, 409);
+    }
     const player = {
       id: newId(),
       name: text(name, MAX_PLAYER_NAME) || `Player ${game.players.length + 1}`,
