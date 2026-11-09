@@ -9,6 +9,8 @@ export const ICONS = Object.freeze({
   speaker: svg('<path class="fill" d="M6 15H4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h2l3.5-4.5a.8.8 0 0 1 1.5.5v14a.8.8 0 0 1-1.5.5L6 15"/>'
     + '<path d="M15 8a5 5 0 0 1 0 8M17.7 5a9 9 0 0 1 0 14"/><path class="off" d="M3 3l18 18"/>'),
   music: svg('<circle class="fill" cx="6" cy="17" r="3"/><circle class="fill" cx="16" cy="17" r="3"/><path d="M9 17V4h10v13M9 8h10"/>'),
+  minus: svg('<path d="M5 12h14"/>'),
+  plus: svg('<path d="M12 5v14M5 12h14"/>'),
   next: svg('<path class="fill" d="M4 5v14l12-7z"/><path d="M20 5v14"/>'),
   // the game report: a bar chart on its axes, the bars in no particular order (rising bars read as a signal or
   // volume meter); solid bars with no outline so the gaps between them stay clear

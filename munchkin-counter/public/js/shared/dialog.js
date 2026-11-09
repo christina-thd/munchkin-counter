@@ -92,13 +92,10 @@ export function openDialog({
 
     if (input) {
       const text = field('dialogInput');
-      text.focus();
-      text.select();
+      $('dialogOk')?.focus();
       text.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirm(); });
       $('dialogSuggest')?.addEventListener('click', () => {
         text.value = input.suggest(text.value);
-        text.focus();
-        text.select();
       });
     }
   });
