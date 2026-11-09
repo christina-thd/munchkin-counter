@@ -22,6 +22,17 @@ h2 { margin: 8px 0 16px; font: 400 20px var(--font-display); letter-spacing: 0.0
 .player-list .list-avatar { width: 40px; height: 40px; flex: none; }
 .player-list .player-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .player-list .sex-icon { width: 26px; height: 26px; font-size: 16px; }
+/* the winner's avatar wears a 👑, like in the win popup */
+.player-list .list-token { position: relative; flex: none; }
+.player-list .winner-crown {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  font-size: 18px;
+  line-height: 1;
+  transform: translateX(-50%) rotate(-10deg);
+  filter: drop-shadow(0 2px 1px #0008);
+}
 
 /* in place of the new player form when the game has its 6 players */
 .game-full {
@@ -90,6 +101,7 @@ h2 { margin: 8px 0 16px; font: 400 20px var(--font-display); letter-spacing: 0.0
 .avatar-button:active { transform: scale(0.95); }
 /* name, then the character's sex as a small icon */
 .who { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; }
+/* one line: js/phone/main.js shrinks the font until the name fits; still too long at the smallest, it ends in "…" */
 .me .name {
   min-width: 0;
   overflow: hidden;
@@ -97,6 +109,12 @@ h2 { margin: 8px 0 16px; font: 400 20px var(--font-display); letter-spacing: 0.0
   letter-spacing: 0.02em;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+/* narrow phones (360px): a bit more room for the name */
+@media (max-width: 380px) {
+  .me { gap: 8px; }
+  .avatar-button { width: 52px; height: 52px; }
+  .me .strength { min-width: 62px; }
 }
 /* ♂ / ♀ icon after the name: tap to switch (Change Sex curse). Blue / pink, as on the dashboard. */
 .sex-icon {
@@ -175,9 +193,20 @@ h2 { margin: 8px 0 16px; font: 400 20px var(--font-display); letter-spacing: 0.0
 .panel .value { flex: 1; text-align: center; font: 400 80px/1 var(--font-display); font-variant-numeric: tabular-nums; }
 .panel .pm { width: 92px; height: 92px; border: 2px solid #3b2212; border-radius: 18px; box-shadow: 0 3px 0 #3b2212; }
 .panel .pm:active { transform: scale(0.94); }
-.panel.won { outline: 4px solid #e0a82e; animation: glow 1.2s ease-in-out infinite alternate; }
+/* only the glow's opacity pulses: animating box-shadow would repaint the panel on every frame */
+.panel.won { position: relative; outline: 4px solid #e0a82e; box-shadow: 0 0 8px #e0a82e; }
+.panel.won::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 28px #ffd46b;
+  pointer-events: none;
+  animation: glow 1.2s ease-in-out infinite alternate;
+  will-change: opacity;
+}
 .panel.died { animation: died 1.6s ease-out; }
-@keyframes glow { from { box-shadow: 0 0 8px #e0a82e; } to { box-shadow: 0 0 28px #ffd46b; } }
+@keyframes glow { from { opacity: 0; } to { opacity: 1; } }
 @keyframes died { 0% { background: #7a1010; } }
 
 .died-button {
@@ -192,7 +221,7 @@ h2 { margin: 8px 0 16px; font: 400 20px var(--font-display); letter-spacing: 0.0
 }
 .died-button:active { background: var(--red); }
 
-/* 💀 I died, with 📈 (the game report) beside it */
+/* 💀 I died, with the game report beside it */
 .bottom-row { display: flex; gap: 10px; }
 .bottom-row .died-button { flex: 1; width: auto; }
 .report-button {
@@ -214,6 +243,37 @@ h2 { margin: 8px 0 16px; font: 400 20px var(--font-display); letter-spacing: 0.0
 .standings .you { margin-left: 4px; padding: 1px 6px; border-radius: 6px; background: var(--surface); color: var(--muted); font-size: 12px; font-weight: 600; }
 .standings b { font: 400 22px var(--font-display); font-variant-numeric: tabular-nums; }
 .report-legend.compact { margin-bottom: 8px; font-size: 14px; }
+
+/* ----- game over: the win card takes the controls' place, and nothing can be changed ----- */
+#playView.over :is(.panel, .bottom-row, .avatar-grid) { display: none; }
+#playView.over :is(.avatar-button, .sex-icon) { pointer-events: none; }
+.win-card {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 18px 16px 16px;
+  border: 1px solid var(--gold);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #4a3413, var(--surface));
+  box-shadow: 0 4px 0 #1a0f08, 0 0 18px #ffd46b33;
+}
+#winStory { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.win-card .win-avatar { width: 92px; height: 92px; }
+.win-card .win-title { font-size: 32px; }
+.win-card .win-line { font-size: 17px; }
+.win-buttons { display: flex; gap: 10px; margin-top: auto; }
+.win-buttons button {
+  flex: 1;
+  padding: 14px;
+  border: 1px solid #ffffff22;
+  border-radius: 14px;
+  background: #00000055;
+  font-size: 18px;
+  font-weight: 700;
+}
+.win-buttons .report-wide { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
 
 .switch { display: block; margin: 0 auto; padding: 6px 12px; color: var(--muted); font-size: 15px; text-decoration: underline; }
 

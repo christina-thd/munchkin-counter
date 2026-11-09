@@ -17,12 +17,21 @@
  * @property {string} version                                   the app's; a page that sees a new one reloads
  * @property {{ id: string, name: string, lastDeath: { playerId: string, at: number } | null }} game   the current game
  * @property {Player[]} players
- * @property {{ id: string, name: string, createdAt: number, playerCount: number }[]} games   every game, oldest first
+ * @property {GameSummary[]} games   every game, oldest first
+ */
+
+/**
+ * @typedef {object} GameSummary
+ * @property {string} id
+ * @property {string} name
+ * @property {number} createdAt
+ * @property {number} playerCount
+ * @property {string[]} winners   names of who reached level 10: a game with winners is finished
  */
 
 export const MIN_LEVEL = 1;
 export const MAX_LEVEL = 10;          // reaching it wins the game
-export const MAX_PLAYER_NAME = 20;
+export const MAX_PLAYER_NAME = 14;    // fits the phone's header on a 360px-wide phone (it was 20 before 3.0.0)
 export const MAX_PLAYERS = 6;         // Munchkin is for 3–6 players; the dashboard is sized for at most 6 rows
 export const MAX_GAME_NAME = 30;
 
@@ -57,6 +66,12 @@ export const SEX_LABELS = Object.freeze({ male: 'Male', female: 'Female' });
 export const otherSex = (sex) => (sex === 'female' ? 'male' : 'female');
 
 export const clampLevel =(level) => Math.min(MAX_LEVEL, Math.max(MIN_LEVEL, level));
+
+/**
+ * Who reached level 10. Once anyone has, the game is over: nothing in it can change until the win is undone.
+ * @param {Player[]} players
+ */
+export const winnersOf = (players) => players.filter((p) => p.level >= MAX_LEVEL);
 
 /**
  * Combat strength: level plus the bonus from gear.

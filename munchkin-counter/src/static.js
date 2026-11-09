@@ -14,6 +14,7 @@ const MIME_TYPES = {
   '.ico': 'image/x-icon',
   '.mp4': 'video/mp4',
   '.webm': 'video/webm',
+  '.mp3': 'audio/mpeg',          // the music's instrument notes (public/audio/instruments)
 };
 
 /** Resolves `relative` inside `root`, or returns null if it would escape it (e.g. `../`). */

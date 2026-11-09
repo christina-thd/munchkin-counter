@@ -5,11 +5,12 @@
 //            (emoji: a change of emoji, logged before 2.8.0; those entries carry `emoji` instead of `avatar`)
 //   source   'dashboard' | 'phone' | null (which kind of screen did it)
 //   name, avatar   the player as they were at that moment (so removed players still read well)
+import { MAX_LEVEL } from '../../public/js/shared/rules.js';
 
 export const MAX_ENTRIES = 500;      // per game; the oldest are dropped
 export const MERGE_WINDOW_MS = 15_000;
 
-export const KINDS = Object.freeze(['start', 'join', 'remove', 'avatar', 'emoji', 'sex', 'level', 'gear', 'death']);
+const KINDS = Object.freeze(['start', 'join', 'remove', 'avatar', 'emoji', 'sex', 'level', 'gear', 'death']);
 export const SOURCES = Object.freeze(['dashboard', 'phone']);
 
 /**
@@ -25,10 +26,13 @@ export const aboutPlayer = (player) => ({ playerId: player.id, name: player.name
 
 const direction = (e) => Math.sign(e.to - e.from);
 
+// Reaching level 10 is always an entry of its own: undoing a win goes back to the level just before it.
+const wins = (e) => e.kind === 'level' && e.to >= MAX_LEVEL;
+
 function continues(last, item) {
   return last && MERGEABLE.has(item.kind) && last.kind === item.kind && last.playerId === item.playerId
     && last.source === item.source && item.at - last.at <= MERGE_WINDOW_MS
-    && direction(last) === direction(item);
+    && direction(last) === direction(item) && !wins(item);
 }
 
 /** Adds an entry to the game's log. */

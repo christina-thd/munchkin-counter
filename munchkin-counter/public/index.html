@@ -27,6 +27,7 @@
 
   <!-- ===== start page ===== -->
   <div class="view lobby-view" id="lobbyView" hidden>
+    <button class="corner-button sound-corner sound-button" title="Sound and music" aria-label="Sound and music" data-icon="speaker"></button>
     <button class="corner-button fullscreen-button" title="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="expand" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><path class="collapse" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></button>
 
     <main class="lobby">
@@ -42,11 +43,11 @@
           <div class="meta" id="currentMeta"></div>
           <div class="play-row">
             <button class="big primary" id="continueButton">▶ Play</button>
-            <button class="big report" id="currentReport" title="Game report: levels over time" aria-label="Game report">📈</button>
+            <button class="big report" id="currentReport" title="Game report: levels over time" aria-label="Game report" data-icon="report"></button>
           </div>
         </div>
 
-        <button class="big" id="newGame">+ New game</button>
+        <button class="big" id="newGame">+ New dungeon</button>
       </section>
 
       <section class="history">
@@ -59,13 +60,13 @@
   <!-- ===== dashboard ===== -->
   <div class="view table-view" id="tableView" hidden>
     <header class="topbar">
-      <div class="brand"><img src="logo" alt="">Munchkin</div>
+      <img class="brand" src="logo" alt="">
       <a class="game-button" id="gameButton" href="./" title="All games">🎲 <span id="gameName"></span></a>
       <div class="announcer" id="announcer" aria-live="polite"></div>
-      <button class="bar-button primary" id="addPlayer">+ Player</button>
+      <button class="bar-button icon primary" id="addPlayer" aria-label="Add player"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7.5" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/><path d="M19 8v6M16 11h6"/></svg></button>
       <button class="bar-button icon" id="activity" title="Activity log" aria-label="Activity log">📜</button>
-      <button class="bar-button icon" id="report" title="Game report: levels over time" aria-label="Game report">📈</button>
-      <button class="bar-button icon" id="sound" title="Sound on/off">🔊</button>
+      <button class="bar-button icon" id="report" title="Game report: levels over time" aria-label="Game report" data-icon="report"></button>
+      <button class="bar-button icon sound-button" id="sound" title="Sound and music" aria-label="Sound and music" data-icon="speaker"></button>
       <button class="bar-button icon fullscreen-button" title="Full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="expand" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><path class="collapse" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></button>
       <img class="qr-thumb" id="qrButton" src="qr.svg" alt="Join QR code" title="Show join QR code">
     </header>

@@ -3,6 +3,9 @@
 import { restartAnimation } from '../shared/dom.js';
 import { LineDeck, SituationTracker, situationKey, situations } from './announcer.js';
 
+const FONT_PX = 15;
+const MIN_FONT_PX = 11;
+
 export class Ticker {
   #el;
   #deathMs;
@@ -15,16 +18,19 @@ export class Ticker {
   #death = { gameId: null, seenAt: null, until: 0 };
   #timers = [];
 
-  constructor(el, { rotateMs = 30_000, deathMs = 30_000 } = {}) {
+  constructor(el, { rotateMs = 60_000, deathMs = 30_000 } = {}) {
     this.#el = el;
     this.#deathMs = deathMs;
     this.#timers = [setInterval(() => this.#rotate(), rotateMs), setInterval(() => this.#expireDeath(), 1000)];
+    addEventListener('resize', this.#fit);
+    document.fonts?.ready.then(this.#fit);
   }
 
   /** Stops rotating (when the dashboard is hidden). */
   stop() {
     this.#timers.forEach(clearInterval);
     this.#timers = [];
+    removeEventListener('resize', this.#fit);
   }
 
   /**
@@ -36,14 +42,20 @@ export class Ticker {
     this.#trackDeath(view.game);
     const list = this.#situations();
     const [news] = this.#tracker.update(view.game.id, list);
-    if (news) this.#index = list.indexOf(news);
-    this.#render(list);
+    const spoken = list.filter((s) => s.lines.length);
+    if (news && spoken.includes(news)) this.#index = spoken.indexOf(news);
+    this.#render(spoken);
     return news?.category ?? null;
   }
 
+  // every situation, including the ones that only make a sound
   #situations() {
     const death = Date.now() < this.#death.until ? this.#view.game.lastDeath : null;
     return situations(this.#view.players, death);
+  }
+
+  #spoken() {
+    return this.#situations().filter((s) => s.lines.length);
   }
 
   // A death is announced for `deathMs` from when it happened. On page load or after switching
@@ -65,7 +77,7 @@ export class Ticker {
   #expireDeath() {
     if (this.#death.until && Date.now() >= this.#death.until) {
       this.#death.until = 0;
-      this.#render(this.#situations());
+      this.#render(this.#spoken());
     }
   }
 
@@ -73,7 +85,7 @@ export class Ticker {
     if (!this.#view) return;
     this.#index += 1;
     this.#chosen.clear();
-    this.#render(this.#situations());
+    this.#render(this.#spoken());
   }
 
   #render(list) {
@@ -88,8 +100,20 @@ export class Ticker {
     const html = this.#chosen.get(key);
     if (html !== this.#shown) {
       this.#el.innerHTML = html;
+      this.#fit();
       restartAnimation(this.#el, 'fresh');
       this.#shown = html;
     }
   }
+
+  // A long line gets a smaller font rather than making the top bar (and so the board) change height.
+  #fit = () => {
+    const el = this.#el;
+    let size = FONT_PX;
+    el.style.fontSize = `${size}px`;
+    while (el.scrollHeight > el.clientHeight + 1 && size > MIN_FONT_PX) {
+      size -= 1;
+      el.style.fontSize = `${size}px`;
+    }
+  };
 }

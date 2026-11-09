@@ -1,8 +1,9 @@
 // Announcer lines, per situation. Each function gets a context and returns every way to say it:
 //   who    player name(s), already HTML-formatted
 //   n      how many players are in the situation (for singular/plural)
-//   level, gap, gear, toWin   numbers where relevant
+//   level, gap   numbers where relevant
 // Keep them short: two lines of the top bar on an iPad is about 90 characters.
+// A line shows for a minute and none repeats until its whole list has been used.
 
 const s = (n, one, many) => (n > 1 ? many : one);
 
@@ -16,120 +17,123 @@ export const LINES = {
   ],
 
   death: ({ who }) => [
-    `💀 ${who} died. Level stays, gear goes. Loot the body.`,
     `💀 ${who} is dead. Everyone take something nice from the corpse.`,
-    `💀 ${who} has died, keeping their level and absolutely nothing else.`,
     `💀 ${who} died. Same level, empty pockets.`,
     `💀 RIP ${who}'s gear. The level survived; the loot didn't.`,
-    `💀 ${who} is dead. Highest level picks first from the body.`,
-    `💀 ${who} died. It's only permanent for the equipment.`,
   ],
 
   start: () => [
-    `Everyone's level 1. Somebody kick open a door.`,
-    `All level 1. The dungeon is quiet. Too quiet.`,
-    `Level 1 across the board. Nobody has anything worth stealing yet.`,
     `Fresh characters, empty backpacks. Go find something to hit.`,
     `Level 1 all round. Enjoy it — this is the only time everyone at this table is friends.`,
     `No one's ahead, so no one's a target. That won't last.`,
   ],
 
-  nine: ({ who, n }) => [
-    `⚠️ ${who} ${s(n, 'is', 'are')} at level 9. The next monster they kill ends the game.`,
-    `⚠️ ${who} ${s(n, 'is', 'are')} at level 9. Level 10 can't be bought, only killed for.`,
+  // the rest are about one player alone at the top
+
+  nine: ({ who }) => [
     `⚠️ Level 9: ${who}. If you've been saving a curse, now is the time.`,
-    `⚠️ ${who} ${s(n, 'needs', 'need')} one more kill. Every monster enhancer just became urgent.`,
-    `⚠️ ${who} ${s(n, 'is', 'are')} one fight away from winning. Nobody help. Not for any price.`,
-    `⚠️ ${who} at level 9. Suddenly everyone cares about their next fight.`,
-    `⚠️ ${who} ${s(n, 'is', 'are')} at level 9. A good moment to remember old grudges.`,
+    `⚠️ ${who} is at level 9. A good moment to remember old grudges.`,
+    `⚠️ ${who} needs just one more monster. Make it a very big one.`,
+    `⚠️ ${who} is one kill from glory. Nobody blink.`,
   ],
 
-  eight: ({ who, n }) => [
-    `${who} ${s(n, 'is', 'are')} at level 8. Time to start making their fights harder.`,
-    `${who} ${s(n, 'hits', 'hit')} level 8. The friendly part of the game is over.`,
-    `Level 8 for ${who}. Two more to go — make both of them expensive.`,
-    `${who} ${s(n, 'is', 'are')} at level 8. Anyone holding a curse should be thinking about it.`,
-    `${who} ${s(n, 'is', 'are')} at level 8, and the rest of the table has noticed.`,
-  ],
-
-  tie: ({ who, level }) => [
-    `${who} are tied at level ${level}. Only one of them gets to win.`,
-    `Dead heat at level ${level}: ${who}. Expect selective helping.`,
-    `${who} share the lead at level ${level}. That arrangement won't last.`,
-    `Tied at level ${level}: ${who}. Watch who helps whom.`,
-    `${who} are neck and neck at level ${level}. Someone's getting cursed.`,
+  eight: ({ who }) => [
+    `${who} hits level 8. The friendly part of the game is over.`,
+    `${who} is at level 8. Anyone holding a curse should be thinking about it.`,
+    `${who} at level 8. Every curse at this table just found a home.`,
+    `Level 8: ${who}. Stop helping. Seriously.`,
+    `${who} is level 8. Remember those monster enhancers you were saving?`,
   ],
 
   runaway: ({ who, gap }) => [
     `${who} is ${gap} levels ahead. The rest of you have a common enemy now.`,
     `${who} leads by ${gap}. Temporary alliances are now in season.`,
-    `${who} is ${gap} levels clear. Every monster they fight should be a little bigger.`,
     `${who} is pulling away by ${gap}. Nobody's helping them anymore, right?`,
-    `${gap} levels ahead: ${who}. That isn't luck, that's a target.`,
-    `${who} is out in front by ${gap}. Time to aim the curses.`,
+    `${who} is ${gap} levels ahead. Unite. Briefly.`,
+    `A ${gap}-level lead for ${who}. The table has a new favourite target.`,
   ],
 
-  stuck: ({ who, n }) => [
-    `${who} ${s(n, 'is', 'are')} still level 1. You can't lose a level from there, at least.`,
-    `${who} ${s(n, 'is', 'are')} still level 1. First in line for Charity, though.`,
-    `${who}: level 1, and the dungeon isn't taking them seriously.`,
-    `${who} ${s(n, 'is', 'are')} still level 1. The Bad Stuff can't get much worse.`,
-    `${who} ${s(n, 'has', 'have')} yet to leave level 1. Maybe try a smaller door.`,
-    `Still level 1: ${who}. Someone help. For a fee.`,
-    `${who} ${s(n, 'remains', 'remain')} level 1. Bold strategy.`,
+  // one player with far more gear than everyone else
+  hoard: ({ who }) => [
+    `That much gear on ${who}? Either very lucky or very sneaky.`,
+    `Count ${who}'s items again. Slowly.`,
+    `${who}'s pockets are suspiciously full.`,
+    `${who} just keeps finding things. Funny, that.`,
   ],
 
-  behind: ({ who, n, gap }) => [
-    `${who} ${s(n, 'is', 'are')} ${gap}+ levels behind. Catching up will take a big monster and a small miracle.`,
-    `${who} ${s(n, 'trails', 'trail')} by ${gap} or more. Charity is on its way.`,
-    `${who} ${s(n, 'is', 'are')} well behind. Perfect position to help in fights — at a price.`,
-    `${who}, ${gap}+ levels back. Nobody sees them as a threat. Use that.`,
-    `${who} ${s(n, 'is', 'are')} falling behind. Offer help, take the best treasure.`,
+  status: ({ who, level }) => [
+    `Current leader: ${who}. Current target: also ${who}.`,
+    `${who} leads with level ${level}. Nobody else is happy about it.`,
   ],
 
-  loaded: ({ who, n, gear }) => (n === 1 ? [
-    `${who} has +${gear} in gear. That's not a character, that's a walking shop.`,
-    `${who} carries +${gear} of gear. Those items would look great on someone else.`,
-    `${who} is at +${gear} gear. One good curse would even things out.`,
-    `+${gear} gear on ${who}. Dying would be very expensive for them.`,
-    `${who} has +${gear} in gear. Find them a bigger monster.`,
-  ] : [
-    `${who} are loaded with gear. Their deaths would be very profitable.`,
-    `${who} are armed to the teeth. The monsters should be nervous. So should everyone else.`,
-    `${who} are carrying enough gear to open a shop.`,
-  ]),
-
-  cursed: ({ who, n, gear }) => [
-    `${who} ${s(n, 'is', 'are')} cursed. Negative gear is still gear, technically.`,
-    `${who} ${s(n, 'is', 'are')} carrying a curse. It seemed like a good idea when someone else played it.`,
-    `${who} ${s(n, 'has', 'have')} negative gear. Even the monsters feel sorry.`,
-    `Cursed: ${who}. Someone at this table is quietly pleased.`,
-    n === 1 ? `${who} is down to ${gear}. That's a curse, not a strategy.` : `${who} are all cursed. Somebody has been busy.`,
-    `${who} ${s(n, 'is', 'are')} cursed. The monsters just got a little easier. For them, not for you.`,
-  ],
-
+  // table talk, all game long
   flavor: () => [
-    `Can't beat the monster? Ask for help. Then negotiate the loot.`,
     `Helping in a fight is a business arrangement, not a favour.`,
     `Nothing in the rules says you have to be nice.`,
-    `Kicked open a door and found nothing? You can always go Looking for Trouble.`,
-    `Running away takes a 5 or 6. Start praying now.`,
-    `Selling items for levels is legal. Winning that way isn't.`,
     `If the monster is too big, that's what the other players are for.`,
     `Every bribe is a promise you might keep.`,
     `Somebody at this table is holding a curse with your name on it.`,
-    `The best time to play a monster enhancer is during someone else's fight.`,
-    `Too many cards at the end of your turn? Charity goes to the lowest level.`,
     `Loot the room, then look innocent.`,
     `There's no such thing as a fair fight in the dungeon. Only profitable ones.`,
     `Wandering monsters don't wander on their own. Someone sends them.`,
-    `Only one Big item at a time. Unless you're a Dwarf.`,
     `When in doubt about a rule, argue louder.`,
-  ],
-
-  status: ({ who, n, level, toWin }) => [
-    `Leading: ${who} · level ${level} · ${toWin} to win`,
-    `${who} ${s(n, 'leads', 'lead')} at level ${level}. ${toWin} to go.`,
-    `Top of the table: ${who}, level ${level}.`,
+    `A good backstab is just teamwork with better timing.`,
+    `Every door hides a monster, a curse, or a very short friendship.`,
+    `Hand too full? The lowest level at the table thanks you in advance.`,
+    `If someone offers to help for nothing, count your treasures afterwards.`,
+    `The monster is not the only thing in the room that wants you dead.`,
+    `Bad Stuff happens. Mostly to people who didn't bring friends.`,
+    `Every alliance comes with an expiry date. Usually your next turn.`,
+    `Ask nicely for help. Then ask again with treasure.`,
+    `Rule of the dungeon: whoever owns the game is right.`,
+    `Your best friend is the one who hasn't cursed you yet.`,
+    `A Wandering Monster is just a gift you didn't ask for.`,
+    `Running away is a perfectly respectable career choice.`,
+    `If you're not sure whether to play that curse, you're sure.`,
+    `Help offered. Terms and conditions apply.`,
+    `Loot is shared fairly: everyone gets what they can grab.`,
+    `Count your bonuses. Then count them again, slower.`,
+    `Kick the door with confidence. Close it with regret.`,
+    `The die is not cursed. Probably.`,
+    `Your rival is one bad door away from being your best friend again.`,
+    `Help now, betray later. It's called planning ahead.`,
+    `Time flies when you're stabbing friends in the back.`,
+    `Nobody at this table is your friend. Some of them are just polite about it.`,
+    `Gratitude in the dungeon lasts about one turn.`,
+    `Sharing is caring. Caring is optional.`,
+    `The dungeon is full of monsters. Most of them are sitting at this table.`,
+    `Never let a good monster go to waste. Give it to a friend.`,
+    `A deal is a deal. Until it isn't.`,
+    `The fastest way to make friends: be in last place.`,
+    `The fastest way to lose friends: be in first place.`,
+    `Revenge is a valid strategy. So is pettiness.`,
+    `Behind every hero is someone trying to steal their stuff.`,
+    `Never underestimate a player who's been quiet for three turns.`,
+    `Every door is a gamble. So is every friendship.`,
+    `The monster was fair. The player who boosted it wasn't.`,
+    `Keep your friends close and your curses closer.`,
+    `Alliances are temporary. Grudges are forever.`,
+    `Every hero needs a sidekick. Preferably one who doesn't want the treasure.`,
+    `The treasure is in the room. The danger is around the table.`,
+    `Every monster has a weakness. Every player has a price.`,
+    `Gold can't buy happiness. It can buy a level, though.`,
+    `Somebody always remembers the rules better when it helps them.`,
+    `The monster isn't the problem. The person beside you is.`,
+    `Every fight has three sides: yours, the monster's, and whoever profits.`,
+    `Betrayal tastes better with loot.`,
+    `The table is quiet. Someone is counting their bonuses.`,
+    `If everyone hates you, you're probably winning.`,
+    `Last place is just first place with more friends.`,
+    `That monster had a lot of guts. Now they're on the floor.`,
+    `Elves help so much. Truly elf-less.`,
+    `The Wizard's spells are charming. Literally.`,
+    `The Thief stole the show. And your boots.`,
+    `Boots? Kicking. Doors? Kicked. Friendships? Also kicked.`,
+    `Rest in pieces, monster.`,
+    `Bad Stuff? More like Sad Stuff.`,
+    `The Wizard cast a spell. The table cast suspicion.`,
+    `The level 1 player has a lot of potential. And nothing else.`,
+    `Somebody here has a brilliant plan. It involves your treasure.`,
+    `The player in last place has a bright future. Somewhere far from here.`,
   ],
 };

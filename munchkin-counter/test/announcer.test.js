@@ -1,28 +1,47 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
-import { LevelWatcher, LineDeck, situations, SituationTracker } from '../public/js/table/announcer.js';
+import { LevelWatcher, LineDeck, SexWatcher, situations, SituationTracker } from '../public/js/table/announcer.js';
 
 /** @returns {import('../public/js/shared/rules.js').Player} */
 const player = (id, level = 1, gear = 0) => ({ id, name: id, avatar: 'wizard', sex: 'male', level, gear });
 const categories = (list) => list.map((s) => s.category);
+const spoken = (list) => categories(list.filter((s) => s.lines.length));
 
 describe('situations', () => {
   test('everyone at level 1 is the start of the game', () => {
     assert.deepEqual(categories(situations([player('a'), player('b')])), ['start']);
   });
 
-  test('a close mid game has table talk and status', () => {
+  test('a mid game with one leader has table talk and status', () => {
     assert.deepEqual(categories(situations([player('a', 3), player('b', 2)])), ['flavor', 'status']);
   });
 
-  test('detects level 9, stuck at 1, far behind, loaded and cursed', () => {
+  test('level 9, stuck at 1 and cursed are news; stuck and cursed only make a sound', () => {
     const list = situations([player('a', 9, 9), player('b', 2), player('c', 1, -1)]);
-    assert.deepEqual(categories(list), ['nine', 'stuck', 'behind', 'loaded', 'cursed', 'status']);
+    assert.deepEqual(categories(list), ['nine', 'stuck', 'cursed', 'flavor', 'status']);
+    assert.deepEqual(spoken(list), ['nine', 'flavor', 'status']);
     assert.deepEqual(list.find((s) => s.category === 'stuck').ids, ['c']);
   });
 
-  test('a tie at the top', () => {
-    assert.ok(categories(situations([player('a', 5), player('b', 5), player('c', 3)])).includes('tie'));
+  test('no gear talk when everyone is well equipped', () => {
+    assert.deepEqual(spoken(situations([player('a', 4, 20), player('b', 3, 15)])), ['flavor', 'status']);
+  });
+
+  test('one player with suspiciously much more gear than anyone else gets a remark', () => {
+    const list = situations([player('a', 4, 3), player('b', 3, 12)]);
+    assert.ok(spoken(list).includes('hoard'));
+    assert.deepEqual(list.find((s) => s.category === 'hoard').ids, ['b']);
+    assert.ok(!categories(situations([player('a', 4, 9), player('b', 3, 3)])).includes('hoard'));   // under 10
+    // way more than everybody else, not just the most: 20 against 14 is a well-equipped table
+    assert.ok(!categories(situations([player('a', 4, 20), player('b', 3, 14)])).includes('hoard'));
+    assert.ok(categories(situations([player('a', 4, 12), player('b', 3, 5), player('c', 2, 6)])).includes('hoard'));
+  });
+
+  test('several level with each other at the top: only table talk', () => {
+    assert.deepEqual(spoken(situations([player('a', 5), player('b', 5), player('c', 3)])), ['flavor']);
+    assert.deepEqual(spoken(situations([player('a', 8), player('b', 8)])), ['flavor']);
+    const nine = situations([player('a', 9), player('b', 9)]);
+    assert.deepEqual([categories(nine), spoken(nine)], [['nine', 'flavor'], ['flavor']]);   // still news, for its sound
   });
 
   test('a runaway leader', () => {
@@ -98,5 +117,17 @@ describe('LevelWatcher', () => {
     assert.equal(watcher.update('g', [player('a', 1)]), 'down');
     assert.equal(watcher.update('g', [player('a', 1), player('b', 5)]), null);
     assert.equal(watcher.update('other', [player('a', 7)]), null);
+  });
+});
+
+describe('SexWatcher', () => {
+  test('notices a change of sex, ignoring the first update, new players and game switches', () => {
+    const watcher = new SexWatcher();
+    const as = (sex) => ({ ...player('a'), sex });
+    assert.equal(watcher.update('g', [as('male')]), false);
+    assert.equal(watcher.update('g', [as('female')]), true);
+    assert.equal(watcher.update('g', [as('female')]), false);
+    assert.equal(watcher.update('g', [as('female'), { ...player('b'), sex: 'male' }]), false);
+    assert.equal(watcher.update('other', [as('male')]), false);
   });
 });

@@ -7,7 +7,7 @@ import { formatGear, plural } from './format.js';
 import { MAX_LEVEL } from './rules.js';
 import { sexIcon } from './sex-icons.js';
 
-const SOURCE_LABELS = { dashboard: 'Tablet', phone: 'Phone' };
+const SOURCE_LABELS = { dashboard: 'Dashboard', phone: 'Phone' };
 
 // The player's picture: their avatar, or the emoji in entries logged before 2.8.0
 const picture = (e) => (e.avatar ? avatarHtml(e.avatar, { inline: true }) : escapeHtml(e.emoji ?? ''));

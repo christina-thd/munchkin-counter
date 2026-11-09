@@ -1,14 +1,19 @@
 // Dashboard (tablet / TV): the board, announcer and sounds for the current game.
 import { refreshActivityLog, showActivityLog } from '../shared/activity.js';
 import { fetchInfo, sendAction } from '../shared/api.js';
-import { $, closest } from '../shared/dom.js';
-import { MAX_PLAYERS } from '../shared/rules.js';
-import { LevelWatcher } from './announcer.js';
+import { closeDialog, openDialog } from '../shared/dialog.js';
+import { $, closest, escapeHtml } from '../shared/dom.js';
+import { ICONS } from '../shared/icons.js';
+import { MAX_PLAYERS, winnersOf } from '../shared/rules.js';
+import { loadWinStory, winHtml } from '../shared/win.js';
+import { LevelWatcher, SexWatcher } from './announcer.js';
 import { renderBoard } from './board.js';
-import { askNewPlayer, confirmDeath, confirmRemovePlayer, showSoundTest } from './dialogs.js';
+import { askNewPlayer, confirmDeath, confirmRemovePlayer, showMusicTest, showSoundTest } from './dialogs.js';
 import { showReport } from './report.js';
 import { fitRows, keepRowsFitted } from './sizing.js';
-import { LEVEL_SOUNDS, NEWS_SOUNDS, Soundboard } from './sounds.js';
+/** @typedef {import('./music.js').Music} Music */
+import { LEVEL_SOUNDS, NEWS_SOUNDS, SEX_SOUND } from './sounds.js';
+/** @typedef {import('./sounds.js').Soundboard} Soundboard */
 import { Ticker } from './ticker.js';
 
 const DEATH_FLASH_MS = 1600;
@@ -18,36 +23,81 @@ const DEATH_FLASH_MS = 1600;
 /**
  * The dashboard only works while it's on screen: the announcer, sounds and level watching start
  * fresh (and silently, like a page load) each time it's shown, so nothing plays on the start page.
- * @param {{ openLobby: () => void }} options  switches the page to the start page view
+ * @param {{ openLobby: () => void, music: Music, sounds: Soundboard }} options  openLobby switches the page to
+ *        the start page view; music and sounds are shared with the start page (js/app.js: the sound popup, and the
+ *        right music for each view)
  * @returns {{ update(view: View): void, show(): void, hide(): void }}
  */
-export function createDashboard({ openLobby }) {
+export function createDashboard({ openLobby, music, sounds }) {
   const board = $('board');
-  const sounds = new Soundboard();
   const flashIds = new Set();   // players who just died: their row flashes red
   /** @type {View} */
   let view = { version: '', game: { id: '', name: '', lastDeath: null }, players: [], games: [] };
   let active = null;           // { ticker, levels } while shown
+  let shownWin = null;         // the win the popup was shown for (game and winners), so it opens once by itself
+  let winOpen = false;
 
   const send = (action) => sendAction(action).catch((err) => console.warn(`${action.type} failed:`, err.message));
+  const isOver = () => winnersOf(view.players).length > 0;
 
   function render() {
     $('gameName').textContent = view.game.name ?? '';
-    // Munchkin is for up to 6 players
+    // Munchkin is for up to 6 players; nobody joins a game that's over
     const full = view.players.length >= MAX_PLAYERS;
+    const over = isOver();
     const add = /** @type {HTMLButtonElement} */ ($('addPlayer'));
-    add.disabled = full;
-    add.title = full ? `The game is full: Munchkin is for up to ${MAX_PLAYERS} players` : 'Add a player';
+    add.disabled = full || over;
+    add.title = over ? 'The game is over'
+      : full ? `The game is full: Munchkin is for up to ${MAX_PLAYERS} players` : 'Add a player';
+    board.classList.toggle('over', over);
     fitRows(board, view.players.length);
     renderBoard(board, view.players, flashIds);
   }
 
+  // ----- the end of the game -----
+
+  async function showWin() {
+    const gameId = view.game.id;
+    winOpen = true;
+    const story = await loadWinStory(gameId, view.players);
+    if (!active || view.game.id !== gameId || !isOver()) {             // undone or switched meanwhile
+      winOpen = false;
+      return;
+    }
+    const who = story.winners.map((p) => escapeHtml(p.name)).join(' & ');
+    const result = await openDialog({
+      title: '',
+      className: 'win-sheet',
+      body: winHtml(story, `${who} ${story.winners.length > 1 ? 'win' : 'wins'}!`),
+      ok: null,
+      cancel: null,
+      closeX: true,
+      buttons: [{ value: 'undo', label: '↩ Undo' }, { value: 'report', label: `${ICONS.report} Report` }, { value: 'lobby', label: '🎲 All games', primary: true }],
+    });
+    winOpen = false;
+    if (result?.button === 'undo') send({ type: 'undoWin' });
+    else if (result?.button === 'report') showReport(gameId);
+    else if (result?.button === 'lobby') openLobby();
+  }
+
+  // Opens by itself once per win; after that, tapping the (locked) board brings it back.
+  function watchWin() {
+    const key = isOver() ? `${view.game.id}:${winnersOf(view.players).map((p) => p.id).join(',')}` : null;
+    if (!key && winOpen) closeDialog();          // undone from a phone
+    const testPage = ['#sounds', '#music'].includes(location.hash);    // it would close the test page
+    if (key && key !== shownWin && !testPage) showWin();
+    shownWin = key;
+  }
+
   function react() {
-    // One sound per update: news (death, win, level 9…) beats a plain level change.
+    // One sound per update: news (death, win, level 9…) beats a plain level change, which beats a sex change.
     const news = active.ticker.update(view);
     const levelChange = active.levels.update(view.game.id, view.players);
-    if (news) sounds.play(NEWS_SOUNDS[news]);
-    else if (levelChange) sounds.play(LEVEL_SOUNDS[levelChange]);
+    const sexChange = active.sexes.update(view.game.id, view.players);
+    const played = news ? sounds.play(NEWS_SOUNDS[news])
+      : levelChange ? sounds.play(LEVEL_SOUNDS[levelChange])
+        : sexChange ? sounds.play(SEX_SOUND) : false;
+    if (played) music.duck();
   }
 
   // the window, or the top bar when the announcer wraps onto more lines
@@ -56,6 +106,10 @@ export function createDashboard({ openLobby }) {
   // ----- player rows -----
 
   board.addEventListener('click', async (e) => {
+    if (isOver()) {
+      if (!winOpen) showWin();
+      return;
+    }
     const button = closest(e, 'button[data-action]');
     if (!button) return;
     const { action, player: playerId } = button.dataset;
@@ -101,26 +155,19 @@ export function createDashboard({ openLobby }) {
     if (player) send({ type: 'addPlayer', ...player });
   });
 
-  function showSoundState() {
-    const button = $('sound');
-    button.textContent = sounds.enabled ? '🔊' : '🔇';
-    button.title = sounds.enabled ? 'Sound on (tap to mute)' : 'Sound off (tap to unmute)';
-  }
-  $('sound').addEventListener('click', () => {
-    sounds.enabled = !sounds.enabled;
-    showSoundState();
-    sounds.unlock();
-    if (sounds.enabled) setTimeout(() => sounds.play('beep'), 50);
-  });
-  showSoundState();
 
   const qrOverlay = $('qrOverlay');
   $('qrButton').addEventListener('click', () => qrOverlay.classList.add('open'));
   qrOverlay.addEventListener('click', () => qrOverlay.classList.remove('open'));
   fetchInfo().then((info) => { $('joinUrl').textContent = info.joinUrl; });
 
-  // Open the dashboard with #sounds at the end of the address to hear every sound.
-  const openSoundTestFromHash = () => { if (active && location.hash === '#sounds') showSoundTest(sounds); };
+  // Open the dashboard with #sounds at the end of the address to hear every sound, #music for every tune.
+  // Closing a test page takes the hash off the address, so adding it again opens the page again.
+  const clearHash = () => history.replaceState(null, '', location.pathname + location.search);
+  const openSoundTestFromHash = () => {
+    if (active && location.hash === '#sounds') showSoundTest(sounds).then(clearHash);
+    if (active && location.hash === '#music') showMusicTest(music).then(clearHash);
+  };
   addEventListener('hashchange', openSoundTestFromHash);
 
   return {
@@ -130,13 +177,16 @@ export function createDashboard({ openLobby }) {
       render();
       refreshActivityLog();
       react();
+      watchWin();
     },
 
     show() {
       if (active) return;
-      active = { ticker: new Ticker($('announcer')), levels: new LevelWatcher() };
+      active = { ticker: new Ticker($('announcer')), levels: new LevelWatcher(), sexes: new SexWatcher() };
+      shownWin = null;        // opening a finished game shows its popup
       render();
       react();                // the first update only learns the table: no sounds
+      watchWin();
       openSoundTestFromHash();
     },
 
@@ -144,6 +194,7 @@ export function createDashboard({ openLobby }) {
       if (!active) return;
       active.ticker.stop();
       active = null;
+      if (winOpen) closeDialog();
       qrOverlay.classList.remove('open');
     },
   };

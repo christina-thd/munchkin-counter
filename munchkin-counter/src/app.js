@@ -15,7 +15,7 @@ const PAGES = {
   '/join': 'phone.html',
   '/manifest.webmanifest': 'manifest.webmanifest',
 };
-const STATIC_DIRS = ['/css/', '/js/', '/img/', '/media/'];
+const STATIC_DIRS = ['/css/', '/js/', '/img/', '/media/', '/audio/'];
 
 class HttpError extends Error {
   constructor(status, message) {
@@ -61,7 +61,7 @@ function readJsonBody(req) {
  *   GET  /table         the same page, opening on the dashboard (tablet / TV)
  *   GET  /join          phone controls
  *   GET  /manifest.webmanifest   web app manifest ("Add to Home Screen" opens full screen)
- *   GET  /css/*, /js/*, /img/*, /media/*   static files (byte ranges supported, for video)
+ *   GET  /css/*, /js/*, /img/*, /media/*, /audio/*   static files (byte ranges supported, for video)
  *   GET  /logo          the logo: LOGO_FILE if set and present, else public/img/logo.svg
  *   GET  /qr.svg        QR code pointing phones at /join
  *   GET  /api/info      { version, joinUrl, secureUrl }

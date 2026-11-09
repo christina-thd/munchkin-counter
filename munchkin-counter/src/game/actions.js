@@ -1,6 +1,7 @@
 import {
-  AVATAR_IDS, clampLevel, freeAvatar, MAX_GAME_NAME, MAX_LEVEL, MAX_PLAYER_NAME, MAX_PLAYERS, MIN_LEVEL, SEXES,
+  AVATAR_IDS, clampLevel, freeAvatar, MAX_GAME_NAME, MAX_LEVEL, MAX_PLAYER_NAME, MAX_PLAYERS, MIN_LEVEL, SEXES, winnersOf,
 } from '../../public/js/shared/rules.js';
+import { dungeonName } from '../../public/js/shared/dungeon-names.js';
 import { aboutPlayer, record, SOURCES } from './activity.js';
 import { createGame, currentGame, newId } from './state.js';
 
@@ -130,6 +131,19 @@ const handlers = {
     return player;
   },
 
+  /** Takes a win back (a slip of the finger): each winner goes back to the level they had just before level 10. */
+  undoWin(state, _action, ctx) {
+    const game = currentGame(state);
+    const winners = winnersOf(game.players);
+    if (!winners.length) throw new ActionError('Nobody has won this game', 409);
+    for (const player of winners) {
+      const won = game.log.findLast((e) => e.kind === 'level' && e.playerId === player.id && e.to >= MAX_LEVEL);
+      const from = player.level;
+      player.level = won && won.from < MAX_LEVEL ? won.from : MAX_LEVEL - 1;
+      record(game, { kind: 'level', ...aboutPlayer(player), from, to: player.level }, ctx);
+    }
+  },
+
   /** Munchkin death: you keep your level but lose all your gear. */
   die(state, { playerId }, ctx) {
     const game = currentGame(state);
@@ -158,12 +172,27 @@ const handlers = {
     state.currentGameId = findGame(state, gameId).id;
   },
 
-  deleteGame(state, { gameId }) {
-    findGame(state, gameId);
-    if (gameId === state.currentGameId) throw new ActionError('Cannot delete the game being played');
+  /**
+   * The game being played can't be deleted, but a finished one can, even if it's the current game:
+   * then the newest other game becomes the current one (or a new, empty one if it was the last).
+   */
+  deleteGame(state, { gameId }, ctx) {
+    const game = findGame(state, gameId);
+    const current = gameId === state.currentGameId;
+    if (current && !winnersOf(game.players).length) throw new ActionError('Cannot delete the game being played');
     state.games = state.games.filter((g) => g.id !== gameId);
+    if (!current) return;
+    if (!state.games.length) {
+      const fresh = createGame(dungeonName([]), [], ctx.now);
+      record(fresh, { kind: 'start', kept: 0 }, ctx);
+      state.games.push(fresh);
+    }
+    state.currentGameId = state.games[state.games.length - 1].id;
   },
 };
+
+/** Changes to the players of the current game: refused once someone has won, until the win is undone. */
+const IN_GAME = new Set(['addPlayer', 'removePlayer', 'setAvatar', 'setSex', 'changeLevel', 'setLevel', 'changeGear', 'die']);
 
 /**
  * Applies one action to the state (mutating it) and returns the handler's result.
@@ -173,6 +202,9 @@ const handlers = {
 export function applyAction(state, action, now = Date.now()) {
   if (!action || typeof action !== 'object') throw new ActionError('Action must be a JSON object');
   if (!Object.hasOwn(handlers, action.type)) throw new ActionError(`Unknown action: ${action.type}`);
+  if (IN_GAME.has(action.type) && winnersOf(currentGame(state).players).length) {
+    throw new ActionError('The game is over: undo the win or start a new dungeon', 409);
+  }
   const source = SOURCES.includes(action.source) ? action.source : null;
   return handlers[action.type](state, action, { now, source }) ?? { ok: true };
 }
