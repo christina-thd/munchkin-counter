@@ -10,7 +10,7 @@ import { MAX_LEVEL } from '../../public/js/shared/rules.js';
 export const MAX_ENTRIES = 500;      // per game; the oldest are dropped
 export const MERGE_WINDOW_MS = 15_000;
 
-export const KINDS = Object.freeze(['start', 'join', 'remove', 'avatar', 'emoji', 'sex', 'level', 'gear', 'death']);
+const KINDS = Object.freeze(['start', 'join', 'remove', 'avatar', 'emoji', 'sex', 'level', 'gear', 'death']);
 export const SOURCES = Object.freeze(['dashboard', 'phone']);
 
 /**

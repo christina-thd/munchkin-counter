@@ -67,9 +67,9 @@ public/                   browser (plain ES modules, no build step)
                           device-check.js (plain script: sends phones to /join, keeps tablets and TVs)
   js/app.js               tablet / TV entry: switches between the start page and dashboard views
   js/lobby/               start page (lobby.js)
-  js/table/               dashboard: dashboard.js, board, sizing, dialogs, report (📈 chart dialog),
+  js/table/               dashboard: dashboard.js, board, sizing, dialogs, report (chart dialog),
                           announcer (situations, pure) + lines (texts) + ticker (UI), sounds
-  js/phone/               phone controls (main.js) and the phone's simpler 📈 report (report.js)
+  js/phone/               phone controls (main.js) and the phone's simpler report (report.js)
 
 test/                     node:test suites
 ```

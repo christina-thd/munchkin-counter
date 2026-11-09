@@ -1,8 +1,9 @@
 // Start page: continue the current game, start a new one, or reopen / delete a past game (🕘 recap a finished one,
-// ▶ resume one nobody won yet); 📈 shows any game's report.
+// ▶ resume one nobody won yet); the bar chart shows any game's report.
 import { sendAction } from '../shared/api.js';
 import { avatarHtml } from '../shared/avatars.js';
 import { $, closest, escapeHtml } from '../shared/dom.js';
+import { ICONS } from '../shared/icons.js';
 import { askNewGame, confirmDeleteGame, describeGame, gameFacts } from '../shared/games.js';
 import { winnersOf } from '../shared/rules.js';
 import { showReport } from '../table/report.js';
@@ -68,7 +69,7 @@ export function createLobby({ openDashboard }) {
               <div class="title">${escapeHtml(g.name)}</div>
               ${gameLines(g)}
             </div>
-            <button class="report" data-report="${g.id}" title="Game report: levels over time">📈 Report</button>
+            <button class="report" data-report="${g.id}" title="Game report: levels over time">${ICONS.report} Report</button>
             <button class="delete" data-delete="${g.id}" title="Delete this game" aria-label="Delete this game">${TRASH}</button>
           </div>`).join('')
       : '<p class="empty">No past games yet. Finished games show up here.</p>';

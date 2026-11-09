@@ -6,6 +6,7 @@
 - Win popup
 - Start page improvements
 - Phone improvements
+- Background music
 
 ## 2.9.0
 - Up to 6 players, dashboard layout fixes

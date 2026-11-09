@@ -53,6 +53,14 @@ export const LINES = {
     `A ${gap}-level lead for ${who}. The table has a new favourite target.`,
   ],
 
+  // one player with far more gear than everyone else
+  hoard: ({ who }) => [
+    `That much gear on ${who}? Either very lucky or very sneaky.`,
+    `Count ${who}'s items again. Slowly.`,
+    `${who}'s pockets are suspiciously full.`,
+    `${who} just keeps finding things. Funny, that.`,
+  ],
+
   status: ({ who, level }) => [
     `Current leader: ${who}. Current target: also ${who}.`,
     `${who} leads with level ${level}. Nobody else is happy about it.`,

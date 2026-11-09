@@ -1,9 +1,10 @@
-// The dashboard's 📈 game report: every player's level over the game (shared/report-chart.js), a legend,
+// The dashboard's game report: every player's level over the game (shared/report-chart.js), a legend,
 // and a summary table (the chart's values without hovering). Built from the game's activity log.
 import { fetchLog } from '../shared/api.js';
 import { avatarHtml } from '../shared/avatars.js';
 import { openDialog } from '../shared/dialog.js';
 import { escapeHtml } from '../shared/dom.js';
+import { ICONS } from '../shared/icons.js';
 import { levelReport } from '../shared/report.js';
 import { attachHover, chartSvg, colorOf, summaryText } from '../shared/report-chart.js';
 import { MAX_LEVEL } from '../shared/rules.js';
@@ -38,7 +39,7 @@ export async function showReport(gameId) {
     report = levelReport(log.entries, log.players);
     name = log.name;
   } catch (err) {
-    openDialog({ title: '📈 Game report', ok: null, cancel: 'Close', body: `<p class="note">${escapeHtml(err.message)}</p>` });
+    openDialog({ title: `${ICONS.report} Game report`, ok: null, cancel: 'Close', body: `<p class="note">${escapeHtml(err.message)}</p>` });
     return;
   }
 
@@ -47,7 +48,7 @@ export async function showReport(gameId) {
        <div class="report-chart">${chartSvg(report)}<div class="report-tip" hidden></div></div>
        ${legendHtml(report)}${tableHtml(report)}`
     : '<p class="note">No players in this game yet.</p>';
-  openDialog({ title: `📈 ${escapeHtml(name)}`, ok: null, cancel: 'Close', wide: true, body });
+  openDialog({ title: `${ICONS.report} ${escapeHtml(name)}`, ok: null, cancel: 'Close', wide: true, body });
   const chart = /** @type {HTMLElement} */ (document.querySelector('#sheet .report-chart'));
   if (chart) attachHover(chart, report);
 }

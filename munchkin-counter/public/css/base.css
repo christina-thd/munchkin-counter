@@ -7,6 +7,7 @@
   --line: #4a3322;
   --ink: #f3e3bf;
   --muted: #b39a78;
+  --parchment: #f5c98e; /* every icon button (gold is only for the main action, + player) */
   --gold: #e8b54a;
   --red: #b3261e;
   --green: #4f8a2f;
@@ -228,6 +229,105 @@ button { border: 0; background: none; cursor: pointer; }
 .sheet-close:hover { color: var(--ink); }
 .win-sheet .actions { flex-wrap: wrap; justify-content: center; }
 
+/* ----- sound popup: sound effects, music and its volume (js/table/sound-settings.js) ----- */
+/* Big rows and a strong outline on the focused control: on a TV it's chosen with the remote's arrows. */
+.sheet.sound-sheet { width: min(460px, 100%); }
+.sound-settings { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.sound-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #00000040;
+  font-size: 19px;
+  font-weight: 700;
+  text-align: left;
+}
+.sound-state {
+  min-width: 56px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #ffffff14;
+  color: var(--muted);
+  font-size: 15px;
+  text-align: center;
+}
+.sound-toggle.on .sound-state { background: var(--gold); color: var(--on-gold); }
+/* "Music volume" on top, then − [the level] + */
+.volume-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: "label label label" "down bar up";
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #00000040;
+}
+.volume-label { grid-area: label; font-size: 19px; font-weight: 700; }
+.volume-step {
+  width: 52px;
+  height: 52px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #ffffff10;
+  font-size: 28px;
+  font-weight: 700;
+}
+#volumeDown { grid-area: down; }
+#volumeUp { grid-area: up; }
+.volume-bar { grid-area: bar; display: flex; gap: 4px; height: 28px; align-items: flex-end; }
+.volume-bar span { flex: 1; height: 40%; border-radius: 3px; background: #ffffff1c; }
+.volume-bar span:nth-child(n+4) { height: 60%; }
+.volume-bar span:nth-child(n+7) { height: 80%; }
+.volume-bar span:nth-child(n+10) { height: 100%; }
+.volume-bar span.lit { background: var(--gold); }
+.volume-row.muted .volume-bar span.lit { background: var(--muted); }
+/* Now playing: the song's name, and a small ⏭ (next song) at the end of the row */
+.now-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 10px 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #00000040;
+}
+.now-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.now-label { color: var(--muted); font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+.now-name { overflow: hidden; font-size: 18px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+#nextSong { flex: none; display: grid; place-items: center; font-size: 20px; }
+.sound-name .icon { margin-right: 4px; color: var(--gold); }
+.sound-toggle:not(.on) .sound-name .icon { color: var(--muted); }
+.sound-toggle:not(.on) .icon .off { display: inline; }
+#nextSong:disabled { opacity: 0.4; cursor: default; }
+.sound-sheet button:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+/* ----- line icons (js/shared/icons.js): the text's colour and size, their main shape filled in ----- */
+.icon {
+  flex: none;
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: -0.22em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.icon .fill { fill: currentColor; }
+.icon .solid { fill: currentColor; stroke: none; }
+.icon .off { display: none; }
+/* Icon buttons are all one colour, parchment (top bar: css/table.css; corners: css/lobby.css); colour only
+   changes to show state: the speaker greyed with a slash through it when sound and music are both off. */
+#currentReport, .game .report .icon, .report-button { color: var(--parchment); }
+.sound-button.muted { color: var(--muted); }
+.sound-button.muted .icon .off { display: inline; }
+
 /* ----- full-screen button: shows "expand" corners, or "collapse" while full screen ----- */
 .fullscreen-button svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .fullscreen-button .collapse, .fullscreen-button.active .expand { display: none; }
@@ -256,7 +356,7 @@ button { border: 0; background: none; cursor: pointer; }
 .activity .up { color: #7ccf5a; }
 .activity .down { color: #e8675a; }
 
-/* ----- 📈 game report chart (js/shared/report-chart.js): dashboard and phone ----- */
+/* ----- game report chart (js/shared/report-chart.js): dashboard and phone ----- */
 .report-chart { position: relative; margin: 6px 0 10px; }
 .report-svg { display: block; width: 100%; height: auto; overflow: visible; outline: none; touch-action: pan-y; }
 .report-svg:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; border-radius: 6px; }

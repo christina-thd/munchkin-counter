@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
-import { LevelWatcher, LineDeck, situations, SituationTracker } from '../public/js/table/announcer.js';
+import { LevelWatcher, LineDeck, SexWatcher, situations, SituationTracker } from '../public/js/table/announcer.js';
 
 /** @returns {import('../public/js/shared/rules.js').Player} */
 const player = (id, level = 1, gear = 0) => ({ id, name: id, avatar: 'wizard', sex: 'male', level, gear });
@@ -23,8 +23,18 @@ describe('situations', () => {
     assert.deepEqual(list.find((s) => s.category === 'stuck').ids, ['c']);
   });
 
-  test('no gear talk, however much gear there is', () => {
+  test('no gear talk when everyone is well equipped', () => {
     assert.deepEqual(spoken(situations([player('a', 4, 20), player('b', 3, 15)])), ['flavor', 'status']);
+  });
+
+  test('one player with suspiciously much more gear than anyone else gets a remark', () => {
+    const list = situations([player('a', 4, 3), player('b', 3, 12)]);
+    assert.ok(spoken(list).includes('hoard'));
+    assert.deepEqual(list.find((s) => s.category === 'hoard').ids, ['b']);
+    assert.ok(!categories(situations([player('a', 4, 9), player('b', 3, 3)])).includes('hoard'));   // under 10
+    // way more than everybody else, not just the most: 20 against 14 is a well-equipped table
+    assert.ok(!categories(situations([player('a', 4, 20), player('b', 3, 14)])).includes('hoard'));
+    assert.ok(categories(situations([player('a', 4, 12), player('b', 3, 5), player('c', 2, 6)])).includes('hoard'));
   });
 
   test('several level with each other at the top: only table talk', () => {
@@ -107,5 +117,17 @@ describe('LevelWatcher', () => {
     assert.equal(watcher.update('g', [player('a', 1)]), 'down');
     assert.equal(watcher.update('g', [player('a', 1), player('b', 5)]), null);
     assert.equal(watcher.update('other', [player('a', 7)]), null);
+  });
+});
+
+describe('SexWatcher', () => {
+  test('notices a change of sex, ignoring the first update, new players and game switches', () => {
+    const watcher = new SexWatcher();
+    const as = (sex) => ({ ...player('a'), sex });
+    assert.equal(watcher.update('g', [as('male')]), false);
+    assert.equal(watcher.update('g', [as('female')]), true);
+    assert.equal(watcher.update('g', [as('female')]), false);
+    assert.equal(watcher.update('g', [as('female'), { ...player('b'), sex: 'male' }]), false);
+    assert.equal(watcher.update('other', [as('male')]), false);
   });
 });

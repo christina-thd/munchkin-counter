@@ -1,9 +1,10 @@
-// The phone's 📈: a simpler game report. Your line in color over everyone else's in gray, your deaths, and
+// The phone's report: a simpler game report. Your line in color over everyone else's in gray, your deaths, and
 // the standings as a plain list. Touch the chart for everyone's level at that moment.
 import { fetchLog } from '../shared/api.js';
 import { avatarHtml } from '../shared/avatars.js';
 import { openDialog } from '../shared/dialog.js';
 import { escapeHtml } from '../shared/dom.js';
+import { ICONS } from '../shared/icons.js';
 import { levelReport } from '../shared/report.js';
 import { attachHover, chartSvg, colorOf, summaryText } from '../shared/report-chart.js';
 import { MAX_LEVEL } from '../shared/rules.js';
@@ -28,7 +29,7 @@ export async function showMyReport(view, myId) {
     const log = await fetchLog(view.game.id);
     report = levelReport(log.entries, log.players);
   } catch (err) {
-    openDialog({ title: '📈 How it went', ok: null, cancel: 'Close', body: `<p class="note">${escapeHtml(err.message)}</p>` });
+    openDialog({ title: `${ICONS.report} How it went`, ok: null, cancel: 'Close', body: `<p class="note">${escapeHtml(err.message)}</p>` });
     return;
   }
   const me = report.tracks.findIndex((t) => t.playerId === myId);
@@ -42,7 +43,7 @@ export async function showMyReport(view, myId) {
       <span class="item"><span class="key others"></span>Everyone else</span>
     </div>
     ${standingsHtml(report, myId)}`;
-  openDialog({ title: '📈 How it went', ok: null, cancel: 'Close', body });
+  openDialog({ title: `${ICONS.report} How it went`, ok: null, cancel: 'Close', body });
   // the chart and its readout strip share a parent (the sheet), which attachHover searches
   attachHover(/** @type {HTMLElement} */ (document.getElementById('sheet')), report, options);
 }

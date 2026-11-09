@@ -4,6 +4,7 @@ import { avatarHtml, avatarLabel } from '../shared/avatars.js';
 import { choiceHtml, openDialog } from '../shared/dialog.js';
 import { $, closest, escapeHtml, input, restartAnimation } from '../shared/dom.js';
 import { formatGear } from '../shared/format.js';
+import { fillIcons } from '../shared/icons.js';
 import {
   AVATAR_IDS, MAX_LEVEL, MAX_PLAYER_NAME, MAX_PLAYERS, MIN_LEVEL, otherSex, SEX_LABELS, strengthOf, winnersOf,
 } from '../shared/rules.js';
@@ -15,6 +16,7 @@ import { showMyReport } from './report.js';
 const PLAYER_KEY = 'playerId';   // remembered per phone
 
 setActionSource('phone');
+fillIcons();
 
 /** @type {import('../shared/rules.js').Player[]} */
 let players = [];

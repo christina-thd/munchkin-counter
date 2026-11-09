@@ -221,7 +221,7 @@ h2 { margin: 8px 0 16px; font: 400 20px var(--font-display); letter-spacing: 0.0
 }
 .died-button:active { background: var(--red); }
 
-/* 💀 I died, with 📈 (the game report) beside it */
+/* 💀 I died, with the game report beside it */
 .bottom-row { display: flex; gap: 10px; }
 .bottom-row .died-button { flex: 1; width: auto; }
 .report-button {

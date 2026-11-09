@@ -7,9 +7,14 @@ import { LINES } from './lines.js';
 
 const STUCK_WHEN_LEADER_AT = 4;   // "stuck at level 1" only once someone has reached this level
 const RUNAWAY_BY = 3;
+// Suspiciously much gear: one player with way more than everybody else: at least HOARD_GEAR, at least HOARD_BY
+// more than the next one, and at least twice as much. (General gear talk is out: with everyone well equipped it
+// read oddly; one player far ahead of the rest is worth a remark.)
+const HOARD_GEAR = 10;
+const HOARD_BY = 6;
 
 /** Situations that interrupt the rotation (and make a sound), most important first. */
-export const NEWSWORTHY = Object.freeze(['win', 'death', 'nine', 'cursed', 'stuck']);
+const NEWSWORTHY = Object.freeze(['win', 'death', 'nine', 'cursed', 'stuck']);
 
 const nameHtml = (p) => `<b>${avatarHtml(p.avatar, { inline: true })} ${escapeHtml(p.name)}</b>`;
 const namesHtml = (players) => (players.length > 2
@@ -71,6 +76,14 @@ export function situations(players, activeDeath = null) {
 
   const cursed = players.filter((p) => p.gear < 0);
   if (cursed.length) out.push(make('cursed', cursed.map((p) => p.id), []));
+
+  const byGear = [...players].sort((a, b) => b.gear - a.gear);
+  const [hoarder, nextGear] = byGear;
+  const runnerUp = nextGear ? Math.max(nextGear.gear, 0) : 0;
+  if (players.length > 1 && hoarder.gear >= HOARD_GEAR && hoarder.gear - runnerUp >= HOARD_BY
+      && hoarder.gear >= 2 * runnerUp) {
+    out.push(make('hoard', [hoarder.id], LINES.hoard({ who: nameHtml(hoarder) })));
+  }
 
   if (started) out.push(make('flavor', ['*'], LINES.flavor()));
   if (started && alone) out.push(make('status', [...leaderIds, `L${top}`], LINES.status(leader)));
@@ -157,5 +170,21 @@ export class LevelWatcher {
     this.#levels = now;
     this.#gameId = gameId;
     return up ? 'up' : down ? 'down' : null;
+  }
+}
+
+/** Notices when any player's sex changed (♂ ↔ ♀, a Change Sex curse) since the last update of the same game. */
+export class SexWatcher {
+  #sexes = null;
+  #gameId = null;
+
+  /** @returns {boolean} */
+  update(gameId, players) {
+    const now = new Map(players.map((p) => [p.id, p.sex]));
+    const changed = Boolean(this.#sexes) && gameId === this.#gameId
+      && [...now].some(([id, sex]) => this.#sexes.has(id) && this.#sexes.get(id) !== sex);
+    this.#sexes = now;
+    this.#gameId = gameId;
+    return changed;
   }
 }

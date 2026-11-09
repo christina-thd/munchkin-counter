@@ -74,6 +74,8 @@
 .bar-button.primary { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
 .bar-button:disabled { opacity: 0.4; cursor: not-allowed; }   /* + Player once the game has its 6 players */
 .bar-button.icon { width: 44px; padding: 0; font-size: 20px; }
+/* every icon button one colour; gold is only for the main action (+ player) */
+.bar-button.icon:not(.primary) { color: var(--parchment); }
 /* + player: a person with a plus */
 #addPlayer svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
 .qr-thumb { width: 48px; height: 48px; padding: 3px; border-radius: 8px; background: #fff; cursor: pointer; }
@@ -354,6 +356,9 @@
 .list-item .text { flex: 1; min-width: 0; }
 .list-item .title { display: block; overflow: hidden; font-size: 17px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
 .list-item .meta { display: block; font-size: 13px; color: var(--muted); }
+/* #music: the tunes in a grid, the one playing in gold */
+.list.tunes { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); max-height: 50vh; overflow: auto; }
+.list-item.playing { border-color: var(--gold); color: var(--gold); }
 
 /* ----- short landscape screens (e.g. iPad in Safari): slimmer top bar ----- */
 @media (min-width: 861px) and (max-height: 760px) {
@@ -398,7 +403,7 @@
 
 .bar-button.icon { display: grid; place-items: center; }
 
-/* ----- 📈 game report dialog (js/table/report.js; the chart's styles are in base.css) ----- */
+/* ----- game report dialog (js/table/report.js; the chart's styles are in base.css) ----- */
 .sheet.wide { width: min(860px, 100%); }
 .report-table { width: 100%; margin-bottom: 8px; border-collapse: collapse; font-size: 15px; }
 .report-table th { padding: 6px 8px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 12px; font-weight: 600;

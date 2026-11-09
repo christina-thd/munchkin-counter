@@ -59,7 +59,7 @@ h1 {
   font-weight: 700;
 }
 .big.primary { background: var(--gold); border-color: var(--gold); color: var(--on-gold); box-shadow: 0 4px 0 #8a6420; }
-/* ▶ Play with 📈 (the game report) beside it */
+/* ▶ Play with the game report beside it */
 .play-row { display: flex; gap: 10px; }
 .play-row .primary { flex: 1; }
 .big.report { flex: none; width: 58px; padding: 0; font-size: 24px; }
@@ -104,7 +104,7 @@ h2 {
 .game .go.recap { background: #00000040; border-color: var(--gold); color: var(--gold); }
 .game .go.recap svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .game .text { cursor: pointer; }
-/* 📈 Report on the right */
+/* Report on the right */
 .game .report { flex: none; background: #00000040; font-size: 15px; }
 /* 🗑 beside Report: red outline, filled red when pressed (it still asks first) */
 .game .delete {
@@ -140,5 +140,7 @@ h2 {
   border: 1px solid var(--line);
   border-radius: 12px;
   background: #00000045;
-  color: var(--ink);
+  color: var(--parchment);
 }
+/* the speaker (sound and music) beside full screen */
+.corner-button.sound-corner { right: 66px; font-size: 20px; }

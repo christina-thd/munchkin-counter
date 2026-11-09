@@ -54,7 +54,7 @@ address (e.g. `http://<homeassistant-ip>:3000/?dashboard`); it remembers. Use `?
   pick an existing player; removing one frees the seat.
 - **+ New dungeon** (on the start page) adds a game to the list, with a suggested name (🎲 for another). Old games
   are kept under **Past games**, finished ones too: tap ▶ (or the name) to resume one nobody has won yet, 🕘 to see
-  how a finished one ended, 📈 Report for its chart, or the red 🗑 to delete it.
+  how a finished one ended, **Report** for its chart, or the red 🗑 to delete it.
 
 ### Activity log
 
@@ -66,18 +66,30 @@ The newest 500 entries are kept per game.
 
 ### Game report
 
-Tap 📈 in the dashboard's top bar, or next to any game on the start page, to see the whole game as a chart: every
+Tap the bar-chart button in the dashboard's top bar, or next to any game on the start page, to see the whole game as a chart: every
 player's level over time, with 💀 where someone died, who won and how long it took, and a table of each player's
 final and highest level and deaths. Touch or hover the chart to see everyone's level at that moment.
 
-On a phone, tap 📈 next to **💀 I died** for a simpler version: your own line in color over everyone else's in gray,
+On a phone, tap the bar-chart button next to **💀 I died** for a simpler version: your own line in color over everyone else's in gray,
 and the standings as a list. It's built from the activity log, so in a very long game only the newest 500 changes are shown.
 
 ### Sound
 
 The dashboard plays a sound for a win, a death, someone reaching level 9, someone stuck at level 1,
 negative gear, and level changes. Tap the screen once after opening it (browsers only allow sound after a tap).
-Use the 🔊 button to mute. Add `#sounds` to the end of the address to hear every sound.
+Add `#sounds` to the end of the address to hear every sound.
+
+There's also quiet Renaissance tavern music: original tunes of about 3 minutes each (tavern, dungeon, spooky,
+mystery, adventure and a comic bassoon), played in random order, each fading into the next. The start page plays
+Torchlight Fading. Add `#music` to the end of the address to listen to each tune.
+
+The speaker button (on the dashboard's top bar and in the start page's corner) opens the **Sound** settings: sound
+effects on or off, music on or off, and the music's volume. It works with a TV remote too: the arrows move between
+the rows (left and right change the volume), OK selects, Back closes. Each screen remembers its own settings, and
+where it was in the shuffled music.
+
+Instrument sounds: the FluidR3_GM soundfont ([midi-js-soundfonts](https://github.com/gleitz/midi-js-soundfonts)),
+licensed [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
 
 ## Screen always on, and full screen
 

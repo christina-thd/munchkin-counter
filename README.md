@@ -25,7 +25,7 @@ Add this repository to Home Assistant:
 
 ### Munchkin Counter
 
-Tablet dashboard and phone controls for Munchkin, over your home network.
+Tablet/TV dashboard and phone controls for Munchkin, over your home network.
 
 **Features:**
 - Dashboard for up to 6 players on one screen, phones join by QR code
@@ -48,6 +48,12 @@ npm install
 npm run check   # lint, types and tests
 npm run dev
 ```
+
+## Credits
+
+Instrument sounds for the background music: the FluidR3_GM soundfont, via
+[midi-js-soundfonts](https://github.com/gleitz/midi-js-soundfonts), licensed
+[CC BY 3.0](https://creativecommons.org/licenses/by/3.0/). The tunes are original.
 
 ## Support
 
