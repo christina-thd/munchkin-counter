@@ -88,9 +88,39 @@ h2 {
 .game .title { overflow: hidden; font: 400 20px/1.2 var(--font-display); letter-spacing: 0.02em; text-overflow: ellipsis; white-space: nowrap; }
 .game .meta { font-size: 13px; color: var(--muted); }
 .game button { height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 12px; font-size: 16px; font-weight: 700; }
-.game .open { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
-.game .icon { width: 44px; padding: 0; background: #00000040; }
-.empty { color: var(--muted); }
+/* before the name: ▶ resume (gold) or 🕘 recap (a finished game) */
+.game .go {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 22px;
+}
+.game .go.resume { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+.game .go.resume svg { width: 22px; height: 22px; margin-left: 3px; fill: currentColor; }
+.game .go.recap { background: #00000040; border-color: var(--gold); color: var(--gold); }
+.game .go.recap svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.game .text { cursor: pointer; }
+/* 📈 Report on the right */
+.game .report { flex: none; background: #00000040; font-size: 15px; }
+/* 🗑 beside Report: red outline, filled red when pressed (it still asks first) */
+.game .delete {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  padding: 0;
+  border-color: #b3261e99;
+  background: #b3261e26;
+  color: #f0a39c;
+}
+.game .delete svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.game .delete:hover, .game .delete:active { border-color: var(--red); background: var(--red); color: #fff8e6; }
+.game .title + .meta { margin-top: 2px; }
+.games .empty { margin: 0; color: var(--muted); font-size: 17px; line-height: 1.5; }
 
 /* ----- portrait: one column ----- */
 @media (max-width: 860px) {

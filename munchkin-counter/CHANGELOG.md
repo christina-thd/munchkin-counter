@@ -2,6 +2,10 @@
 
 ## 3.0.0
 - More room for the announcer, more announcer lines
+- Fix lag after a win
+- Win popup
+- Start page improvements
+- Phone improvements
 
 ## 2.9.0
 - Up to 6 players, dashboard layout fixes

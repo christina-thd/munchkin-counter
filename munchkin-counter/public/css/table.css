@@ -108,10 +108,26 @@
 .player.won {
   border-color: var(--gold);
   background: linear-gradient(90deg, #6b4a12, #3a2819);
+  box-shadow: 0 0 6px #e8b54a55;
+}
+/* The glow pulses until the next game, so only its opacity is animated: the GPU does that without
+   repainting the row. Animating box-shadow repainted it on every frame, which made the pointer lag on TVs. */
+.player.won::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 26px #ffd46b99;
+  pointer-events: none;
   animation: glow 1.2s ease-in-out infinite alternate;
+  will-change: opacity;
 }
 .player.died { animation: died 1.6s ease-out; }
-@keyframes glow { from { box-shadow: 0 0 6px #e8b54a55; } to { box-shadow: 0 0 26px #ffd46b99; } }
+/* game over: nothing on the board can be changed (a tap brings back the win popup) */
+#board.over { cursor: pointer; }
+#board.over .player button { pointer-events: none; }
+#board.over .player :is(.track-line, .controls, .remove, .sex) { opacity: 0.4; }
+@keyframes glow { from { opacity: 0; } to { opacity: 1; } }
 @keyframes died { 0% { background: #7a1010; } }
 
 /* avatar token with rank badge */
@@ -303,8 +319,8 @@
 }
 .player.leading .strength, .player.won .strength { border-color: var(--gold); }
 
-.empty { margin: auto; text-align: center; font-size: 18px; line-height: 1.6; color: var(--muted); }
-.empty img { display: block; width: 220px; margin: 0 auto 14px; padding: 8px; border-radius: 12px; background: #fff; }
+#board .empty { margin: auto; text-align: center; font-size: 18px; line-height: 1.6; color: var(--muted); }
+#board .empty img { display: block; width: 220px; margin: 0 auto 14px; padding: 8px; border-radius: 12px; background: #fff; }
 
 /* ----- QR overlay ----- */
 

@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { normalizeLog } from './activity.js';
-import { AVATAR_IDS, clampLevel, freeAvatar, MAX_GAME_NAME, MAX_PLAYER_NAME, SEXES } from '../../public/js/shared/rules.js';
+import { AVATAR_IDS, clampLevel, freeAvatar, MAX_GAME_NAME, SEXES, winnersOf } from '../../public/js/shared/rules.js';
 
 /**
  * State shape (saved to disk as JSON):
@@ -50,10 +50,13 @@ function avatarOf(raw, index) {
 const toInt = (value, fallback) => (Number.isFinite(Number(value)) ? Math.trunc(Number(value)) : fallback);
 const toText = (value, max, fallback) => String(value ?? '').trim().slice(0, max) || fallback;
 
+// New names are at most MAX_PLAYER_NAME (14) long; names saved before 3.0.0 could be 20 and are kept whole
+const SAVED_NAME_MAX = 20;
+
 function normalizePlayer(raw, index) {
   return {
     id: String(raw.id ?? newId()),
-    name: toText(raw.name, MAX_PLAYER_NAME, `Player ${index + 1}`),
+    name: toText(raw.name, SAVED_NAME_MAX, `Player ${index + 1}`),
     avatar: avatarOf(raw, index),
     sex: SEXES.includes(raw.sex) ? raw.sex : SEXES[0],   // saved before 2.8.0: none yet
     level: clampLevel(toInt(raw.level, 1)),
@@ -112,6 +115,7 @@ function summarize(game) {
     name: game.name,
     createdAt: game.createdAt,
     playerCount: game.players.length,
+    winners: winnersOf(game.players).map((p) => p.name),   // a game with a winner is finished
   };
 }
 

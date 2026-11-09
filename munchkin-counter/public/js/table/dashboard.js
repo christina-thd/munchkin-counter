@@ -1,8 +1,10 @@
 // Dashboard (tablet / TV): the board, announcer and sounds for the current game.
 import { refreshActivityLog, showActivityLog } from '../shared/activity.js';
 import { fetchInfo, sendAction } from '../shared/api.js';
-import { $, closest } from '../shared/dom.js';
-import { MAX_PLAYERS } from '../shared/rules.js';
+import { closeDialog, openDialog } from '../shared/dialog.js';
+import { $, closest, escapeHtml } from '../shared/dom.js';
+import { MAX_PLAYERS, winnersOf } from '../shared/rules.js';
+import { loadWinStory, winHtml } from '../shared/win.js';
 import { LevelWatcher } from './announcer.js';
 import { renderBoard } from './board.js';
 import { askNewPlayer, confirmDeath, confirmRemovePlayer, showSoundTest } from './dialogs.js';
@@ -28,18 +30,58 @@ export function createDashboard({ openLobby }) {
   /** @type {View} */
   let view = { version: '', game: { id: '', name: '', lastDeath: null }, players: [], games: [] };
   let active = null;           // { ticker, levels } while shown
+  let shownWin = null;         // the win the popup was shown for (game and winners), so it opens once by itself
+  let winOpen = false;
 
   const send = (action) => sendAction(action).catch((err) => console.warn(`${action.type} failed:`, err.message));
+  const isOver = () => winnersOf(view.players).length > 0;
 
   function render() {
     $('gameName').textContent = view.game.name ?? '';
-    // Munchkin is for up to 6 players
+    // Munchkin is for up to 6 players; nobody joins a game that's over
     const full = view.players.length >= MAX_PLAYERS;
+    const over = isOver();
     const add = /** @type {HTMLButtonElement} */ ($('addPlayer'));
-    add.disabled = full;
-    add.title = full ? `The game is full: Munchkin is for up to ${MAX_PLAYERS} players` : 'Add a player';
+    add.disabled = full || over;
+    add.title = over ? 'The game is over'
+      : full ? `The game is full: Munchkin is for up to ${MAX_PLAYERS} players` : 'Add a player';
+    board.classList.toggle('over', over);
     fitRows(board, view.players.length);
     renderBoard(board, view.players, flashIds);
+  }
+
+  // ----- the end of the game -----
+
+  async function showWin() {
+    const gameId = view.game.id;
+    winOpen = true;
+    const story = await loadWinStory(gameId, view.players);
+    if (!active || view.game.id !== gameId || !isOver()) {             // undone or switched meanwhile
+      winOpen = false;
+      return;
+    }
+    const who = story.winners.map((p) => escapeHtml(p.name)).join(' & ');
+    const result = await openDialog({
+      title: '',
+      className: 'win-sheet',
+      body: winHtml(story, `${who} ${story.winners.length > 1 ? 'win' : 'wins'}!`),
+      ok: null,
+      cancel: null,
+      closeX: true,
+      buttons: [{ value: 'undo', label: '↩ Undo' }, { value: 'report', label: '📈 Report' }, { value: 'lobby', label: '🎲 All games', primary: true }],
+    });
+    winOpen = false;
+    if (result?.button === 'undo') send({ type: 'undoWin' });
+    else if (result?.button === 'report') showReport(gameId);
+    else if (result?.button === 'lobby') openLobby();
+  }
+
+  // Opens by itself once per win; after that, tapping the (locked) board brings it back.
+  function watchWin() {
+    const key = isOver() ? `${view.game.id}:${winnersOf(view.players).map((p) => p.id).join(',')}` : null;
+    if (!key && winOpen) closeDialog();          // undone from a phone
+    if (key && key !== shownWin) showWin();
+    shownWin = key;
   }
 
   function react() {
@@ -56,6 +98,10 @@ export function createDashboard({ openLobby }) {
   // ----- player rows -----
 
   board.addEventListener('click', async (e) => {
+    if (isOver()) {
+      if (!winOpen) showWin();
+      return;
+    }
     const button = closest(e, 'button[data-action]');
     if (!button) return;
     const { action, player: playerId } = button.dataset;
@@ -130,13 +176,16 @@ export function createDashboard({ openLobby }) {
       render();
       refreshActivityLog();
       react();
+      watchWin();
     },
 
     show() {
       if (active) return;
       active = { ticker: new Ticker($('announcer')), levels: new LevelWatcher() };
+      shownWin = null;        // opening a finished game shows its popup
       render();
       react();                // the first update only learns the table: no sounds
+      watchWin();
       openSoundTestFromHash();
     },
 
@@ -144,6 +193,7 @@ export function createDashboard({ openLobby }) {
       if (!active) return;
       active.ticker.stop();
       active = null;
+      if (winOpen) closeDialog();
       qrOverlay.classList.remove('open');
     },
   };

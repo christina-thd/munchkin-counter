@@ -39,6 +39,9 @@ address (e.g. `http://<homeassistant-ip>:3000/?dashboard`); it remembers. Use `?
 ### Rules
 
 - **Level** 1–10. Tap a number on the level track to jump straight to it. Level 10 wins.
+- **Winning** ends the game: a popup on the dashboard (and a card on every phone) tells how the game went, and
+  nothing in the game can be changed anymore. Reached level 10 by mistake? **↩ Undo** in the popup, or on the
+  winner's phone, puts them back to the level they had before.
 - **Gear** can go up or down (negative gear means cursed).
 - **Strength** = Level + Gear.
 - **💀 Died**: you keep your level but lose all your gear.
@@ -49,7 +52,9 @@ address (e.g. `http://<homeassistant-ip>:3000/?dashboard`); it remembers. Use `?
   the phone to pick another.
 - **Players**: up to 6 per game, as in Munchkin. Once 6 have joined, the add-player button is greyed out and phones can only
   pick an existing player; removing one frees the seat.
-- **New game** (on the start page) adds a game to the list. Old games are kept and can be reopened or deleted.
+- **+ New dungeon** (on the start page) adds a game to the list, with a suggested name (🎲 for another). Old games
+  are kept under **Past games**, finished ones too: tap ▶ (or the name) to resume one nobody has won yet, 🕘 to see
+  how a finished one ended, 📈 Report for its chart, or the red 🗑 to delete it.
 
 ### Activity log
 

@@ -108,8 +108,22 @@ button { border: 0; background: none; cursor: pointer; }
   background: #00000055;
   font-size: 20px;
 }
+/* the text field, with 🎲 beside it when it has suggestions (a new game's name) */
+.sheet .input-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.sheet .input-row input[type="text"] { flex: 1; min-width: 0; margin: 0; }
+.sheet .suggest {
+  flex: none;
+  width: 52px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #00000055;
+  font-size: 24px;
+}
+.sheet .suggest:active { transform: rotate(-20deg); }
 .sheet label { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; font-size: 16px; }
-.sheet label input { width: 22px; height: 22px; accent-color: var(--gold); }
+.sheet label input { width: 22px; height: 22px; flex: none; accent-color: var(--gold); }
+/* a second, quieter line under a checkbox's label (the players a new dungeon keeps) */
+.sheet .check-detail { display: block; margin-top: 2px; color: var(--muted); font-size: 14px; line-height: 1.35; }
 
 /* one-of-several buttons (radio inputs underneath): ♂ Male / ♀ Female when adding a player */
 .choice { display: flex; gap: 8px; margin-bottom: 14px; }
@@ -155,6 +169,64 @@ button { border: 0; background: none; cursor: pointer; }
 }
 .sheet .actions .confirm { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
 .sheet .actions .confirm.danger { background: var(--red); border-color: var(--red); color: #fff8e6; }
+
+/* ----- end of the game: the dashboard's win popup and the phone's win card (js/shared/win.js) ----- */
+.win { text-align: center; }
+.win-avatars { position: relative; display: inline-flex; gap: 10px; margin: 26px 0 8px; }
+.win-avatar {
+  width: 104px;
+  height: 104px;
+  padding: 3px;
+  border: 3px solid var(--gold);
+  border-radius: 50%;
+  background: #24170e;
+  box-shadow: 0 0 28px #ffd46b55;
+}
+.win-crown {
+  position: absolute;
+  top: -34px;
+  left: 50%;
+  font-size: 44px;
+  transform: translateX(-50%) rotate(-10deg);
+  filter: drop-shadow(0 3px 2px #0008);
+}
+.win-title {
+  margin-bottom: 10px;
+  font: 400 36px/1.1 var(--font-display);
+  letter-spacing: 0.02em;
+  color: var(--gold);
+  text-shadow: 2px 2px 0 var(--shadow-red);
+  overflow-wrap: anywhere;
+}
+.win .win-line { margin: 0 auto 14px; max-width: 30em; font-size: 18px; line-height: 1.4; }
+.win-facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 14px; }
+.win-facts span {
+  padding: 5px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #00000040;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 600;
+}
+.sheet.win-sheet { position: relative; width: min(580px, 100%); }
+/* ✕ in the top-right corner (openDialog's closeX) */
+.sheet-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: #00000040;
+  color: var(--muted);
+  font-size: 18px;
+}
+.sheet-close:hover { color: var(--ink); }
+.win-sheet .actions { flex-wrap: wrap; justify-content: center; }
 
 /* ----- full-screen button: shows "expand" corners, or "collapse" while full screen ----- */
 .fullscreen-button svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }

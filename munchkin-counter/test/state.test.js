@@ -75,6 +75,12 @@ describe('normalizeState', () => {
     assert.equal(player.gear, 0);
     assert.equal(player.name, 'Player 1');
   });
+
+  test('names saved before 3.0.0 (up to 20 characters) are kept whole', () => {
+    const name = 'Twenty letters long.';
+    const raw = { currentGameId: 'g', games: [{ id: 'g', players: [{ id: 'a', name }] }] };
+    assert.equal(currentGame(normalizeState(raw, 0)).players[0].name, name);
+  });
 });
 
 describe('toView', () => {
@@ -88,7 +94,7 @@ describe('toView', () => {
     assert.equal(view.version, '9.9.9');
     assert.equal(view.players.length, 2);
     assert.deepEqual(view.games[0], {
-      id: state.currentGameId, name: 'Game 1', createdAt: 5, playerCount: 2,
+      id: state.currentGameId, name: 'Game 1', createdAt: 5, playerCount: 2, winners: [],
     });
   });
 });

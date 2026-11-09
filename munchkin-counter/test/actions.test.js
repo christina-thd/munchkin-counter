@@ -34,7 +34,7 @@ describe('players', () => {
 
   test('addPlayer trims, limits and defaults the name', () => {
     assert.equal(add('   ').name, 'Player 1');
-    assert.equal(add('  Konstantina Papadopoulou  ').name.length, 20);
+    assert.equal(add('  A very long player name  ').name, 'A very long pl');      // MAX_PLAYER_NAME: 14
   });
 
   test('removePlayer', () => {
@@ -94,7 +94,9 @@ describe('levels and gear', () => {
     const a = add('Ana');
     act({ type: 'changeLevel', playerId: a.id, delta: -1 });
     assert.equal(players()[0].level, 1);
-    for (let i = 0; i < 15; i++) act({ type: 'changeLevel', playerId: a.id, delta: 1 });
+    for (let i = 1; i < MAX_LEVEL; i++) act({ type: 'changeLevel', playerId: a.id, delta: 1 });
+    assert.equal(players()[0].level, MAX_LEVEL);
+    assert.throws(() => act({ type: 'changeLevel', playerId: a.id, delta: 1 }), { status: 409 });   // won: game over
     assert.equal(players()[0].level, MAX_LEVEL);
   });
 
@@ -132,6 +134,46 @@ describe('levels and gear', () => {
   });
 });
 
+describe('the end of a game', () => {
+  test('once someone has won, nothing in the game can change; new games still can', () => {
+    const a = add('Ana');
+    const b = add('Bo');
+    act({ type: 'setLevel', playerId: a.id, level: MAX_LEVEL });
+    for (const action of [
+      { type: 'addPlayer', name: 'Cy' }, { type: 'removePlayer', playerId: b.id },
+      { type: 'setAvatar', playerId: b.id, avatar: 'dragon' }, { type: 'setSex', playerId: b.id, sex: 'female' },
+      { type: 'changeLevel', playerId: b.id, delta: 1 }, { type: 'setLevel', playerId: a.id, level: 3 },
+      { type: 'changeGear', playerId: b.id, delta: 1 }, { type: 'die', playerId: b.id },
+    ]) {
+      assert.throws(() => act(action), { status: 409, message: /over/ }, action.type);
+    }
+    assert.deepEqual(players().map((p) => [p.level, p.gear, p.sex]), [[10, 0, 'male'], [1, 0, 'male']]);
+    act({ type: 'newGame', name: 'Rematch', keepPlayers: true });
+    assert.deepEqual(players().map((p) => p.level), [1, 1]);
+  });
+
+  test('undoWin puts the winner back to the level just before 10, and unlocks the game', () => {
+    const a = add('Ana');
+    act({ type: 'setLevel', playerId: a.id, level: 4 }, 1000);
+    act({ type: 'changeLevel', playerId: a.id, delta: 1 }, 2000);
+    act({ type: 'setLevel', playerId: a.id, level: MAX_LEVEL }, 3000);       // tapped the crown by mistake
+    act({ type: 'undoWin' }, 4000);
+    assert.equal(players()[0].level, 5);
+    act({ type: 'changeLevel', playerId: a.id, delta: 1 });
+    assert.equal(players()[0].level, 6);
+    assert.throws(() => act({ type: 'undoWin' }), { status: 409 });           // nobody has won
+  });
+
+  test('a quick level-up into 10 is logged on its own, so undo goes back one level, not to before the taps', () => {
+    const a = add('Ana');
+    act({ type: 'setLevel', playerId: a.id, level: 8 }, 1000);
+    act({ type: 'changeLevel', playerId: a.id, delta: 1 }, 2000);
+    act({ type: 'changeLevel', playerId: a.id, delta: 1 }, 3000);            // within the merge window
+    act({ type: 'undoWin' }, 4000);
+    assert.equal(players()[0].level, 9);
+  });
+});
+
 describe('games', () => {
   test('newGame adds a game, keeps the old one and switches to it', () => {
     const first = state.currentGameId;
@@ -163,6 +205,28 @@ describe('games', () => {
     act({ type: 'deleteGame', gameId: second });
     assert.equal(state.games.length, 1);
     assert.throws(() => act({ type: 'switchGame', gameId: second }), { status: 404 });
+  });
+});
+
+describe('deleting a finished game', () => {
+  test('the current game can be deleted once someone won; the newest other game takes over', () => {
+    const first = state.currentGameId;
+    act({ type: 'newGame', name: 'Second', keepPlayers: false });
+    const second = state.currentGameId;
+    const a = add('Ana');
+    assert.throws(() => act({ type: 'deleteGame', gameId: second }), ActionError);      // still being played
+    act({ type: 'setLevel', playerId: a.id, level: MAX_LEVEL });
+    act({ type: 'deleteGame', gameId: second });
+    assert.deepEqual([state.games.map((g) => g.id), state.currentGameId], [[first], first]);
+  });
+
+  test('deleting the last game leaves a new, empty one', () => {
+    const only = state.currentGameId;
+    act({ type: 'setLevel', playerId: add('Ana').id, level: MAX_LEVEL });
+    act({ type: 'deleteGame', gameId: only });
+    assert.equal(state.games.length, 1);
+    assert.notEqual(state.currentGameId, only);
+    assert.deepEqual(players(), []);
   });
 });
 

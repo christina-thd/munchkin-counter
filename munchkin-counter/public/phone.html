@@ -27,12 +27,13 @@
     <form class="join" id="joinForm">
       <div class="label">New player</div>
       <div class="join-row">
-        <input id="newName" placeholder="Your name" maxlength="20" autocomplete="off" aria-label="Your name">
+        <input id="newName" placeholder="Your name" maxlength="14" autocomplete="off" aria-label="Your name">
         <div id="newSex"></div>
       </div>
       <button type="submit" class="join-button">Join the game</button>
     </form>
     <p class="game-full" id="gameFull" hidden>This game is full: Munchkin is for up to 6 players. Pick yourself above.</p>
+    <p class="game-full" id="gameOver" hidden>👑 The dungeon is closed.</p>
   </section>
 
   <section id="playView" hidden>
@@ -45,6 +46,15 @@
       <div class="strength"><span>Strength</span><b id="strength"></b></div>
     </div>
     <div class="avatar-grid" id="avatarGrid" hidden></div>
+
+    <!-- game over: in place of the controls -->
+    <div class="win-card" id="winCard" hidden>
+      <div id="winStory"></div>
+      <div class="win-buttons">
+        <button class="undo-button" id="undoWin">↩ Undo</button>
+        <button class="report-wide" id="winReport">📈 Relive the drama</button>
+      </div>
+    </div>
 
     <div class="panel" id="levelPanel">
       <div class="label" id="levelLabel">Level</div>
