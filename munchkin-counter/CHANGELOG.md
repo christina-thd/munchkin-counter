@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.0.1
+- Fixes in the report and sound settings
+
 ## 3.0.0
 - More room for the announcer, more announcer lines
 - Fix lag after a win

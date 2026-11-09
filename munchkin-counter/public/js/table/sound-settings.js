@@ -28,9 +28,9 @@ export async function showSoundSettings({ sounds, music, onChange }) {
         <button type="button" class="sound-toggle" id="toggleMusic"></button>
         <div class="volume-row" role="group" aria-label="Music volume">
           <span class="volume-label">Music volume</span>
-          <button type="button" class="volume-step" id="volumeDown" aria-label="Quieter">−</button>
+          <button type="button" class="volume-step" id="volumeDown" aria-label="Quieter">${ICONS.minus}</button>
           <div class="volume-bar" aria-hidden="true">${'<span></span>'.repeat(VOLUME_STEPS)}</div>
-          <button type="button" class="volume-step" id="volumeUp" aria-label="Louder">+</button>
+          <button type="button" class="volume-step" id="volumeUp" aria-label="Louder">${ICONS.plus}</button>
         </div>
         <div class="now-row">
           <span class="now-text"><span class="now-label">Now playing</span><span class="now-name" id="nowPlaying"></span></span>

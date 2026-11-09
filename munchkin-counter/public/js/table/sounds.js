@@ -3,6 +3,7 @@
 // Browsers only allow audio after the page has been touched, so the context is unlocked
 // on the first tap or key press.
 import { storage } from '../shared/storage.js';
+import { decodeAudio } from '../shared/tv.js';
 import { noteFrequency } from './tunes.js';
 
 const SETTING_KEY = 'munchkinSound';
@@ -150,7 +151,7 @@ export class Soundboard {
       Promise.all(notes.split(' ').map(async (note) => {
         const response = await fetch(`audio/instruments/${folder}/${note}.mp3`);
         if (!response.ok) throw new Error(`${folder}/${note}: ${response.status}`);
-        return { freq: noteFrequency(note), buffer: await this.#ctx.decodeAudioData(await response.arrayBuffer()) };
+        return { freq: noteFrequency(note), buffer: await decodeAudio(this.#ctx, await response.arrayBuffer()) };
       }))
         .then((list) => { this.#samples[name] = list; })
         .catch(() => { /* the synthesized sound plays instead */ });

@@ -188,14 +188,10 @@ export function attachHover(root, report, { compact = false, highlight = null } 
   });
 }
 
-/** "Played 1 h 22 min · 👑 Ana won after 1 h 20 min" (HTML: the name is escaped by the caller's escapeHtml). */
 export function summaryText(report, escapeHtml) {
   // non-breaking spaces: "1 h 22 min" never splits over two lines
   const elapsed = (ms) => formatElapsed(ms).replace('Start', 'under a minute').replaceAll(' ', ' ');
-  const parts = [`Played ${elapsed(report.end - report.start)}`];
-  if (report.winner) {
-    const who = report.tracks.find((t) => t.playerId === report.winner.playerId);
-    parts.push(`👑 ${escapeHtml(who?.name ?? 'Someone')} won after ${elapsed(report.winner.at - report.start)}`);
-  }
-  return parts.join(' · ');
+  if (!report.winner) return `Played ${elapsed(report.end - report.start)}`;
+  const who = report.tracks.find((t) => t.playerId === report.winner.playerId);
+  return `👑 ${escapeHtml(who?.name ?? 'Someone')} won after ${elapsed(report.winner.at - report.start)}`;
 }

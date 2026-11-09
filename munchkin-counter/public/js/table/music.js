@@ -7,9 +7,11 @@
 // low drum marks the bars, with only a touch of room echo; the goblin tunes swap the guitar for a bassoon and a
 // piano. Kept out on purpose: long held notes (a cello sounded like a choir or an organ), and anything high,
 // bowed or ringing (a fiddle, a tin whistle, a hammered dulcimer).
-// Until the recordings have loaded (or if they can't), a modelled plucked string (Karplus-Strong) plays instead.
+// Until the recordings have loaded (or if they can't), a modelled plucked string (Karplus-Strong) plays instead;
+// not on a TV, whose slow processor plays a lighter version (see IS_TV below).
 // Each tune is played in its form (formOf in tunes.js). Open the dashboard with #music to listen to each tune.
 import { storage } from '../shared/storage.js';
+import { decodeAudio, IS_TV } from '../shared/tv.js';
 import { chordFrequencies, formOf, noteFrequency, TUNES, variantBars } from './tunes.js';
 
 export { TUNES };
@@ -43,14 +45,28 @@ function savedVolume() {
   const level = Number(saved);
   return saved != null && Number.isInteger(level) && level >= 0 && level <= VOLUME_STEPS ? level : DEFAULT_VOLUME;
 }
-const LOOKAHEAD_S = 0.6;       // notes are scheduled this far ahead
-const TICK_MS = 150;
+// Notes are scheduled this far ahead, every TICK_MS. A TV's slow processor can be busy for a moment: there the
+// notes are queued further ahead, so a busy moment doesn't make the music stumble.
+const LOOKAHEAD_S = IS_TV ? 1.5 : 0.6;
+const TICK_MS = IS_TV ? 300 : 150;
 // The chords are played an octave lower than written, deep and dark. Every part moves by whole octaves only
 // (chords and tune down one, the dungeon tune down two): any other shift puts the chords and the tune in
 // different keys, which sounds out of tune.
 const DEEPER = 0.5;
 
 const LUTE = { brightness: 3.5, maxTone: 1500 };
+
+/**
+ * Music doesn't need a quick reaction, so the browser may use a bigger audio buffer ('playback'): on a slow
+ * processor (a TV) that's what stops crackles and gaps. Browsers that don't take options get the default.
+ */
+function newContext(AudioContextClass) {
+  try {
+    return new AudioContextClass({ latencyHint: 'playback' });
+  } catch {
+    return new AudioContextClass();
+  }
+}
 
 export class Music {
   #enabled = storage.get(SETTING_KEY) !== 'off';
@@ -157,7 +173,7 @@ export class Music {
     try {
       // older Safari only has the webkit-prefixed name
       const AudioContextClass = window.AudioContext || /** @type {any} */ (window).webkitAudioContext;
-      if (!this.#ctx) this.#setUp(new AudioContextClass());
+      if (!this.#ctx) this.#setUp(newContext(AudioContextClass));
       if (this.#ctx.state === 'suspended') this.#ctx.resume();
     } catch {
       return;                 // no Web Audio: no music
@@ -232,7 +248,8 @@ export class Music {
     if (end != null) source.stop(end);
   }
 
-  // master volume ← dry + small-room reverb ← every instrument
+  // master volume ← dry + small-room reverb ← every instrument (no reverb on a TV: it's the heaviest part to work
+  // out all the time, and barely heard)
   #setUp(ctx) {
     this.#ctx = ctx;
     this.#master = ctx.createGain();
@@ -240,11 +257,13 @@ export class Music {
     this.#master.connect(ctx.destination);
     this.#bus = ctx.createGain();
     this.#bus.connect(this.#master);
-    const reverb = ctx.createConvolver();
-    reverb.buffer = this.#roomImpulse(1.1);          // a small room, barely there: echo blurs the notes
-    const wet = ctx.createGain();
-    wet.gain.value = 0.1;
-    this.#bus.connect(reverb).connect(wet).connect(this.#master);
+    if (!IS_TV) {
+      const reverb = ctx.createConvolver();
+      reverb.buffer = this.#roomImpulse(1.1);          // a small room, barely there: echo blurs the notes
+      const wet = ctx.createGain();
+      wet.gain.value = 0.1;
+      this.#bus.connect(reverb).connect(wet).connect(this.#master);
+    }
     this.#loadSamples();
   }
 
@@ -254,7 +273,7 @@ export class Music {
       Promise.all(notes.split(' ').map(async (note) => {
         const response = await fetch(`audio/instruments/${folder}/${note}.mp3`);
         if (!response.ok) throw new Error(`${folder}/${note}: ${response.status}`);
-        const buffer = await this.#ctx.decodeAudioData(await response.arrayBuffer());
+        const buffer = await decodeAudio(this.#ctx, await response.arrayBuffer());
         return { freq: noteFrequency(note), buffer };
       }))
         .then((list) => { this.#samples[name] = list; })
@@ -489,7 +508,8 @@ export class Music {
     const { tone = 0, dry = false } = options;
     const samples = this.#samples[instrument];
     if (!samples) {
-      if (instrument === 'guitar') this.#pluck(t, f, volume * 0.45);
+      // the modelled string is worked out note by note, too much for a TV: it waits for the recordings
+      if (instrument === 'guitar' && !IS_TV) this.#pluck(t, f, volume * 0.45);
       return;
     }
     // the recording closest in pitch, played faster or slower to reach this one
