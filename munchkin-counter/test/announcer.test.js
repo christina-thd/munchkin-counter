@@ -5,24 +5,33 @@ import { LevelWatcher, LineDeck, situations, SituationTracker } from '../public/
 /** @returns {import('../public/js/shared/rules.js').Player} */
 const player = (id, level = 1, gear = 0) => ({ id, name: id, avatar: 'wizard', sex: 'male', level, gear });
 const categories = (list) => list.map((s) => s.category);
+const spoken = (list) => categories(list.filter((s) => s.lines.length));
 
 describe('situations', () => {
   test('everyone at level 1 is the start of the game', () => {
     assert.deepEqual(categories(situations([player('a'), player('b')])), ['start']);
   });
 
-  test('a close mid game has table talk and status', () => {
+  test('a mid game with one leader has table talk and status', () => {
     assert.deepEqual(categories(situations([player('a', 3), player('b', 2)])), ['flavor', 'status']);
   });
 
-  test('detects level 9, stuck at 1, far behind, loaded and cursed', () => {
+  test('level 9, stuck at 1 and cursed are news; stuck and cursed only make a sound', () => {
     const list = situations([player('a', 9, 9), player('b', 2), player('c', 1, -1)]);
-    assert.deepEqual(categories(list), ['nine', 'stuck', 'behind', 'loaded', 'cursed', 'status']);
+    assert.deepEqual(categories(list), ['nine', 'stuck', 'cursed', 'flavor', 'status']);
+    assert.deepEqual(spoken(list), ['nine', 'flavor', 'status']);
     assert.deepEqual(list.find((s) => s.category === 'stuck').ids, ['c']);
   });
 
-  test('a tie at the top', () => {
-    assert.ok(categories(situations([player('a', 5), player('b', 5), player('c', 3)])).includes('tie'));
+  test('no gear talk, however much gear there is', () => {
+    assert.deepEqual(spoken(situations([player('a', 4, 20), player('b', 3, 15)])), ['flavor', 'status']);
+  });
+
+  test('several level with each other at the top: only table talk', () => {
+    assert.deepEqual(spoken(situations([player('a', 5), player('b', 5), player('c', 3)])), ['flavor']);
+    assert.deepEqual(spoken(situations([player('a', 8), player('b', 8)])), ['flavor']);
+    const nine = situations([player('a', 9), player('b', 9)]);
+    assert.deepEqual([categories(nine), spoken(nine)], [['nine', 'flavor'], ['flavor']]);   // still news, for its sound
   });
 
   test('a runaway leader', () => {

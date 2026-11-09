@@ -29,17 +29,7 @@
   border-bottom: 1px solid var(--line);
   background: var(--panel);
 }
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font: 400 28px var(--font-display);
-  letter-spacing: 0.03em;
-  white-space: nowrap;
-  color: var(--gold);
-  text-shadow: 2px 2px 0 var(--shadow-red);
-}
-.brand img { width: 40px; height: 40px; filter: drop-shadow(0 2px 3px #0008); }
+.brand { width: 40px; height: 40px; flex: none; filter: drop-shadow(0 2px 3px #0008); }
 .game-button {
   display: flex;
   color: var(--ink);
@@ -57,13 +47,13 @@
 }
 .game-button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* announcer: up to three short lines of table talk */
+/* announcer: a line or two of table talk. It never makes the top bar taller: a long line gets a smaller
+   font instead (js/table/ticker.js), down to --announcer-min, and only then is cut off. */
 .announcer {
+  --announcer-max: 46px;
   flex: 1;
   min-width: 0;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  max-height: var(--announcer-max);
   overflow: hidden;
   font-size: 15px;
   line-height: 1.2;
@@ -84,6 +74,8 @@
 .bar-button.primary { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
 .bar-button:disabled { opacity: 0.4; cursor: not-allowed; }   /* + Player once the game has its 6 players */
 .bar-button.icon { width: 44px; padding: 0; font-size: 20px; }
+/* + player: a person with a plus */
+#addPlayer svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
 .qr-thumb { width: 48px; height: 48px; padding: 3px; border-radius: 8px; background: #fff; cursor: pointer; }
 
 /* ----- player rows ----- */
@@ -350,6 +342,7 @@
 /* ----- short landscape screens (e.g. iPad in Safari): slimmer top bar ----- */
 @media (min-width: 861px) and (max-height: 760px) {
   .topbar { min-height: 54px; padding: 6px 14px; }
+  .announcer { --announcer-max: 42px; }
   .qr-thumb { width: 42px; height: 42px; }
   #board { gap: 6px; padding: 4px 10px 8px; }
 }
@@ -361,8 +354,7 @@
     --value: clamp(30px, 6vw, 52px);
     --strength: clamp(30px, min(calc(var(--rh) * 0.85), 9vw), 100px);   /* its box spans both lines of the row */
   }
-  .brand { font-size: 20px; }
-  .brand img { width: 32px; height: 32px; }
+  .brand { width: 32px; height: 32px; }
   .announcer { display: none; }
 
   .player {

@@ -1,5 +1,8 @@
 # Changelog
 
+## 3.0.0
+- More room for the announcer, more announcer lines
+
 ## 2.9.0
 - Up to 6 players, dashboard layout fixes
 
