@@ -29,7 +29,7 @@ export async function showMyReport(view, myId) {
     const log = await fetchLog(view.game.id);
     report = levelReport(log.entries, log.players);
   } catch (err) {
-    openDialog({ title: `${ICONS.report} How it went`, ok: null, cancel: 'Close', body: `<p class="note">${escapeHtml(err.message)}</p>` });
+    openDialog({ title: `${ICONS.report} ${escapeHtml(view.game.name)}`, ok: null, cancel: 'Close', body: `<p class="note">${escapeHtml(err.message)}</p>` });
     return;
   }
   const me = report.tracks.findIndex((t) => t.playerId === myId);
@@ -43,7 +43,7 @@ export async function showMyReport(view, myId) {
       <span class="item"><span class="key others"></span>Everyone else</span>
     </div>
     ${standingsHtml(report, myId)}`;
-  openDialog({ title: `${ICONS.report} How it went`, ok: null, cancel: 'Close', body });
+  openDialog({ title: `${ICONS.report} ${escapeHtml(view.game.name)}`, ok: null, cancel: 'Close', body });
   // the chart and its readout strip share a parent (the sheet), which attachHover searches
   attachHover(/** @type {HTMLElement} */ (document.getElementById('sheet')), report, options);
 }

@@ -1,4 +1,4 @@
-// The win popup's text: who won, one fun line about how the game went, and how long it took with how many deaths.
+// The win popup's text: who won, one fun line about how the game went, and how long it took.
 // Pure (no DOM), so it can be tested in Node.
 import { escapeHtml } from './dom.js';
 import { formatElapsed, levelAt } from './report.js';
@@ -44,14 +44,12 @@ function mostBehind(report, winnerId) {
   return most;
 }
 
-const count = (n, one, many) => `${n} ${n === 1 ? one : many}`;
-
 /**
  * @param {ReturnType<typeof import('./report.js').levelReport> | null} report   null if the log couldn't be loaded
  * @param {import('./rules.js').Player[]} players   the game's players now
  * @param {() => number} [random]
- * @returns {{ kind: string, winners: import('./rules.js').Player[], line: string, time: string | null, deaths: string | null }}
- *          time and deaths as text ("1 h 30 min", "2 deaths"); null without the log
+ * @returns {{ kind: string, winners: import('./rules.js').Player[], line: string, time: string | null }}
+ *          time as text ("1 h 30 min"); null without the log
  */
 export function winStory(report, players, random = Math.random) {
   const winners = winnersOf(players);
@@ -62,11 +60,10 @@ export function winStory(report, players, random = Math.random) {
   const who = winners.map((p) => `<b>${escapeHtml(p.name)}</b>`).join(' & ');
 
   const runnerUp = players.filter((p) => p.level < MAX_LEVEL).sort((a, b) => b.level - a.level)[0];
-  if (!report || !winners.length) return { winners, ...pick('plain', {}), time: null, deaths: null };
+  if (!report || !winners.length) return { winners, ...pick('plain', {}), time: null };
 
   const ms = (report.winner?.at ?? report.end) - report.start;
   const time = ms < 60_000 ? 'under a minute' : formatElapsed(ms);
-  const deaths = count(report.tracks.reduce((n, t) => n + t.deaths.length, 0), 'death', 'deaths');
   const behind = mostBehind(report, winners[0].id);
   const gap = runnerUp ? MAX_LEVEL - runnerUp.level : 0;
 
@@ -75,5 +72,5 @@ export function winStory(report, players, random = Math.random) {
   else if (gap >= BLOWOUT_BY) story = pick('blowout', { gap });
   else if (ms > MARATHON_MS) story = pick('marathon', { time });
   else story = pick('plain', {});
-  return { winners, ...story, time, deaths };
+  return { winners, ...story, time };
 }

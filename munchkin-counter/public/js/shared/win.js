@@ -17,10 +17,9 @@ export async function loadWinStory(gameId, players) {
 /**
  * @param {ReturnType<typeof winStory>} story
  * @param {string} title   HTML
- * @param {{ deaths?: boolean }} [show]   deaths: the number of deaths beside the time
  */
-export function winHtml(story, title, { deaths = true } = {}) {
-  const facts = [story.time && `⏱ ${story.time}`, deaths && story.deaths != null && `💀 ${story.deaths}`].filter(Boolean);
+export function winHtml(story, title) {
+  const facts = story.time ? [`⏱ ${story.time}`] : [];
   return `
     <div class="win">
       <div class="win-avatars">

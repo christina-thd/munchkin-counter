@@ -35,17 +35,17 @@ describe('winStory', () => {
     assert.equal(game(90, 7).kind, 'plain');
   });
 
-  test('the facts: how long and how many deaths', () => {
+  test('the facts: how long it took', () => {
     const s = story(
       [death(5, 'b'), level(6, 'a', 1, 6), level(10, 'b', 1, 7), level(90, 'a', 6, 10)],
       [player('a', 10), player('b', 7)],
     );
-    assert.deepEqual([s.time, s.deaths], ['1 h 30 min', '1 death']);
+    assert.equal(s.time, '1 h 30 min');
   });
 
   test('without the log, a general line and no facts; names are HTML-escaped', () => {
     const s = winStory(null, [player('a', 10)], () => 0);
-    assert.deepEqual([s.kind, s.time, s.deaths], ['plain', null, null]);
+    assert.deepEqual([s.kind, s.time], ['plain', null]);
     const comeback = story([level(10, 'b', 1, 5), level(60, 'a', 1, 10)],
       [player('a', 10, '<img onerror=x>'), player('b', 5)]);
     assert.equal(comeback.kind, 'comeback');

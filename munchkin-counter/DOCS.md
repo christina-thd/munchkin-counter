@@ -50,7 +50,7 @@ address (e.g. `http://<homeassistant-ip>:3000/?dashboard`); it remembers. Use `?
   after a Change Sex curse. It carries over when a new game keeps the same players.
 - **Avatar**: every player gets a character token (races, classes, monsters and dungeon loot). Tap yours on
   the phone to pick another.
-- **Players**: up to 6 per game, as in Munchkin. Once 6 have joined, the add-player button is greyed out and phones can only
+- **Players**: up to 6 per game, as in Munchkin, with names of up to 14 letters (so they fit on every screen). Once 6 have joined, the add-player button is greyed out and phones can only
   pick an existing player; removing one frees the seat.
 - **+ New dungeon** (on the start page) adds a game to the list, with a suggested name (🎲 for another). Old games
   are kept under **Past games**, finished ones too: tap ▶ (or the name) to resume one nobody has won yet, 🕘 to see
@@ -76,7 +76,7 @@ and the standings as a list. It's built from the activity log, so in a very long
 ### Sound
 
 The dashboard plays a sound for a win, a death, someone reaching level 9, someone stuck at level 1,
-negative gear, and level changes. Tap the screen once after opening it (browsers only allow sound after a tap).
+negative gear, level changes, and a change of sex. Tap the screen once after opening it (browsers only allow sound after a tap).
 Add `#sounds` to the end of the address to hear every sound.
 
 There's also quiet Renaissance tavern music: original tunes of about 3 minutes each (tavern, dungeon, spooky,
@@ -84,7 +84,7 @@ mystery, adventure and a comic bassoon), played in random order, each fading int
 Torchlight Fading. Add `#music` to the end of the address to listen to each tune.
 
 The speaker button (on the dashboard's top bar and in the start page's corner) opens the **Sound** settings: sound
-effects on or off, music on or off, and the music's volume. It works with a TV remote too: the arrows move between
+effects on or off, music on or off, the music's volume, the song that's playing and ⏭ to skip it. It works with a TV remote too: the arrows move between
 the rows (left and right change the volume), OK selects, Back closes. Each screen remembers its own settings, and
 where it was in the shuffled music.
 

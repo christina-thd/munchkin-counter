@@ -31,16 +31,20 @@ munchkin-counter/                  Home Assistant add-on containing the app
 │   ├── img/   logo.svg            built-in logo (a custom one can replace it via LOGO_FILE), icon-*.png,
 │   │          avatars/*.svg       player avatars (tokens), drawn by art/avatars.mjs
 │   ├── media/ wake.mp4, wake.webm tiny silent video that keeps the screen on over plain http
+│   ├── audio/instruments/         recorded notes for the music (FluidR3_GM, CC BY 3.0; CREDITS.md)
 │   └── js/
-│       ├── shared/  rules.js (used by server too; Player and View types), activity (log dialog), api, dialog, dom, format, games, screen, storage,
-│       │            device-check.js (phones → /join; tablets and TVs keep the dashboard)
-│       ├── app.js                 switches between the start page and dashboard (keeps full screen)
+│       ├── shared/  rules.js (used by server too; Player and View types), activity (log dialog), api, avatars, dialog, dom,
+│       │            dungeon-names, format, games, icons (line icons), report, report-chart, screen, sex-icons, storage,
+│       │            win + win-story (win popup / card), device-check.js (phones → /join; tablets and TVs keep the dashboard)
+│       ├── app.js                 switches between the start page and dashboard (keeps full screen); sound effects and music
 │       ├── lobby/   lobby.js      start page
-│       ├── table/   dashboard, board, sizing, dialogs, report (levels over the game), sounds,
+│       ├── table/   dashboard, board, sizing, dialogs, report (levels over the game), sounds (effects),
+│       │            music (player) + tunes (original tunes), sound-settings (popup),
 │       │            announcer (situations, pure) + lines (texts) + ticker (UI)
 │       └── phone/   main.js       phone controls; report.js: the simpler report
 ├── test/                          automated tests (Node's built-in runner, no extra deps):
-│                                  actions, activity log, state, announcer, store, http, addon packaging, device check
+│                                  actions, activity log, state, announcer, store, http, addon packaging, device check,
+│                                  tunes, dungeon names, win story
 └── docs/
     ├── DEVELOPMENT.md             dev setup, architecture, releasing, local Docker test
     └── _project_architecture.txt  this overview

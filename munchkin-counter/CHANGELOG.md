@@ -7,6 +7,7 @@
 - Start page improvements
 - Phone improvements
 - Background music
+- Sound settings, new icons
 
 ## 2.9.0
 - Up to 6 players, dashboard layout fixes

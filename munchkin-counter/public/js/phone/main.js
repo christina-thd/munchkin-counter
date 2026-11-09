@@ -76,7 +76,7 @@ async function renderWin(player) {
   const others = winners.filter((p) => p.id !== player.id).map((p) => escapeHtml(p.name));
   const title = mine ? (others.length ? `You & ${others.join(' & ')} win!` : 'You win!')
     : `${others.join(' & ')} ${others.length > 1 ? 'win' : 'wins'}!`;
-  $('winStory').innerHTML = winHtml(story, title, { deaths: mine });     // the others only get how long it took
+  $('winStory').innerHTML = winHtml(story, title);
 }
 
 // A long name gets a smaller font so it fits beside the avatar and strength; past the smallest it ends in "…".

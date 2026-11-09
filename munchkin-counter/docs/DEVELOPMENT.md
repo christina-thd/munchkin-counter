@@ -13,7 +13,7 @@ npm run typecheck   # type checks the JavaScript from its JSDoc comments (tsconf
 npm run check       # all three, as the pull request checks do
 ```
 
-Open `/#sounds` on the dashboard to hear every sound.
+Open the dashboard with `#sounds` to hear every sound effect, or `#music` to listen to each tune.
 
 | Variable     | Default           | Purpose                                                  |
 |--------------|-------------------|----------------------------------------------------------|
@@ -59,16 +59,21 @@ public/                   browser (plain ES modules, no build step)
   img/avatars/*.svg       player avatars, one token each, drawn by art/avatars.mjs (run it after changing one;
                           the ids must match AVATARS in js/shared/rules.js, a test checks it)
   media/wake.*            tiny silent video that keeps the screen on over plain http
+  audio/instruments/      recorded notes for the music (FluidR3_GM, CC BY 3.0, see CREDITS.md there): only the
+                          notes the tunes use, a note every three semitones
   manifest.webmanifest    web app manifest (home screen opens full screen)
   js/shared/              rules.js (also used by the server; the Player and View types every screen gets),
                           activity (log dialog), api, avatars (the avatar pictures as HTML), dialog, dom,
-                          format, games, report (levels over the game from the log, pure), report-chart (its
-                          chart, full or compact), screen, storage;
+                          dungeon-names (+ New dungeon's suggestions), format, games, icons (line icons),
+                          report (levels over the game from the log, pure), report-chart (its chart, full or
+                          compact), screen, sex-icons, storage, win + win-story (the win popup / card);
                           device-check.js (plain script: sends phones to /join, keeps tablets and TVs)
-  js/app.js               tablet / TV entry: switches between the start page and dashboard views
+  js/app.js               tablet / TV entry: switches between the start page and dashboard views, owns the
+                          sound effects and music (shared by both views)
   js/lobby/               start page (lobby.js)
   js/table/               dashboard: dashboard.js, board, sizing, dialogs, report (chart dialog),
-                          announcer (situations, pure) + lines (texts) + ticker (UI), sounds
+                          announcer (situations, pure) + lines (texts) + ticker (UI), sounds (effects),
+                          music (player) + tunes (the original tunes, as text notation), sound-settings (popup)
   js/phone/               phone controls (main.js) and the phone's simpler report (report.js)
 
 test/                     node:test suites
@@ -86,7 +91,7 @@ Screens send `source: "dashboard"` or `"phone"` with their actions so the log ca
 came from. The log isn't part of the live view (it would grow every update); screens fetch it from
 `GET /api/log?game=<id>` when it's opened.
 
-**Actions:** `addPlayer`, `removePlayer`, `setAvatar`, `setSex`, `changeLevel`, `setLevel`, `changeGear`, `die`,
+**Actions:** `addPlayer`, `removePlayer`, `setAvatar`, `setSex`, `changeLevel`, `setLevel`, `changeGear`, `undoWin`, `die`,
 `newGame`, `switchGame`, `deleteGame`. See `src/game/actions.js`.
 
 **Saved data** is versioned (`schema`). `normalizeState` upgrades older files on load, so
@@ -99,6 +104,15 @@ version reloads itself.
 and the dashboard are two views of `index.html`. `js/app.js` switches between them with
 `history.pushState` (the address still changes to `/table` and back, and the back button works). The
 dashboard's announcer, sounds and level watching only run while its view is shown.
+
+**Music:** `js/table/music.js` plays the tunes in `js/table/tunes.js` with the Web Audio API: each note is the
+nearest recorded note in `public/audio/instruments/`, played slightly faster or slower, scheduled a little ahead.
+The start page plays one tune; a game shuffles the rest (the order is kept per screen in localStorage). If you add
+a tune that goes lower or higher than the others, check its notes still have a recording near them.
+
+**Winning:** a player at level 10 ends the game. Changes to its players are refused (409) until `undoWin` puts the
+winner back to their level before; starting, switching and deleting games still work. A game with a winner is
+listed under past games with a recap instead of resume.
 
 **Home-screen icons over https:** the tablet doesn't trust the add-on's own certificate, and "Add to Home
 Screen" then may not download the icons (it shows a plain letter). So over https, `src/app.js` puts

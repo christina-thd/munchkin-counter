@@ -98,6 +98,7 @@ button { border: 0; background: none; cursor: pointer; }
   letter-spacing: 0.02em;
   color: var(--gold);
 }
+.sheet h3 .icon { margin-right: 4px; color: var(--parchment); }
 .sheet p { margin: 0 0 14px; font-size: 17px; line-height: 1.45; }
 .sheet .note { color: var(--muted); font-size: 15px; }
 .sheet input[type="text"] {
@@ -301,7 +302,7 @@ button { border: 0; background: none; cursor: pointer; }
 .now-label { color: var(--muted); font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
 .now-name { overflow: hidden; font-size: 18px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
 #nextSong { flex: none; display: grid; place-items: center; font-size: 20px; }
-.sound-name .icon { margin-right: 4px; color: var(--gold); }
+.sound-name .icon { margin-right: 4px; color: var(--parchment); }
 .sound-toggle:not(.on) .sound-name .icon { color: var(--muted); }
 .sound-toggle:not(.on) .icon .off { display: inline; }
 #nextSong:disabled { opacity: 0.4; cursor: default; }

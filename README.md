@@ -4,11 +4,13 @@ A level counter for the Munchkin card game, as a Home Assistant add-on.
 
 A tablet (or TV) shows every player at the table, and each player controls their own
 level and gear from their phone by scanning a QR code. Munchkin rules are built in,
-with an announcer, sound effects and a game history.
+with an announcer, sound effects, background music and a game history.
 
 ![Munchkin Counter on a tablet and a phone](images/hero.png)
 
-![Start page with past games](images/start-page.png)
+![Start page with the current game and past games](images/start-page.png)
+
+![A win: the popup on the tablet and the card on the winner's phone](images/win.png)
 
 ![Game report: every player's level over the game, on the tablet and on a phone](images/report.png)
 
@@ -32,6 +34,7 @@ Tablet/TV dashboard and phone controls for Munchkin, over your home network.
 - Levels 1–10, gear, strength, and Munchkin death rules
 - Male / female characters and character avatars
 - Munchkin-style announcer and sound effects
+- Background music: original tavern and dungeon tunes
 - Start page with past games
 - Game report: every player's level over the whole game
 
